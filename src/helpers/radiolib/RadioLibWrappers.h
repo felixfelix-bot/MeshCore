@@ -21,15 +21,19 @@ protected:
   uint16_t _num_floor_samples;
   int32_t _floor_sample_sum;
   uint8_t _preamble_sf;
+  float _center_offset_hz;
 
   void idle();
   void startRecv();
   float packetScoreInt(float snr, int sf, int packet_len);
   virtual bool isReceivingPacket() =0;
   virtual void doResetAGC();
+  // Apply the stored center-frequency offset to the physical radio.
+  // Default no-op; overridden by temperature-capable wrappers (e.g. LR2021).
+  virtual void applyCenterFreqOffset() { }
 
 public:
-  RadioLibWrapper(PhysicalLayer& radio, mesh::MainBoard& board) : _radio(&radio), _board(&board), _preamble_sf(0) { n_recv = n_sent = 0; }
+  RadioLibWrapper(PhysicalLayer& radio, mesh::MainBoard& board) : _radio(&radio), _board(&board), _preamble_sf(0), _center_offset_hz(0) { n_recv = n_sent = 0; }
 
   void begin() override;
   virtual void powerOff() { _radio->sleep(); }
@@ -72,6 +76,15 @@ public:
 
   virtual float getLastRSSI() const override;
   virtual float getLastSNR() const override;
+
+  // store + apply a center-frequency offset (Hz) for thermal compensation.
+  // Applies immediately and re-applies on every startRecv() re-arm.
+  void setCenterFreqOffset(float hz) override {
+    _center_offset_hz = hz;
+    applyCenterFreqOffset();
+  }
+  // radio die temp; 0.0 when the radio does not expose a temperature sensor.
+  float getRadioTemperatureC() override { return 0.0f; }
 
   float packetScore(float snr, int packet_len) override { return packetScoreInt(snr, 10, packet_len); }  // assume sf=10
 

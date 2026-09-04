@@ -16,6 +16,8 @@ public:
   CustomLR2021Wrapper(CustomLR2021& radio, mesh::MainBoard& board) : RadioLibWrapper(radio, board) { }
 
   void setParams(float freq, float bw, uint8_t sf, uint8_t cr) override {
+    _base_freq_mhz = freq;                       // nominal center before any offset
+    if (_center_offset_hz != 0.0f) freq += _center_offset_hz / 1e6f;
     ((CustomLR2021 *)_radio)->setFrequency(freq);
     ((CustomLR2021 *)_radio)->setSpreadingFactor(sf);
     ((CustomLR2021 *)_radio)->setBandwidth(bw);
@@ -26,6 +28,20 @@ public:
     ((CustomLR2021 *)_radio)->setPreambleMillis(pm.preambleMillis);
     ((CustomLR2021 *)_radio)->setMaxPayloadMillis(pm.payloadMillis);
 
+  }
+
+  float getRadioTemperatureC() override {
+    // XOSC (crystal) sensor is the relevant one for crystal-frequency drift.
+    // 13-bit resolution degrees Celsius. 0.0 if the read fails.
+    return ((CustomLR2021 *)_radio)->getTemperature(RADIOLIB_LR2021_TEMP_SOURCE_XOSC);
+  }
+
+  void applyCenterFreqOffset() override {
+    if (_base_freq_mhz > 0.0f && _center_offset_hz != 0.0f) {
+      // offset is small (< ~300 ppm << 20 MHz image-cal trigger) so this is a
+      // FREE retune - no front-end image calibration is re-run.
+      ((CustomLR2021 *)_radio)->setFrequency(_base_freq_mhz + _center_offset_hz / 1e6f);
+    }
   }
 
   bool configSideDetectors(const uint8_t* sideDetSFs, uint8_t num, float bw) override {
@@ -107,5 +123,5 @@ public:
   protected:
     LR2021LoRaSideDetector_t _sideDet[3];
     size_t _numSideDet = 0;
-
+    float _base_freq_mhz = 0.0f;
 };
