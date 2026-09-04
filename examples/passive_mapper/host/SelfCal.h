@@ -21,11 +21,14 @@ public:
   static const uint8_t BLOB_SIZE = 3 * 4 + 2 + 1; // 15 bytes
   static const uint16_t CAL_MAGIC = 0x5343;       // 'SC'
 
-  static const float TEMP_TC_SECS;     // thermal-lag time constant
-  static const float SLEW_PPM;         // max |delta| per update
-  static const float DEADBAND_PPM;     // ignore sub-deadband changes
-  static const float MAX_PPM;          // absolute output clamp
-  static const float SNR_GATE_DB;      // FEI residual acceptance gate
+  // In-class constexpr values (C++11-safe: used as prvalues only, so no
+  // out-of-line definition is needed and no ODR multiple-definition occurs
+  // when the header is included by several translation units).
+  static constexpr float TEMP_TC_SECS = 10.0f;     // thermal-lag time constant
+  static constexpr float SLEW_PPM     = 25.0f;     // max |delta| per update
+  static constexpr float DEADBAND_PPM = 1.0f;      // ignore sub-deadband changes
+  static constexpr float MAX_PPM      = 300.0f;    // absolute output clamp
+  static constexpr float SNR_GATE_DB  = -10.0f;    // FEI residual acceptance gate
 
   SelfCal()
     : _k(0.0f), _T0(0.0f), _ver(0), _cal_valid(false),
@@ -149,9 +152,3 @@ private:
   uint8_t _median_n;
   float _last_snr;
 };
-
-const float SelfCal::TEMP_TC_SECS  = 10.0f;
-const float SelfCal::SLEW_PPM      = 25.0f;
-const float SelfCal::DEADBAND_PPM  = 1.0f;
-const float SelfCal::MAX_PPM       = 300.0f;
-const float SelfCal::SNR_GATE_DB   = -10.0f;
