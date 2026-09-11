@@ -29,6 +29,11 @@ public:
   static constexpr float DEADBAND_PPM = 1.0f;      // ignore sub-deadband changes
   static constexpr float MAX_PPM      = 300.0f;    // absolute output clamp
   static constexpr float SNR_GATE_DB  = -10.0f;    // FEI residual acceptance gate
+  // Validity band of the open-loop model around the calibration point T0. Outside
+  // |T - T0| <= CAL_RANGE_C the parabola is extrapolated and the residual error
+  // can exceed the SF8/BW62.5 capture window, so callers should fall back to the
+  // wide-bandwidth profile instead of trusting the model.
+  static constexpr float CAL_RANGE_C  = 60.0f;
 
   SelfCal()
     : _k(0.0f), _T0(0.0f), _ver(0), _cal_valid(false),
@@ -124,6 +129,21 @@ public:
     // scalar EMA on the temp-model residual
     _residual_ema += (median - _residual_ema) * 0.2f;  // ~5-sample smoothing
   }
+
+  // --- calibration range -----------------------------------------------------
+  // Is 't' inside the band where the calibrated parabola is trustworthy?
+  // Requires a valid blob AND |t - T0| <= CAL_RANGE_C.
+  bool inCalRange(float t) const {
+    if (!_cal_valid) return false;
+    float d = t - _T0;
+    if (d < 0.0f) d = -d;
+    return d <= CAL_RANGE_C;
+  }
+
+  // Can we produce a trustworthy offset for this die temperature? Callers use
+  // this (together with a "no reading" sentinel check) to decide whether to
+  // engage the degraded wide-bandwidth RX profile.
+  bool canCompensate(float t) const { return inCalRange(t); }
 
   // --- accessors -------------------------------------------------------------
   float getOffsetPpm() const { return _offset_ppm; }

@@ -91,6 +91,21 @@ public:
    *         radios. Free retune (< image-cal trigger) is expected.
    */
   virtual void setCenterFreqOffset(float hz) { (void)hz; }
+
+  /**
+   * \brief  Switch the RX (LoRa) bandwidth at runtime, in kHz.
+   *         Used by the passive_mapper to fall back to a WIDE bandwidth profile
+   *         (+/-72 ppm capture window) when the die temperature is unavailable
+   *         or outside the calibration range, so no thermal offset can be
+   *         trusted. Returns true when the radio actually applied it; the
+   *         default is false (unsupported -> caller keeps its current profile).
+   */
+  virtual bool setRxBandwidthKhz(float bw_khz) { (void)bw_khz; return false; }
+
+  /**
+   * \returns the RX (LoRa) bandwidth currently in use, in kHz (0 = unknown).
+   */
+  virtual float getRxBandwidthKhz() const { return 0.0f; }
 };
 
 /**

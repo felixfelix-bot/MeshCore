@@ -128,6 +128,24 @@ int main() {
     CHECK(cal.getOffsetPpm() > 0.0f);
   }
 
+  // --- cal-range predicate: out-of-cal-range is DISTINCT from no reading ------
+  // inCalRange()/canCompensate() let the caller engage the wide-BW fallback when
+  // the temperature is outside the model's validity band, not only when the radio
+  // returns the 0.0f "no reading" sentinel.
+  {
+    SelfCal cal;
+    CHECK(cal.inCalRange(25.0f) == false);     // no valid cal blob -> nothing is in range
+    CHECK(cal.canCompensate(25.0f) == false);
+    cal.setCalibration(0.04f, 25.0f);          // T0 = 25C
+    CHECK(cal.inCalRange(25.0f) == true);      // at T0
+    CHECK(cal.inCalRange(-25.0f) == true);     // 50C below T0, still inside the band
+    CHECK(cal.inCalRange(84.9f) == true);      // 59.9C above T0
+    CHECK(cal.inCalRange(-36.0f) == false);    // 61C below T0 -> outside cal range
+    CHECK(cal.inCalRange(85.1f) == false);     // 60.1C above T0 -> outside
+    CHECK(cal.canCompensate(-10.0f) == true);
+    CHECK(cal.canCompensate(120.0f) == false);
+  }
+
   // --- serialization roundtrip preserves cal params --------------------------
   {
     SelfCal cal;

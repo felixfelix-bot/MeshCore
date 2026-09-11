@@ -86,6 +86,10 @@ public:
   // radio die temp; 0.0 when the radio does not expose a temperature sensor.
   float getRadioTemperatureC() override { return 0.0f; }
 
+  // runtime RX bandwidth switch; false when the physical radio has no such hook.
+  bool setRxBandwidthKhz(float bw_khz) override { (void)bw_khz; return false; }
+  float getRxBandwidthKhz() const override { return 0.0f; }
+
   float packetScore(float snr, int packet_len) override { return packetScoreInt(snr, 10, packet_len); }  // assume sf=10
 
   virtual bool setRxBoostedGainMode(bool) { return false; }
