@@ -1,6 +1,26 @@
 // SelfCal.h - pure host-compilable open-loop thermal frequency compensation.
-// No Arduino dependencies. Model: offset_ppm = -k*(T-T0)^2 (parabolic AT-cut
-// crystal drift), applied with 1Hz-granularity free retune at the radio layer.
+// No Arduino dependencies.
+//
+// MODEL / SIGN CONVENTION
+//   Crystal drift away from the turnover temperature (AT-cut, parabolic):
+//     drift_ppm(T) = -k*(T-T0)^2      (k = 0.03..0.04 ppm/C^2, taken as a
+//                                      MAGNITUDE here; the crystal is SLOW on
+//                                      both sides of T0)
+//   A slow crystal makes the synthesised LO land LOW, so a receiver programmed
+//   to f0 actually centres its passband at f0*(1+drift). To put the passband
+//   back on an on-frequency (warm, at-turnover) transmitter the RX must be
+//   programmed HIGH by |drift|:
+//     applied_offset_ppm(T) = +k*(T-T0)^2 = -drift_ppm(T)
+//   i.e. the applied offset is the NEGATION of the drift. Applying the drift
+//   itself (the pre-2026-09-11 sign) doubles the error instead of cancelling
+//   it: at -40 C with k=0.04,T0=25 it applies -169 ppm where +169 is required,
+//   leaving the passband 338 ppm off instead of on-frequency.
+//   Direction cross-check in the tree: RadioLibWrapper::setCenterFreqOffset()
+//   feeds applyCenterFreqOffset(), which does
+//     ((CustomLR2021*)_radio)->setFrequency(_base_freq_mhz + hz/1e6f)
+//   so a POSITIVE offset programs the RX center HIGH. A negative applied offset
+//   is never correct in any configuration (both sides of the turnover are slow).
+//   Applied with 1 Hz-granularity free retune at the radio layer.
 //
 // PRIMARY  : open-loop temp model driven by getTemperature() die temp, with a
 //            thermal-lag EMA (~10s tc) and output slew/deadband/max clamps.
@@ -28,12 +48,28 @@ public:
   static constexpr float SLEW_PPM     = 25.0f;     // max |delta| per update
   static constexpr float DEADBAND_PPM = 1.0f;      // ignore sub-deadband changes
   static constexpr float MAX_PPM      = 300.0f;    // absolute output clamp
+                                                   // must cover the profile floor:
+                                                   // 0.04*(25-(-56.5))^2 = 266 ppm
   static constexpr float SNR_GATE_DB  = -10.0f;    // FEI residual acceptance gate
   // Validity band of the open-loop model around the calibration point T0. Outside
   // |T - T0| <= CAL_RANGE_C the parabola is extrapolated and the residual error
   // can exceed the SF8/BW62.5 capture window, so callers should fall back to the
   // wide-bandwidth profile instead of trusting the model.
-  static constexpr float CAL_RANGE_C  = 60.0f;
+  //
+  // Sized to the mission profile, not to a round number. ISA/standard-atmosphere
+  // profile: the temperature floor is -56.5 C, held from 11 km to 20 km, rising
+  // to about -46 C at 30 km. A module whose turnover T0 lands anywhere in a
+  // realistic +25..+33 C therefore needs 82..90 C of modelled range to stay in
+  // band for the whole profile; a 60 C band (the earlier value) disqualified the
+  // calibration exactly where it is needed and silently degraded the mapper to
+  // the BW125 fallback (2x noise bandwidth) for the whole flight. The fit's own
+  // residual is the real validity gate - this constant is only the outer sanity
+  // bound, sized to trip on a bogus sensor reading rather than on the profile.
+  // Bench calibration must sweep at least as deep as the expected flight minimum
+  // (a kitchen freezer only reaches ~-18 C; dry ice/IPA (-78 C) or a chamber is
+  // required) and a fit extrapolated beyond the swept span is not flight-valid -
+  // see bench/README.md.
+  static constexpr float CAL_RANGE_C  = 90.0f;
 
   SelfCal()
     : _k(0.0f), _T0(0.0f), _ver(0), _cal_valid(false),
@@ -41,6 +77,10 @@ public:
       _residual_ema(0.0f), _median_n(0), _last_snr(-100.0f) { }
 
   // --- calibration ----------------------------------------------------------
+  // k is the MAGNITUDE of the AT-cut quadratic coefficient (ppm/C^2, > 0);
+  // T0 is the turnover temperature (C). The blob stores k with this sign, so
+  // the serial CLI keeps rejecting negative k (a negative k would flip the
+  // compensation direction again).
   void setCalibration(float k, float T0) {
     _k = k; _T0 = T0; _cal_valid = true;
   }
@@ -86,7 +126,11 @@ public:
     if (_muted) return _offset_ppm;
     if (!_cal_valid) { _offset_ppm = 0.0f; return _offset_ppm; }
 
-    float raw = -_k * (_temp_ema - _T0) * (_temp_ema - _T0);
+    // Compensation, not drift: the crystal is slow away from T0, so the LO is
+    // low and the RX must be programmed HIGH by |drift| = k*(T-T0)^2 (k>0).
+    // Signing this -k*(T-T0)^2 (as it was) inverts the correction and doubles
+    // the error - see the header note.
+    float raw = _k * (_temp_ema - _T0) * (_temp_ema - _T0);
     // max clamp
     if (raw > MAX_PPM) raw = MAX_PPM;
     if (raw < -MAX_PPM) raw = -MAX_PPM;

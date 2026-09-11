@@ -12,9 +12,13 @@
 // Asymmetric hysteresis 5-up / 2-down + 5-min dwell (in DensityWindow).
 //
 // Thermal self-calibration (SelfCal, pure host class): open-loop AT-cut drift
-// model offset_ppm = -k*(T-T0)^2 from the LR2021 die temperature, applied as
-// setCenterFreqOffset() (free retune, <20 MHz trigger), re-applied before every
-// RX re-arm by RadioLibWrapper::startRecv(). When the die temperature is
+// model. The crystal is SLOW away from its turnover temperature, so the LO lands
+// LOW and the RX must be programmed HIGH by |drift|: applied offset_ppm =
+// +k*(T-T0)^2 (k = magnitude, T0 = turnover). Applying the raw drift instead
+// (-k*(T-T0)^2, the original sign) inverts the correction and doubles the error,
+// so the sign is load-bearing. Applied via setCenterFreqOffset() (free retune,
+// <20 MHz trigger), re-applied before every RX re-arm by
+// RadioLibWrapper::startRecv(). When the die temperature is
 // unavailable (radio returns the 0.0f sentinel) or outside the calibrated band
 // (SelfCal::inCalRange), the mapper switches the radio to BW125 (a +/-72 ppm
 // capture window) and keeps the last offset, instead of trusting a model that is
@@ -164,7 +168,10 @@ void MyMesh::handleCommand(char* cmd, char* reply) {
     if (_fs) { _fs->remove(MAP_LOG_FILE); }
     snprintf(reply, 160, "erased %s", MAP_LOG_FILE);
   } else if (strncmp(cmd, "cal ", 4) == 0) {
-    // Persist a bench-derived calibration: cal <k> <T0>   (k in ppm/C^2, T0 in C)
+    // Persist a bench-derived calibration: cal <k> <T0>
+    //   k  = |quadratic tempco| in ppm/C^2 (>0, magnitude - model applies
+    //        +k*(T-T0)^2 because a slow crystal needs the LO programmed high)
+    //   T0 = turnover temperature in C
     float k = 0.0f, t0 = 0.0f;
     const char* p = cmd + 4;
     if (parseFloat(p, &p, &k) && parseFloat(p, nullptr, &t0) && k >= 0.0f) {
@@ -173,9 +180,11 @@ void MyMesh::handleCommand(char* cmd, char* reply) {
                k, t0, ok ? "persisted" : "RAM only, file write failed",
                _selfcal.isCalValid() ? "yes" : "no");
     } else {
-      snprintf(reply, 160, "usage: cal <k_ppm_per_C2> <T0_C>");
+      snprintf(reply, 160, "usage: cal <k_ppm_per_C2> <T0_C>  (k>0 = magnitude)");
     }
   } else if (strcmp(cmd, "calshow") == 0) {
+    // off_hz is the applied RX compensation (positive = LO programmed HIGH),
+    // not the crystal drift; drift = -off_hz.
     snprintf(reply, 160, "cal valid=%s k=%.6g T0=%.2fC range=+/-%.0fC die_temp=%.1f off_hz=%.0f",
              _selfcal.isCalValid() ? "yes" : "no", _selfcal.getK(), _selfcal.getT0(),
              SelfCal::CAL_RANGE_C, _raw_die_temp_c, _applied_offset_hz);
@@ -382,7 +391,7 @@ void MyMesh::updateSelfCal() {
   _applied_die_temp_c = t;
 
   _selfcal.setTemperatureC(t, dt);
-  float ppm = _selfcal.update();
+  float ppm = _selfcal.update();          // compensation: +k*(T-T0)^2, LO up
   float offset_hz = ppm * (_nominal_freq_mhz * 1.0f); // ppm * MHz = Hz
   if (offset_hz != _applied_offset_hz) {
     _applied_offset_hz = offset_hz;
