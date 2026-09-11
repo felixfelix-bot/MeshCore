@@ -12,4 +12,9 @@ echo "== SelfCal =="
 g++ -std=c++11 -Wall -Wextra -o /tmp/sc_test tests/test_self_cal.cpp -lm
 /tmp/sc_test
 
+echo "== bench kit (python, synthetic data) =="
+if command -v python3 >/dev/null 2>&1; then
+  python3 ../bench/test_calib.py
+fi
+
 echo "ALL HOST TESTS PASSED"
