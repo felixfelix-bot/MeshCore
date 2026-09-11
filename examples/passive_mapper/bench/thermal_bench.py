@@ -162,7 +162,8 @@ class Dut:
 class RefTx:
     """Reference transmitter running the same image with the `benchtx` CLI.
 
-    Contract (implemented by the benchtx follow-up card):
+    Contract (NOT part of the mapper image - the swept-reference path is
+    optional and needs a second board flashed with a frequency-agile test TX):
         benchtx <freq_hz> <n> <gap_ms>
           -> "benchtx f=<hz> n=<n> gap=<ms> ..." once the burst is queued
         The burst transmits n MeshCore-parseable packets at freq_hz with the
