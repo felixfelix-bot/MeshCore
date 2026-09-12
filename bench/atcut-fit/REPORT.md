@@ -135,3 +135,46 @@ lands in this directory, the fit + command is one command away.
 - The sibling's untracked `bench/thermal-lag/analyze_thermal_lag.py` was left
   untouched (not this task's artifact; still uncommitted in the worktree).
 - Firmware fork fetched read-only to FETCH_HEAD; no remotes added, no pushes.
+
+## Re-dispatch re-verification (2026-09-12 evening) — verdict unchanged: NO-FIT
+
+The fit task was re-dispatched after this report; every blocker was re-checked
+with fresh tool evidence. Quantitative no-fit verdict (per the task FAILURE
+PATH — the numbers that demonstrate it):
+
+- Soak dwell points available for fitting: **0** of the ≥ 4 required
+  (parent-task acceptance wanted ≥ 4 soaked setpoints spanning +25…−40 C).
+  With n = 0 there is nothing to least-square: k, T0, residuals, and R² are
+  all undefined. No fit was forced; nothing was fabricated.
+- Filesystem re-scan (fresh, this session): whole-root `find` for
+  `*.csv|*soak*|*freezer*` newer than 2026-09-10 (excluding /proc, /sys, R
+  library test fixtures, and the unrelated balloon/e80 PER-RSSI benches) —
+  **zero** thermal die-temp/ppm candidates. Repo-wide `*.csv` search inside
+  meshcore: 0 files. Removable media: none mounted (root disk + /boot/efi
+  only; the 0 B `sdb` card slot is empty).
+- Fork ledger re-read at the live branch head (`git ls-remote` confirms
+  feat/passive-mapper is still `d7ae93fa`): `RESULTS.md` still shows
+  `_not yet measured_ … pending: needs the freezer/dry-ice sweep`.
+- USB re-enumeration: unchanged since the 2026-09-11 guard trips — no
+  SDR / counter / GPSDO / usbtmc / gpib device on the bus (only hubs,
+  Bluetooth, RTL8152 Ethernet, audio/HID, microSD reader, 2× CH340 serial,
+  Pi Debugprobe). The external-frequency-reference precondition is still
+  unmet, so no new soak CSV can be produced on this host either.
+
+Tool integrity re-proven this session (so the verdict is enforced by the
+tool, not just prose):
+
+- `--self-test`: 6/6 PASS, exit 0.
+- Refusal path exercised through the real CLI on a synthetic 3-point CSV
+  (`/tmp/atcut_refusal_demo_SYNTHETIC.csv` — labeled synthetic, not a
+  measurement): gate `n_points >= 4` FAILed → "VERDICT: DO NOT ISSUE cal",
+  exit 1, no command emitted.
+- Header-only CSV (the literal zero-rows case): `CSV error: no usable soak
+  rows found`, exit 1.
+
+Unblock unchanged: a human bench session producing `soak.csv`
+(`die_temp_c` + `offset_ppm` per soaked setpoint, module ID recorded) or an
+operator-provisioned frequency reference. Then the deliverable is one
+command away:
+
+    python3 bench/atcut-fit/fit_atcut.py --csv soak.csv --module <id>
