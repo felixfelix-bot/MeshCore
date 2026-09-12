@@ -187,10 +187,13 @@ def verify_command(cmd, k, t0):
                   "format matches the firmware's %.6g/%.2f echo")
 
 
-def pack_blob(k, t0, version=1):
+def pack_blob(k, t0, version=0):
     """15-byte /selfcal.dat blob: 2x f32 LE (k, T0) + spare f32 + u16 0x5343 +
     u8 version (SelfCal.h @ 3fdfbc8e). For rebuild-after-reflash only; the cal
-    command itself is authoritative."""
+    command itself is authoritative. Version defaults to 0 because the
+    firmware's _ver starts at 0 and setVersion() is never called anywhere in
+    examples/passive_mapper @ 3fdfbc8e (CAL-CLI-SPEC.md §6; harness-verified
+    firmware-written blob ends ... 43 53 00)."""
     import struct
     return struct.pack("<fffHB", k, t0, 0.0, 0x5343, version)
 
