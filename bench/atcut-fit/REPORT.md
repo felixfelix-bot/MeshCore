@@ -38,6 +38,12 @@ Firmware: felixfelix-bot/MeshCore, branch `feat/passive-mapper`,
 commit `3fdfbc8e` ("BW125 runtime fallback, cal-range predicate, cal-blob
 writer"), file `examples/passive_mapper/MyMesh.cpp`, `MyMesh::handleCommand`:
 
+> 2026-09-12 follow-up: the full end-to-end argument spec (serial framing,
+> parser grammar, precision/ulp analysis, blob byte layout, edge-case
+> matrix) now lives in `CAL-CLI-SPEC.md` in this directory, with a
+> host-verification harness `cal_cli_harness.cpp` that compiles the
+> firmware's own `SelfCal.h` + verbatim `parseFloat` (30/30 checks).
+
 - Command form: `cal <k> <T0>` — **k in ppm/C^2, T0 in C** (comment in the
   handler: "k in ppm/C^2, T0 in C"). k must satisfy **k >= 0** (negative k →
   usage error). k is the parabola MAGNITUDE (positive).
