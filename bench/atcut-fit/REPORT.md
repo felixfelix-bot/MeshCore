@@ -184,3 +184,77 @@ operator-provisioned frequency reference. Then the deliverable is one
 command away:
 
     python3 bench/atcut-fit/fit_atcut.py --csv soak.csv --module <id>
+
+## Fourth dispatch re-verification (2026-09-14 ~04:00 UTC+2) — verdict unchanged: NO-FIT
+
+Re-dispatched after the sibling thermal-lag / selfcal-ema-tau tasks' third
+NO-DATA verdicts (committed same morning, `9b9fb897`). Every blocker was
+re-checked with fresh tool evidence; nothing was assumed from prose.
+
+**Why no soak points exist — the root cause is now recorded on the fleet
+board itself.** The parent bench-cluster cards in
+`~/.hermes/bot/fleet_queue_state.json` (read fresh this session, file mtime
+2026-09-14 03:58) carry `decision: skip` / `decision_reason: no-headroom`:
+
+| parent-cluster card (would have produced this task's input) | decision |
+|---|---|
+| t_ffc911f6 Physically locate thermal chamber | skip (light no-headroom) |
+| t_b09424f1 Identify thermal chamber (range/accuracy/ramp) | assigned, no result |
+| t_5f6eb893 Command and log 10-min holds +25/0/−20/−40 C | assigned, no result |
+| t_db8ffdd6 Capture calshow die-temp soak evidence | assigned, no result |
+| t_6a719e4f Identify external frequency reference | assigned, no result |
+| t_0e98e408 Run chamber 10-min holds + capture logs | skip (medium no-headroom) |
+| t_2eb80aef Inventory bench frequency-reference candidates | skip (medium no-headroom) |
+| t_2f5adb53 Inventory RF connectors/adapters/feedthrough | skip (medium no-headroom) |
+| t_48e048a1 Survey chamber feedthrough port + mechanical fit | skip |
+| t_71af23c2 Audit calibration evidence for every bench instrument | skip |
+| t_9d139605 Compile feedthrough+RF feasibility verdict | skip (heavy, waited 232 s) |
+| t_de0a0fa5 Assess condensation/frost risk at −20/−40 C | skip |
+
+The scheduler skipped the entire physical-bench prerequisite cluster for
+capacity ("no-headroom"), and the cards that were assigned show no result
+fields. No CSV was ever captured, on this host or on the fleet queue.
+
+**Fresh evidence (every item re-verified this session, 2026-09-14):**
+
+1. **Filesystem**: repo-wide `*.csv` search inside meshcore → 0 files
+   (unchanged). Host-wide walk (whole root, minus /proc /sys /dev /run and
+   system trees): **2,249 CSVs seen, 834 newer than 2026-09-12** — every
+   thermal-shaped hit (headers `die_temp_c`/`offset_ppm`/`ppm_err`) is one
+   of the 5 known SYNTHETIC self-test artifacts from these bench sessions
+   (`/tmp/twin_ramp.csv`, `/tmp/zero_lag_ramp.csv`,
+   `/tmp/hyst_refusal_demo_SYNTHETIC_dwell_only.csv`,
+   `/tmp/atcut_refusal_demo_SYNTHETIC.csv`,
+   `/tmp/atcut_empty_header_ONLY_demo.csv`). Everything else is FLRC
+   PER/RSSI range-test logs, gerber pick-and-place files, and Go x/arch
+   opcode tables. Zero real die-temp/ppm soak candidates, host-wide.
+2. **USB bus** (this session): 2× CH340 serial + Pi Debugprobe + RTL8152
+   Ethernet + microSD reader + hubs/BT/audio-HID — 0 instrument-class
+   devices, no SDR/counter/GPSDO/signal-analyzer. The external
+   frequency-reference precondition remains unmet, so the `offset_ppm`
+   column is unproducible on this host; the on-chip FEI path is a verified
+   dead end on LR2021.
+3. **Firmware fork**: `git ls-remote` → feat/passive-mapper still `d7ae93fa`
+   (unchanged); ledger `examples/passive_mapper/bench/RESULTS.md` still
+   reads "_not yet measured_ — pending: needs the freezer/dry-ice sweep."
+4. **Tool integrity**: `fit_atcut.py --self-test` → 6/6 PASS, exit 0.
+   Refusal path re-exercised through the real CLI on all 5 synthetic
+   thermal-shaped artifacts: every one refused with "VERDICT: DO NOT ISSUE
+   cal", exit 1 — upward curvature (a=+0.0047619, k=−0.0047619), upward
+   curvature (a=+0.034), T0=−102.5 C unbracketed, n=3, and header-only CSV.
+   No command was emitted for any of them.
+5. **Parser/domain proof re-run**: `verify_cal_domain.py` → PASS, 0 failures
+   over the gate-legal (k, T0) domain; error budget unchanged (worst-case
+   `%.6g`/`%.2f` round-trip cost < 0.1 ppm over |T−T0| ≤ 65 C).
+
+**Quantitative NO-FIT (per METHOD step 2):** soak dwell points available:
+**0** (need ≥ 4 spanning +25…−40 C). With n=0 there is nothing to
+least-square: k, T0, residuals, and R² are undefined. No fit was forced;
+no measurement was fabricated; the `cal <k> <T0>` slot stays unfilled.
+
+**What remains ready (unchanged, re-verified this session):** the fitter,
+the parser-verified `cal %.6g %.2f` emission contract, the domain-wide
+parser proof, and the full argument spec in `CAL-CLI-SPEC.md` /
+`CAL-COMMAND.md` — so the moment a real soak CSV lands, the fitted
+command is one `fit_atcut.py --csv` invocation away and is
+parser-legal by construction.
