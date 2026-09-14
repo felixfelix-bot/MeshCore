@@ -4,7 +4,9 @@ Task: quantify thermal hysteresis — the die-temperature difference between
 cooling and warming ramps at matched frequency-error levels (ppm) — as an
 independent cross-check on die-vs-crystal lag.
 
-Date: 2026-09-12 · Repo: c03rad0r/MeshCore (main @ a8017b27) · artifacts:
+Date: 2026-09-12 (initial); re-verified 2026-09-14 (third dispatch of
+parent t_380a431f — NO-DATA verdict unchanged, tool self-test PASS) ·
+Repo: c03rad0r/MeshCore (main) · artifacts:
 `bench/thermal-hysteresis/hysteresis_fit.py` (this directory).
 
 ## VERDICT: NO DATA — hysteresis not measurable. Median ΔT, spread, and

@@ -6,7 +6,9 @@ Fleet task: synthesize the two committed parent analyses —
 firmware-actionable keep-or-change recommendation for SelfCal's EMA time
 constant, plus an honest statement of open-loop transient limits.
 
-Date: 2026-09-12 (evening) · Repo: c03rad0r/MeshCore (main) ·
+Date: 2026-09-12 (evening); re-verified 2026-09-14 (third dispatch —
+NO-DATA verdict unchanged, all tools re-run PASS) ·
+Repo: c03rad0r/MeshCore (main) ·
 artifacts: `bench/selfcal-ema-tau/synthesize_tau.py` (this directory).
 Body below is the VERBATIM stdout of:
 
