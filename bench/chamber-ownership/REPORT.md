@@ -225,7 +225,88 @@ chamber itself has never been located or identified.
 
 ## (E) Nothing fabricated
 
-No chamber was located, no controller was found, no calibration record
-was produced, and no ownership document exists. Every name above is tied
+No chamber was located, no controller was found, no calibration record was
+produced, and no ownership document exists. Every name above is tied
 to a verbatim quoted source. Zero claims in this report rest on invented,
 simulated, or extrapolated data.
+
+---
+
+## (F) Cold re-verification addendum — 2026-09-14 ~11:55+02:00 (second dispatch of this card, dq05)
+
+The card was re-dispatched to dq05 (`running[]` ts 1789377589 =
+2026-09-14T11:19:49+02:00) while sibling card `meshcore:t_9782fb4c`
+(occupancy/booking) ran concurrently on the same node (11:17:48) and an
+e80-bench pair (11:17:48/11:19:49) joined it. This addendum records the
+second cold re-verification. **The verdict in sections (A)-(E) is
+UNCHANGED.** Everything below was re-run fresh this session.
+
+1. **Primary source survives; ref-decay reconciled.** Commit `d7ae93fa`
+   re-read by SHA this session (`git show d7ae93fa:examples/passive_mapper/
+   bench/README.md`; `git cat-file -p d7ae93fa` and `4a25db04`): the README
+   quote and both commit author/committer headers
+   (`Felix <301398501+felixfelix-bot@users.noreply.github.com>`) are
+   verbatim as cited. `git fsck --dangling`: `d7ae93fa` is the ONLY dangling
+   commit in this object store. So the "fork ledger now unreachable" flag in
+   commit `956801c2` is a REF problem (branch `feat/passive-mapper` is gone
+   from this clone), not object loss — the newest fork state stays
+   cold-readable by SHA. All future citations must use the SHA.
+2. **Fork ledger content unchanged.** `RESULTS.md` @ `d7ae93fa` still
+   carries exactly one row, verbatim `_not yet measured_ | SkyMapper Board
+   A (LR2021) | ... | pending: needs the freezer/dry-ice sweep, see the
+   card` — operator and date columns EMPTY. No completed chamber run
+   exists in the newest fork state visible from this host.
+3. **Events-log corroboration NOT re-verified this session (honest gap).**
+   The live `events-cobrador.jsonl` grew 834 → 874 lines since the prior
+   report (wc/stat this session; mtime 11:49 today), but the re-read command
+   was DENIED by the operator mid-session and was not retried (standing
+   constraint: denied commands are not rephrased or routed around). The
+   FELIX-GATE quotes in section (A) source 2 therefore now rest on the
+   COMMITTED prior reports (`023c5e86` bench-owner §source 3, `7d9227a1`
+   chamber-reservation §(a) source 3) as written secondary evidence,
+   verified verbatim by the sessions that committed them — not on a fresh
+   read by this session. This weakens the corroboration tier slightly; it
+   does not change the verdict, which rests on source 1 (re-verified fresh
+   this session). The 40 new lines added since are UNREAD; nothing in this
+   report claims their content.
+4. **Board churn since the prior report** (`fleet_queue_state.json`, read
+   11:48 today, now 495 cards):
+   - This card's question has been DECOMPOSED into two new sibling cards,
+     both undispatched (no decision): `meshcore:t_e96fa5ad` ("Identify
+     physical thermal chamber custodian with cited sources", created
+     10:24:23+02:00) and `meshcore:t_3e537b94` ("Identify chamber
+     controller/software admin and maintenance approvers", created
+     10:30:11+02:00). Their future outputs must be reconciled with this
+     report, not double-counted as independent answers.
+   - `meshcore:t_a8b9d449` (chamber manual): decision flipped skip → claim
+     ("medium headroom 0.25") — the skip→claim reversals first flagged in
+     `956801c2` continue.
+   - `meshcore:t_fbfead68` (controller inspection): decision field now
+     CLEARED (prior report recorded `claim`).
+   - `meshcore:t_71af23c2`, `meshcore:t_0d0fe29c`, `meshcore:t_d601da74`:
+     removed from `tasks{}` entirely (the latter two have committed
+     REPORTs; their board records are gone — board history is not durable).
+   - All chamber cards still carry `actor: cobrador`; my card
+     `t_c1c07af9` is in `running[]` on dq05.
+5. **Physical/host sweep unchanged (all negative).** The only calendar
+   (`~/.local/share/evolution/calendar/system/calendar.ics`) still has 0
+   VEVENTs, revision line untouched since 2026-03-10. `~/.hermes/
+   peripheral_locks/` still EMPTY. `lsusb`: 2x CH340 (1a86:7523), Raspberry
+   Pi Debugprobe, RTL8152 Ethernet, microSD reader, hubs — nothing that
+   could be a chamber-controller interface. `ps` sweep for
+   chamber/watlow/eurotherm/oven/freezer/labview/scpi/modbus: zero hits
+   (only the concurrent hermes dispatch sessions for this card and its
+   siblings, visible in the process list).
+
+**Verdict re-issued (unchanged, all re-verified this session except the
+events-log tier as flagged):** physical chamber custodian = **Felix**
+(MEDIUM — operator-scoping via fork README `d7ae93fa`, re-verified by SHA;
+no ownership record exists anywhere). Controller/software admin =
+**UNDETERMINED** (no chamber controller, no chamber-control or -scheduling
+software, no admin person on record). Maintenance/calibration window
+approver = **UNDETERMINED** (no calibration system of record; only named
+authorities remain Felix — physical work — and cobrador — fleet dispatch;
+neither holds an explicit cal/maintenance mandate). The split this card
+warns about ("sometimes different people") is neither confirmed nor
+excluded: the chamber's make/model/serial/controller have never been
+captured (identify cards remain unrun or resultless).
