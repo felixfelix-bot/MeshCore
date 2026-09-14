@@ -1,17 +1,26 @@
 # Bench + chamber occupancy audit and booking-system-of-record reconciliation
 
 Task: `meshcore:t_9782fb4c` — "Establish current occupancy and locate/reconcile
-the booking system of record." Dispatch session: node `dq05`, run_id
-`dq05-1789372448`, PID 2900406 (lock file
-`~/.hermes/bot/.locks/meshcore:t_9782fb4c.json`, verbatim:
-`{"node": "dq05", "run_id": "dq05-1789372448", "ts": 1789372448.9145417,
-"pid": 2900406}` = 2026-09-14T09:54:08+02:00; `ps` lstart 09:54).
-Host: `c03rad0r-DQ05proplus`. Audit executed 09:58-10:26 local (UTC+2),
-Monday 2026-09-14 (`date -Is` = 2026-09-14T09:58:45+02:00).
+the booking system of record."
 
-Session window: **start 2026-09-14T09:54:08+02:00 (lock acquisition), end =
-session completion** — session-scoped, same semantics as every prior bench
-card (auto-release on session death; no fixed end time exists to overlap with).
+Audit 1 — dispatch session node `dq05`, run_id `dq05-1789372448`, PID 2900406
+(lock ts 1789372448.9145417 = 2026-09-14T09:54:08+02:00; `ps` lstart 09:54).
+Audit 2 (this document's session-scoped re-verification) — run_id
+`dq05-1789376771`, PID 7209 (lock
+`~/.hermes/bot/.locks/meshcore:t_9782fb4c.json`, verbatim:
+`{"node": "dq05", "run_id": "dq05-1789376771", "ts": 1789376771.2820501,
+"pid": 7209}` = 2026-09-14T11:06:11+02:00). The host **rebooted between the
+two audits** (`uptime -s` / `who -b` = 2026-09-14 11:05:21; every PID from
+audit 1 is dead — systemd lstart 11:05:21, first hermes workers 11:06:10+).
+Audit 2 re-verified every audit-1 claim cold and extended the board watch.
+Host: `c03rad0r-DQ05proplus`. Audit 1 executed 09:58-10:26 local (UTC+2);
+audit 2 executed 11:17-11:46 local (`date -Is` 2026-09-14T11:17:47+02:00
+at start), Monday 2026-09-14.
+
+Session window (both audits): **start = lock acquisition (audit 2:
+2026-09-14T11:06:11+02:00), end = session completion** — session-scoped,
+same semantics as every prior bench card (auto-release on session death; no
+fixed end time exists to overlap with).
 
 ---
 
@@ -119,10 +128,27 @@ All candidates found, with maintainer, currency, and authority assessment
    approval record; `~/repos/balloon-fresh` **does not exist** on this host
    and no FLASH-QUEUE file exists anywhere (find across ~/repos,
    ~/worktrees, ~). Nonexistent here.
-9. **Not found at all**: no spreadsheet (.ods/.xlsx/booking CSV), no wiki
-   directory, no physical logbook file, no Matrix/Slack configs
-   (`~/.config/matrix*`, `slack*`, `.element` all absent), no chamber
-   controller software (process sweep zero hits).
+9. **Fork-side bench ledger** — `examples/passive_mapper/bench/RESULTS.md`
+   in Felix's fork (`felixfelix-bot/MeshCore`). The branch ref
+   `feat/passive-mapper` is gone from this clone, but the tip commit
+   `d7ae93fa` (2026-09-11 11:24:09 +0530, author Felix, verified this
+   session via `git cat-file`/`git fsck --dangling`: the ONLY dangling
+   commit in this object store, i.e. the newest fork state visible here)
+   is readable by SHA. Its ledger is a results table ("One row per
+   calibrated module", columns incl. date/operator) — a **completed-run
+   record, not a reservation system**. Current content: exactly one row,
+   verbatim `| _not yet measured_ | SkyMapper Board A (LR2021) | | | | |
+   | | | 10 | | | pending: needs the freezer/dry-ice sweep, see the card |`
+   — **no run, no operator, no date: the fork records the bench as never
+   having been used**. Maintainer: Felix (sole author). Currency:
+   snapshot 2026-09-11; nothing newer can exist in this clone without a
+   network fetch, which this node may not perform (standing dq05
+   constraint: no outbound probes). Authoritative for completed runs —
+   not for windows.
+10. **Not found at all**: no spreadsheet (.ods/.xlsx/booking CSV), no wiki
+    directory, no physical logbook file, no Matrix/Slack configs
+    (`~/.config/matrix*`, `slack*`, `.element` all absent), no chamber
+    controller software (process sweep zero hits).
 
 **Recommendation — system(s) of record.** There is no single booking
 system; the landscape is a **void with fragments**, and the honest
@@ -198,17 +224,23 @@ Owner/start/end/source table for the only adjacent claims:
    sit in `running[]` (with node+ts) while their `tasks{}` entries carry no
    decision/status fields (decision=none) — running-vs-undispatched
    discrepancy, same class as anomaly 2 in 7d9227a1, still unfixed.
-4. **Evidence decay on the fork-side ledger (blind spot).** The prior
-   session (07:23-07:40 today) read the bench kit and RESULTS.md ledger
-   (author column) from `felixfelix-bot/MeshCore` branch
-   `feat/passive-mapper` via git. This session, that fork is **no longer
-   reachable from this host**: no clone exists (find across ~/repos,
-   ~/mirrors, ~/worktrees), this repo's remote is
-   `github.com/c03rad0r/MeshCore.git` with no passive-mapper ref, and no
-   packed-ref holds it. If Felix records bench occupancy/results in that
-   fork's RESULTS.md, this host cannot see it — the verbatim README quotes
-   survive only in the committed report 7d9227a1. Any reconciliation
-   against the fork ledger is impossible from here right now.
+4. **Evidence decay on the fork-side ledger (partially reconciled
+   mid-audit).** The prior session (07:23-07:40 today) read the bench kit
+   and RESULTS.md ledger from `felixfelix-bot/MeshCore` branch
+   `feat/passive-mapper` via a live git ref. This session the ref is gone
+   (no clone, remote is `c03rad0r/MeshCore`, no packed-ref). HOWEVER, the
+   tip commit `d7ae93fa` survives as a dangling object and was re-read
+   this session by SHA: the fork ledger's single row is
+   `_not yet measured_ ... pending: needs the freezer/dry-ice sweep` —
+   i.e. the newest fork state visible from this host records **no bench
+   use ever** (candidate 9 above). Residual blind spot: any ledger update
+   Felix pushed after 2026-09-11 11:24 +0530 is invisible from this host
+   (no outbound probes allowed), so fork-side occupancy newer than that
+   snapshot cannot be reconciled here. Sibling card t_d601da74's report
+   (commit `023c5e86`, 10:41 today, landed DURING this audit) independently
+   reached the same conclusion: "That ref no longer exists in this clone
+   ... The content remains verifiable by SHA ... future citations should
+   use the SHA, not the ref."
 5. **Lock-map vs physical bus mismatch (carried forward, re-verified).**
    `balloon-board-lock.py` maps resource c3-a to `/dev/ttyACM0`, but
    `/dev/ttyACM0` is the Raspberry Pi Debugprobe (lsusb 2e8a:000c this
@@ -224,7 +256,80 @@ Owner/start/end/source table for the only adjacent claims:
    would change if someone booked a window in a system this host cannot see
    (see anomaly 4) — flagged rather than resolved.
 
+## Audit 2 — post-reboot re-verification (11:17-11:46 local, same day)
+
+The host rebooted at **2026-09-14 11:05:21** (`uptime -s`/`who -b`), killing
+every audit-1 session, and this card was **re-dispatched** (run_id
+`dq05-1789376771`, lock 11:06:11, PID 7209). Every audit-1 claim was
+re-verified cold, plus new facts:
+
+**Re-confirmed unchanged (fresh evidence stamps, all 2026-09-14):**
+
+- `~/.hermes/peripheral_locks/` still EMPTY post-reboot (count 0, `ls` 11:17).
+- `lsof /dev/ttyUSB0 /dev/ttyUSB1 /dev/ttyACM0`: no holders. USB census
+  identical (2x CH340 `1a86:7523`, RP Debugprobe `2e8a:000c`, RTL8152,
+  microSD; no Espressif/CP210x/LR2021). Bench verdict stands: FREE, vacuous.
+- Chamber: still no record anywhere; no controller process post-reboot; no
+  candidate serial device. Verdict stands: UNKNOWN.
+- Evolution calendar: byte-identical 6-line shell, 0 VEVENTs, mtime
+  2026-03-11; `~/.config/goa-1.0/` EMPTY (exists, no accounts). A second
+  shell exists: `~/.local/share/evolution/tasks/system/tasks.ics` (task list,
+  0 VTODOs, same 2026-03-11 mtime) — no booking content.
+- Bounded full-home sweep for spreadsheets (`*.ods/*.xlsx/*.xls/*book*.csv/
+  *bench*.csv/*chamber*.csv`): **zero hits** (rc=0). `FLASH-QUEUE*`: zero.
+  stackstr SCHEDULE.md unchanged ("SCHEDULING ONLY" work-DAG, mtime Sep 13).
+- buzz state (mtimes 11:44:51/11:45:16): keys are only
+  `since/seen/dm_since/leader/answered/pending` and `seen/cursors` — no
+  message content, no booking chatter. Verdict stands: infrastructure only.
+- Fork ledger re-read by SHA this session: `d7ae93fa` is still the ONLY
+  dangling commit (`git fsck --dangling`); `git show d7ae93fa:…/RESULTS.md`
+  returns the verbatim single row `_not yet measured_ … pending: needs the
+  freezer/dry-ice sweep` — no bench use ever recorded fork-side.
+
+**New facts (board churn during audit 2, `fleet_queue_state.json` read
+11:17-11:46):**
+
+- **Orphaned claim residue**: `meshcore:t_d601da74` (bench owner card,
+  completed 023c5e86) and `meshcore:t_0d0fe29c` (chamber reservation request,
+  7d9227a1) are **deleted from `tasks{}`** while their `claims{}` entries
+  persist. Completed cards leave residue, and claims[] arrays host-wide carry
+  heavy duplication (e.g. 100+ identical `{node,ts}` entries on some cards).
+- **Decision churn continued**: `t_fbfead68` (controller classify) decision
+  cleared to `none` again (audit 1 saw skip→claim at 10:12:31);
+  `t_a8b9d449` (chamber manual) flipped **skip→claim at 10:45:29**
+  ("medium headroom 0.25"); two NEW chamber cards claimed 10:45:29 with no
+  worker session: `t_e96fa5ad` (physical chamber custodian) and
+  `t_3e537b94` (controller/software admin + maintenance approvers) — the
+  ownership questions keep being re-asked; none has produced a result.
+- **`running[]` shape changed between audits**: audit 1 read it as a list of
+  task-id strings; audit 2 (11:44) reads an OBJECT keyed by task-id with
+  `{node, ts}` values — and membership mutated DURING audit 2 (three
+  unrelated cards present at 11:17 were gone at 11:44; four cards now run on
+  node `cobrador`). This card and sibling `meshcore:t_c1c07af9` were both
+  re-dispatched on dq05 (running ts 1789379924 = 11:45:24; this card's own
+  claims[] shows first claim 05:42:30, re-claim 11:06:11).
+- Post-reboot live workers: 4 `.fleet_slots` PIDs (7209/7332/7554/7807,
+  all 11:06) = this audit, the chamber-owner sibling, and two e80-bench
+  `cvm_tx_listener` stub workers — same composition as audit 1's window.
+- Deadman flapping continues post-reboot: latest `fleet_interventions.jsonl`
+  entry ts 1789376595.88 = **11:23:15+02:00**.
+
+**Audit-2 verdicts: all four deliverable answers UNCHANGED.** Bench FREE
+(vacuously, DUT not attached); chamber UNKNOWN; no booking system of record
+exists (split recommendation stands: lock registry for live occupancy, fleet
+board for dispatch, this repo's `bench/` record as interim written ledger);
+zero conflicting reservations in our window. The new anomalies are all
+board-hygiene issues (decision churn, orphaned residue, running[] shape
+mutation), not occupancy or booking changes.
+
+Operational note: one redundant chained re-fetch of already-captured facts
+was denied by the operator at ~11:46 (mid-audit); audit stopped on the deny
+and resumed only on the task-body instruction to commit locally. No finding
+depends on that command.
+
 ## Verbatim evidence appendix (commands run this session, all 2026-09-14)
+
+Audit-1 commands (09:58-10:26):
 
 - `date -Is` → `2026-09-14T09:58:45+02:00`; host `c03rad0r-DQ05proplus`.
 - `ls -la ~/.hermes/peripheral_locks/` → empty dir (total 8; `.` Aug 28).
@@ -265,3 +370,48 @@ Owner/start/end/source table for the only adjacent claims:
 - Prior-record citations: bench/chamber-reservation/REPORT.md (commit
   7d9227a1, 07:40), bench/soak-rollup/REPORT.md (commit c4be4400, 08:18),
   git log this repo, branch main, not pushed.
+
+Audit-2 commands (11:17-11:46, run_id dq05-1789376771, PID 7209):
+
+- `date -Is` → `2026-09-14T11:17:47+02:00`. `uptime -s`/`who -b` → boot
+  `2026-09-14 11:05:21` (reboot between audits).
+- Lock dir: my lock `meshcore:t_9782fb4c.json` =
+  `{"node": "dq05", "run_id": "dq05-1789376771", "ts": 1789376771.2820501,
+  "pid": 7209}` (=11:06:11); sibling `meshcore:t_c1c07af9.json`
+  (run_id dq05-1789376774, pid 7332, 11:06:14); two e80-bench locks
+  (`t_bcaa6c62`/`t_3516b5eb`, pids 7554/7807). Audit-1 locks (2900406 etc.)
+  all gone post-reboot.
+- `ls ~/.hermes/peripheral_locks/ | wc -l` → 0 (post-reboot). `lsof` on
+  ttyUSB0/USB1/ACM0 → no holders. `lsusb` → identical census (2x CH340,
+  RP Debugprobe, RTL8152, microSD; no Espressif/CP210x).
+- `cat ~/.local/share/evolution/calendar/system/calendar.ics` → unchanged
+  6-line shell, 0 VEVENTs, revision 2026-03-10T23:01:44. Bounded full-home
+  `find -xdev -maxdepth 6` for `*.ics` → only the Evolution calendar shell
+  + `tasks/system/tasks.ics` (0 VTODOs, same 2026-03-11 mtime).
+- Bounded find for `*.ods/*.xlsx/*.xls/*book*.csv/*bench*.csv/*chamber*.csv`
+  → zero hits (rc=0); `FLASH-QUEUE*` → zero; `ls ~/.config/goa-1.0/` →
+  empty dir (exists, no accounts).
+- `python3` (stdlib json) over `fleet_queue_state.json`: running[] at 11:17
+  = 8 cards; at 11:44 an OBJECT keyed by task-id (`jq -c '.running'`), with
+  this card + t_c1c07af9 re-registered ts 1789379924 (=11:45:24), four
+  cobrador-node entries; t_d601da74/t_0d0fe29c absent from tasks{} but
+  present in claims{} (orphaned residue). t_a2f7f281 decision="claim"
+  (10:12:31), t_fbfead68 decision=null, t_a8b9d449 decision="claim"
+  ("medium headroom 0.25", ts 1789375529.17 = 10:45:29), t_e96fa5ad +
+  t_3e537b94 claimed 10:45:29 (no worker started), t_ffc911f6 decision=null.
+- `ps -o pid,lstart -p 7209,7332,7554,7807` → all started 11:06 (post-boot).
+  `ls ~/.hermes/bot/.fleet_slots/` → `7209.slot 7332.slot 7554.slot 7807.slot`.
+- buzz state files (mtimes 11:44-11:45): keys `since/seen/dm_since/leader/
+  answered/pending` + `seen/cursors` — no message content.
+- `git fsck --dangling` → single dangling commit d7ae93fa;
+  `git show d7ae93fa:examples/passive_mapper/bench/RESULTS.md` → verbatim
+  single pending row (re-read cold this session).
+- `tail fleet_interventions.jsonl` → latest deadman-notify ts 1789376595.88
+  (=11:23:15+02:00).
+- `grep` in bench/bench-owner/REPORT.md lines 155-158: "That ref no longer
+  exists in this clone … The content remains verifiable by SHA … future
+  citations should use the SHA, not the ref." — the citation quoted in the
+  anomaly-4 reconciliation re-verified verbatim (grep hits lines 155/157/158).
+- Operational: one redundant chained re-fetch command (re-reading
+  already-captured board/locks data) was operator-denied at ~11:46; audit
+  stopped on the deny per dq05 protocol. No finding depends on it.
