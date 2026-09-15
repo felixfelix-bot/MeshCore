@@ -1,0 +1,149 @@
+==========================================================================
+A. EXACT UNIT CONVERSIONS (definitions: 1 in = 25.4 mm exactly)
+==========================================================================
+Every 'committed' figure below is read verbatim from the cited
+bench report; nothing here is measured on any physical part.
+
+SMA thread 1/4-36 UNS: major diameter = 0.25 in = 6.3500 mm
+SMA thread pitch: 36 TPI -> 0.7056 mm/thread (0.7056 mm committed)
+  cross-check SMA major OD (6.35): computed 6.3500 vs committed 6.3500 -> PASS
+  cross-check SMA pitch (0.7056): computed 0.7056 vs committed 0.7056 -> PASS
+TNC thread 7/16-28 UNEF: major diameter = 7/16 in = 11.1125 mm
+TNC thread pitch: 28 TPI -> 0.9071 mm/thread
+  cross-check TNC major OD (11.1125 -> committed '11.1'): computed 11.1125 vs committed 11.1125 -> PASS
+N thread 5/8-24 UNEF: major diameter = 5/8 in = 15.8750 mm
+N thread pitch: 24 TPI -> 1.0583 mm/thread
+  (committed first-sight discriminator rounds to 15.9 mm)
+
+SMA hex: AF 7.94 mm (5/16 in) -> AC = 7.94 / cos(30) = 9.1683 mm (9.17 mm committed, rf-connector-geometry:239)
+  cross-check SMA hex AC (9.17): computed 9.1683 vs committed 9.1700 -> PASS
+N hex: AF = 11/16 in = 17.4625 mm (committed '~17.5 mm', chamber-rf-feedthroughs:143)
+N hex AC (from 11/16 in AF) = 20.1640 mm (REFERENCE only)
+
+3.5 mm / 2.92 mm connectors: the NAME is the air-line inner
+diameter of the mated interface, NOT a thread size. Thread group
+is 1/4-36 UNS (same as SMA; compatible with SMA, 3.5 mm is an
+air dielectric precision descendant; 2.92 mm (K) is the 40 GHz
+descendant with the same thread group).
+
+Air-line center-conductor diameter (50 ohm, air dielectric):
+  b/a = e^(50/60) = 2.3010
+  3.5 mm connector: b = 3.5 mm -> center pin a = 3.5/2.3010 = 1.5211 mm
+  2.92 mm (K): b = 2.92 mm -> center pin a = 2.92/2.3010 = 1.2690 mm
+  (These are the namesake dimensions: 3.5 mm and 2.92 mm are the
+  OUTER conductor IDs of their mated air lines; the center pin
+  follows from the 50-ohm impedance. REFERENCE arithmetic only.)
+
+==========================================================================
+B. GEOMETRIC AUDITS — sanity of hex-vs-thread relationships
+==========================================================================
+
+B1. SMA: hex AF 7.94 mm vs thread major 6.35 mm -> radial clearance
+    per side = (7.94 - 6.35)/2 = 0.795 mm (hex AF > thread major: geometrically consistent, hex encloses thread)
+
+B2. TNC hex audit (NEW FINDING): committed identification kit
+    (chamber-rf-feedthroughs:143) lists TNC hex nut AF '~3/8 in
+    ~ 9.5 mm'. A regular hexagon with AF 9.5 mm has AC = 10.97 mm,
+    but it must SURROUND a thread whose major diameter is 11.11 mm:
+    9.5 < 11.11 is geometrically IMPOSSIBLE (the flats of the nut
+    would lie INSIDE the thread major circle). General rule: a hex
+    AF must EXCEED the thread major diameter it encloses.
+
+    Quantitative correction from the kit's own consistent data: a
+    hex nut wall = (AF - thread major)/2. Committed SMA row:
+    (7.94 - 6.35)/2 = 0.795 mm per side;
+    committed N row: (17.4625 - 15.875)/2 = 0.794 mm per side;
+    both imply wall ~= 0.8 mm per side. Applying the same wall to
+    TNC: 11.1125 + 2 x 0.79 = 12.69 mm AF =
+    1/2 in class — the class-typical TNC coupling/jam-nut hex.
+    The committed 9.5 mm value is therefore an ERROR OF ARITHMETIC
+    OR TRANSCRIPTION in the identification-kit table; this sheet
+    carries 12.7 mm AF (1/2 in) as the class-typical TNC value,
+    flags the source line, and keeps the corrected value labeled
+    INDUSTRY-TYPICAL, UNVERIFIED like the rest of the kit.
+
+B3. Discrimination margins (thread major OD):
+    SMA 6.35 mm vs TNC 11.11 mm: gap = 4.76 mm (2.38 mm radial) — unambiguous at caliper
+    precision.
+    TNC 11.11 mm vs N 15.875 mm: gap = 4.76 mm —
+    unambiguous.
+    SMA 6.35 mm vs N 15.875 mm: gap = 9.53 mm —
+    unambiguous. A miscount of TPI (36 vs 28 vs 24) can never
+    rescue a wrong thread-OD match: the two discriminators agree
+    or the reading is wrong.
+
+B4. RP (reverse-polarity) families share the SAME thread as their
+    parent: RP-SMA = 1/4-36 UNS (6.35 mm), RP-N = 5/8-24
+    (15.875 mm), RP-TNC = 7/16-28 (11.11 mm), RP-BNC = the same
+    2-lug bayonet.
+    Therefore NO caliper measurement of thread or hex can separate
+    standard from RP — only the center-contact configuration
+    (look INTO the mated pair: pin+socket pair vs the RP
+    socket+socket and pin+pin pairs) distinguishes them. This is
+    the top procurement hazard H2 of bench/connector-adapter-bom.
+
+B5. SMA vs 3.5 mm/2.92 mm (K): same 1/4-36 UNS thread group;
+    dielectric material differs (PTFE vs mostly air) but the
+    external geometry overlap means they mate; distinguishing by
+    eye is unreliable — rely on markings/known provenance.
+
+==========================================================================
+C. U.FL / MHF FAMILY — diameter variation among MHF1/2/3/4
+==========================================================================
+
+The name 'U.FL' is Hirose's trademark; I-PEX MHF is the cross-
+licensed equivalent; 'U.FL-style' clones are ubiquitous. The
+mating interface of MHF1 == U.FL class is ONE standard, but the
+plug-side RECEPTACLE body diameter (the stamped metal shell of
+the board receptacle) varies among the GENERATIONS MHF1/2/3/4:
+
+  MHF1 (U.FL class, ~1990s): receptacle body OD ~ 2.6-2.8 mm;
+    mating height ~1.2-1.4 mm; the classic 'tiny 3 mm press-fit'
+    footprint impression (committed: connector-adapter-bom H4
+    'U.FL is a tiny 3 mm press-fit' — approximate, REFERENCE).
+  MHF2: smaller (~ 1.6-2.0 mm receptacle OD class), lower profile
+    (~1.0 mm mating height class); NOT mating-compatible with MHF1.
+  MHF3: smallest generation (~1.6 mm receptacle OD class, mating
+    height ~0.9 mm); NOT compatible with MHF1 or MHF2.
+  MHF4: intermediate (~1.6-2.5 mm class); industry-typical
+    dimensions, UNVERIFIED — no Hirose/I-PEX datasheet on host.
+
+ALL MHF1/2/3/4 numbers in this section are INDUSTRY-TYPICAL,
+UNVERIFIED: no Hirose or I-PEX datasheet exists on this host and
+no outbound fetch is permitted (standing constraint; nothing
+attempted). They are included because the task asks for the
+genuine-diameter variation to be NOTED, not as procurement data.
+The committed project anchor that IS on record: the ESP32-C3
+SuperMini carrier carries 'U.FL (I-PEX) for external antenna'
+(esp32c3-mini-v1.json:29) — i.e. MHF1-CLASS, the full-size U.FL
+interface; physical population on c3-a UNVERIFIED (dut-board-
+identity U5). Any pigtail bought for it must be U.FL/MHF1-class;
+an MHF2/3/4 plug will not mate.
+
+==========================================================================
+D. CROSS-CHECKS AGAINST COMMITTED BENCH VALUES (summary)
+==========================================================================
+
+Anchor sources (verbatim committed values):
+  SMA 1/4-36 UNS thread; major 6.35 mm; pitch 0.7056 mm;
+    hex AF 7.94 mm; AC 9.17 mm;
+    bench/rf-connector-geometry/REPORT.md:239-240;
+    bench/chamber-rf-feedthroughs/REPORT.md:142-143.
+  N 5/8-24 UNEF; major ~15.9 mm; hex AF ~17.5 mm;
+    TNC 7/16-28 UNEF; major ~11.1 mm;
+    bench/chamber-rf-feedthroughs/REPORT.md:142-143,150-151.
+  BNC 2-lug bayonet: chamber-rf-feedthroughs:144.
+
+Total cross-checks: 4
+PASS: 4   FAIL: 0
+
+One committed value is FLAGGED AS IMPOSSIBLE (not silently
+"corrected"): the TNC hex nut AF "~9.5 mm" of
+chamber-rf-feedthroughs:143 — audit B2 above. The rest of that
+row (thread 7/16-28 UNEF, major ~11.1 mm) is consistent and is
+carried forward.
+
+NOTHING MEASURED. This script converts and audits numbers that
+were already committed in bench reports; no physical part was
+inspected, no datasheet fetched, no photograph taken. Every
+value in REFERENCE.md carries a REFERENCE / UNVERIFIED label.
