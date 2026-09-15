@@ -1,0 +1,60 @@
+routing_length_check.py -- routing freeze t_e5d5eaae, 2026-09-15
+==================================================================
+All geometric inputs INDUSTRY-NOMINAL UNVERIFIED (fe700201 2b):
+  RG316 OD t = 2.50 mm; static min bend R_min = 12.7 mm;
+  10xOD rule-of-thumb R = 25.0 mm. No vendor datasheet on host.
+
+--- swept envelope at the bulkhead 90-degree turn ---
+static min bend R=12.7 mm         : swept diameter =  27.9 mm, clearance from port face = 13.95 mm
+10xOD rule-of-thumb R=25.0 mm     : swept diameter =  52.5 mm, clearance from port face = 26.25 mm
+
+--- planned assembly lengths vs frozen routing minimums ---
+interior planned L = 0.150 m [RECORD]; frozen minimum = tie-off + bend + 0.05 m loop
+exterior planned L = 0.500 m [RECORD]; frozen minimum = bend + 0.10 m loop
+
+90-deg arc length at R=12.7 mm  =   19.9 mm
+90-deg arc length at R=25.0 mm  =   39.3 mm
+tie-off standoff from connector =  15.0 mm [SPEC]
+
+interior (C-RF-INT-1, 0.15 m):
+  planned  150.0 mm vs minimum budget 15+39.3+50 =  104.3 mm -> PASSES
+exterior (C-RF-EXT-1, 0.50 m):
+  planned  500.0 mm vs minimum budget 15+39.3+100 =  154.3 mm -> PASSES
+
+--- taped bundle OD (planning inputs, NOT measured) ---
+RG316 2.5 mm + USB-C 4.5 mm taped side-by-side, +0.5 mm loom -> equivalent OD = 8.82 mm
+(identical arithmetic to fe700201 3c; inputs UNVERIFIED)
+
+--- cable ID list (frozen identifiers, zero physical instances) ---
+C-RF-INT-1   | RG316 SMA-m/m assembly, 0.15 m, interior
+             | status: MUST-PROCURE
+             | crossing: variant B only
+             | DUT J1 -> T1 -> bulkhead FT-DOOR/WALL; loop 50 mm
+C-RF-EXT-1   | RG316 SMA-m/m assembly, 0.50 m, exterior
+             | status: MUST-PROCURE
+             | crossing: variant B only
+             | bulkhead -> T3 -> reference TX; loop 100 mm
+C-SER-1      | USB-C serial, DUT console (variant A primary crossing)
+             | status: TBD-MPN on record? NO -- part number not on record
+             | crossing: variant A primary
+             | ttyACM0 per protocol; routed per variant-A rule
+C-SER-2      | USB-C serial, reference TX console
+             | status: TBD
+             | crossing: exterior only (never crosses)
+             | reference TX host port; outside chamber wall
+
+FT- prefix rule for chamber ports: t_03954030 (FT-DOOR-n /
+FT-WALL-<SIDE>-n, clockwise from door hinge). Tie points T1..T3
+are new identifiers minted by this freeze.
+
+--- ambient/bench conditions evidence (fresh read 2026-09-15) ---
+acpitz /sys/class/thermal/thermal_zone0 = 27800 -> 27.8 C (host
+  motherboard sensor; NOT bench ambient air -- labeled proxy)
+x86_pkg_temp thermal_zone1 = 95 -> 95.0 C reading is a package
+  throttle sensor artifact, not ambient; excluded as proxy
+Assumed ambient cells in every prior report: 20/22/25 C ASSUMED,
+  RH 30-60% ASSUMED (65c9c3df; warm-side-dewpoint all-cells-ASSUMED)
+Jacket warm/flexible: UNKNOWABLE -- no cable exists to touch
+Tension: UNKNOWABLE -- no routing exists to tension
+
+END routing_length_check.py
