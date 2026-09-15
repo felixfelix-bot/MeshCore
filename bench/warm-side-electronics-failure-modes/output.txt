@@ -1,0 +1,79 @@
+========================================================================
+ANCHORS (sanity, vs published values)
+========================================================================
+es_water(0 C)   =  610.94 Pa  (published 611.2 Pa)
+es_water(22 C)  =  2638.6 Pa  (ASHRAE Fundamentals Ch.1: 2645.2 Pa; committed 182d4755 cross-check used 2638.6 computed)
+es_ice(-20 C)   = 103.22 Pa  (published ~103 Pa)
+es_ice(-40 C)   =  12.84 Pa  (published ~12.8 Pa)
+Td(22 C/50 %) = 11.10 C  (committed 182d4755 table: 11.10 C)
+Td(22 C/30 %) =  3.62 C  (committed 182d4755 table: 3.62 C)
+Td(22 C/60 %) = 13.88 C  (committed 182d4755 table: 13.88 C)
+========================================================================
+1. ICE SATURATION PRESSURE AT THE TWO SETPOINTS (COMPUTED)
+========================================================================
+es_ice(-20 C) = 103.22 Pa
+es_ice(-40 C) =  12.84 Pa
+Condensation mass flux onto the surface scales with (e_ambient - es_surface);
+this is the flux driver while the board sits below the ambient dew point.
+========================================================================
+2. RE-ENTRY CONDENSATION DRIVING DEFICIT (COMPUTED)
+========================================================================
+Board cold-soaked to the setpoint, re-entering 22 C ambient.
+Deficit = e_ambient(RH) - es_ice(T_board); Pa.
+
+  RH %   e_amb Pa   def @ -20 C   def @ -40 C  -40/-20 ratio
+    30      791.6         688.3         778.7          1.131
+    50     1319.3        1216.1        1306.4          1.074
+    60     1583.1        1479.9        1570.3          1.061
+
+At the moment of re-entry the -40 C board drives 1.06-1.13x the flux of
+the -20 C board (more at lower RH); the dominant -20-vs-40 difference
+is the DURATION of the condensation window (item 3) and the frost
+inventory carried out of the soak.
+========================================================================
+3. RE-ENTRY CONDENSATION WINDOW (COMPUTED, first-order warming model)
+========================================================================
+Model: board surface warms toward ambient T_a with time constant tau:
+  T(t) = T_a - (T_a - T_s) * exp(-t/tau)
+Liquid condensation forms from re-entry until the surface passes the
+ambient dew point Td.  Window = tau * ln((T_a - T_s)/(T_a - Td)).
+Same tau for both setpoints (same board, same ambient); the only
+difference is the starting temperature T_s.  Units: multiples of tau.
+
+ cell (T_a/RH)    Td C   window from -20 C   window from -40 C  -40 vs -20
+     20 C/30 %    1.89               0.793               1.198        1.5x
+     20 C/40 %    5.99               1.049               1.454        1.4x
+     20 C/50 %    9.26               1.315               1.720        1.3x
+     20 C/60 %   12.00               1.609               2.015        1.3x
+     22 C/30 %    3.62               0.827               1.216        1.5x
+     22 C/40 %    7.78               1.083               1.472        1.4x
+     22 C/50 %   11.10               1.349               1.738        1.3x
+     22 C/60 %   13.88               1.643               2.033        1.2x
+     25 C/30 %    6.22               0.874               1.242        1.4x
+     25 C/40 %   10.47               1.130               1.498        1.3x
+     25 C/50 %   13.86               1.396               1.764        1.3x
+     25 C/60 %   16.70               1.690               2.058        1.2x
+
+Across the 12-cell grid: window from -40 C soak is 1.22x to 1.51x the -20 C window
+(longer at every humidity; the drier the cell, the larger the ratio,
+ because the surface has to climb further to cross a lower Td).
+========================================================================
+4. PRESSURE-DRIVEN INFLOW DURING COOLDOWN (COMPUTED)
+========================================================================
+Sealed gas volume loaded at 25 C follows P/T on cooldown -> inward
+differential across any imperfect seal/vent path:
+  25 C -> -20 C: P2/P1 = 0.849  (inward dP ~ 0.151 atm)
+  25 C -> -40 C: P2/P1 = 0.782  (inward dP ~ 0.218 atm)
+Cross-check vs COMMITTED 04db4fae FM-9: ~0.15 atm (-20 C), ~0.22 atm (-40 C) -> PASS
+========================================================================
+ASSUMPTION REGISTER (all inputs already labeled upstream)
+========================================================================
+- Ambient grid T=20/22/25 C x RH=30/40/50/60 %: ASSUMED (182d4755,
+  no hygrometer on host); every grid-derived number inherits that label.
+- First-order warming (single tau) is the minimal model; real warm-up has
+  distributed mass -> the window values are MODEL results, not measurements.
+- es at the cold surface taken over ice (condensate is frozen below 0 C;
+  no sub-zero frost point exists in any grid cell, 182d4755).
+- Flux 'deficit' is the thermodynamic driver, not a measured rate; no
+  frost-mass growth model is attempted (no boundary-layer data exists).
+NOTHING in this output is a measurement. No chamber run has occurred.
