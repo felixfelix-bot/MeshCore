@@ -1,0 +1,124 @@
+========================================================================
+PTFE cable-dielectric effect arithmetic (all inputs labeled in code)
+========================================================================
+------------------------------------------------------------------------
+SECTION 1 - velocity factor and its temperature coefficient
+------------------------------------------------------------------------
+VF = 1/sqrt(er)            = 1/sqrt(2.1) = 0.6901
+  [industry-nominal RG316 VF 0.70: INDUSTRY-TYPICAL, UNVERIFIED on host]
+VF tempco = -0.5 * er_tempco = -0.0001 /K = -100 ppm/K
+  VF excursion over 20 K  (-20 -> -40 C): -0.200 %
+  VF excursion over 45 K  (+25 -> -20 C): -0.450 %
+  VF excursion over 65 K  (+25 -> -40 C): -0.650 %
+------------------------------------------------------------------------
+SECTION 2 - electrical length and phase swing vs temperature
+------------------------------------------------------------------------
+electrical-length tempco (er term only)      = +100 ppm/K
+electrical-length tempco (er + conductor CTE) = +117 ppm/K
+
+--- f = 868 MHz ---
+  L = 0.15 m -> 0.6294 wavelengths (226.6 deg)
+    swing 20 K  (-20 -> -40 C): phase +0.453 deg (er only) / +0.530 deg (er+conductor)
+    swing 45 K  (+25 -> -20 C): phase +1.020 deg (er only) / +1.193 deg (er+conductor)
+    swing 65 K  (+25 -> -40 C): phase +1.473 deg (er only) / +1.723 deg (er+conductor)
+  L = 0.65 m -> 2.7272 wavelengths (981.8 deg)
+    swing 20 K  (-20 -> -40 C): phase +1.964 deg (er only) / +2.297 deg (er+conductor)
+    swing 45 K  (+25 -> -20 C): phase +4.418 deg (er only) / +5.169 deg (er+conductor)
+    swing 65 K  (+25 -> -40 C): phase +6.382 deg (er only) / +7.467 deg (er+conductor)
+
+--- f = 2400 MHz ---
+  L = 0.15 m -> 1.7402 wavelengths (626.5 deg)
+    swing 20 K  (-20 -> -40 C): phase +1.253 deg (er only) / +1.466 deg (er+conductor)
+    swing 45 K  (+25 -> -20 C): phase +2.819 deg (er only) / +3.298 deg (er+conductor)
+    swing 65 K  (+25 -> -40 C): phase +4.072 deg (er only) / +4.764 deg (er+conductor)
+  L = 0.65 m -> 7.5407 wavelengths (2714.7 deg)
+    swing 20 K  (-20 -> -40 C): phase +5.429 deg (er only) / +6.352 deg (er+conductor)
+    swing 45 K  (+25 -> -20 C): phase +12.216 deg (er only) / +14.293 deg (er+conductor)
+    swing 65 K  (+25 -> -40 C): phase +17.645 deg (er only) / +20.645 deg (er+conductor)
+
+cross-check vs 04db4fae s2.6: 0.50 m @ 868 MHz, 60 K, er-term only:
+  2.098 wl * 360 * 100 ppm/K * 60 K = +4.53 deg  (04db4fae quotes 4.5 deg -> consistent)
+------------------------------------------------------------------------
+SECTION 3 - BULK moisture absorption bound (datasheet-class max)
+------------------------------------------------------------------------
+datasheet-class max absorption      = 0.01 wt% (65c9c3df)
+  as volume fraction (rho_ptfe/rho_w = 2.2): phi = 0.00022 (0.022 vol%)
+dilute-sphere mixing, water er 80.0 in matrix er 2.1:
+  d_er/er = 3*phi*(er_w-er)/(er_w+2*er) = 0.000611 (+0.0611 %)
+  d_VF/VF = -0.5 * d_er/er            = -0.000305 (-0.0305 %)
+  phase shift at saturation max, 0.15 m @ 868 MHz: 0.0692 deg
+  phase shift at saturation max, 0.65 m @ 868 MHz: 0.2998 deg
+  phase shift at saturation max, 0.15 m @ 2400 MHz: 0.1913 deg
+  phase shift at saturation max, 0.65 m @ 2400 MHz: 0.8288 deg
+NOTE: this is the DATASHEET IMMERSION MAX reached instantly; actual
+campaign uptake is far below it and diffusion-limited (section 3b).
+------------------------------------------------------------------------
+SECTION 3b - diffusion time constants (bound on reaching that max)
+------------------------------------------------------------------------
+water diffusivity in PTFE D = 1e-13 .. 1e-11 m2/s [INDUSTRY-TYPICAL, wide range, UNVERIFIED]
+  radial, dielectric-only (L = 0.6 mm): tau = L^2/D = 10.0 h .. 41.7 d
+  radial, jacket-to-core  (L = 1.0 mm): tau = L^2/D = 1.2 d .. 115.7 d
+  axial, 0.15 m segment   (L = 150.0 mm): tau = L^2/D = 71.3 yr .. 7129.8 yr
+  axial, 0.50 m segment   (L = 500.0 mm): tau = L^2/D = 792.2 yr .. 79220.2 yr
+NOTE: colder is slower (thermally activated); at -20/-40 C the lower
+end of the D range applies. Axial ingress through connector end faces
+is dead on any campaign timescale; radial ingress requires a
+shield/jacket breach (not assumed). Capillary wicking along a wet
+termination gap is a separate, faster mechanism (PDM-2, geometry-gated).
+------------------------------------------------------------------------
+SECTION 3c - loss-tangent mixing bound at the saturation max
+------------------------------------------------------------------------
+  @ 868 MHz: water eps'' = 3.77 (Debye, tau 9.4 ps, UNVERIFIED-textbook constants)
+    PTFE eps'' = 1.05e-03 (er*tan-d high end) -> mix = 1.88e-03
+    alpha_d(mix) = 0.1025 dB/m -> 0.0667 dB over 0.65 m at the UNREACHABLE saturation max
+  @ 2400 MHz: water eps'' = 10.26 (Debye, tau 9.4 ps, UNVERIFIED-textbook constants)
+    PTFE eps'' = 1.05e-03 (er*tan-d high end) -> mix = 3.31e-03
+    alpha_d(mix) = 0.4986 dB/m -> 0.3241 dB over 0.65 m at the UNREACHABLE saturation max
+NOTE: dilute volume-weighted mixing, arithmetic bound only; the real
+campaign uptake is orders below phi_max (section 3b timescales).
+------------------------------------------------------------------------
+SECTION 4 - CTE differential strain per thermal cycle
+------------------------------------------------------------------------
+differential CTE PTFE-minus-copper = 83 .. 118 ppm/K
+  strain per 20 K  (-20 -> -40 C): 1.660e-03 .. 2.360e-03  (0.166 .. 0.236 %)
+  strain per 45 K  (+25 -> -20 C): 3.735e-03 .. 5.310e-03  (0.374 .. 0.531 %)
+  strain per 65 K  (+25 -> -40 C): 5.395e-03 .. 7.670e-03  (0.540 .. 0.767 %)
+PTFE elongation at break 200-400 % [INDUSTRY-TYPICAL] -> strain margin vs worst cycle:
+  2.0 / 0.00767 = 261 x
+NOTE: both setpoints are in the phase-II plateau (below the 19-30 C
+crystalline-transition region, 57-77 K above Tg -97 C): no ductile-
+brittle transition is crossed at either setpoint.
+------------------------------------------------------------------------
+SECTION 5 - freezing pressure available for ice-wedging
+------------------------------------------------------------------------
+Clapeyron slope dP/dT = L/(T*(v_w - v_i))
+  = 333500 / (273.15 * -9.087e-05) = -13.44 MPa/K (magnitude)
+  melting-point depression to -20 C requires ~269 MPa
+  melting-point depression to -40 C requires ~537 MPa
+  [ice-I melting curve is capped near ~210 MPa at ~-22 C, the
+   ice-I/ice-III/liquid triple point - INDUSTRY-STANDARD phase data,
+   UNVERIFIED on host; liquid below that is metastable/supercooled]
+PTFE yield strength 10-20 MPa [INDUSTRY-TYPICAL]:
+  available freezing pressure exceeds PTFE yield by >= 10 x at BOTH setpoints -> damage is limited only by
+  how much liquid is confined and how compliant the pocket is
+------------------------------------------------------------------------
+SECTION 6 - dielectric-loss insertion-loss bound
+------------------------------------------------------------------------
+alpha_d [dB/m] = 27.3 * sqrt(er) * tan(delta) / lambda0  [standard transmission-line relation]
+  @ 868 MHz (lambda0 = 345.4 mm), tan(delta) 1e-04..5e-04 [INDUSTRY-TYPICAL, UNVERIFIED]:
+    alpha_d = 0.0115 .. 0.0573 dB/m -> 0.0074 .. 0.0372 dB over 0.65 m
+  @ 2400 MHz (lambda0 = 124.9 mm), tan(delta) 1e-04..5e-04 [INDUSTRY-TYPICAL, UNVERIFIED]:
+    alpha_d = 0.0317 .. 0.1584 dB/m -> 0.0206 .. 0.1029 dB over 0.65 m
+vs conductor loss on record ~0.3 dB/m class (55585471 step 5):
+  conductor term ~0.2 dB over 0.65 m; the PTFE dielectric-loss term is
+  a minor fraction, and its temperature dependence is NOT on record.
+------------------------------------------------------------------------
+SECTION 7 - one-line consequences (quoted in REPORT.md)
+------------------------------------------------------------------------
+VF 0.690 (derived); VF tempco -100 ppm/K
+bulk-absorption bound: dVF -0.0305 %, phase 0.07 deg (cold seg) .. 0.30 deg (full path) @ 868 MHz
+ice-wedging: Clapeyron 13.4 MPa/K, cap ~210 MPa, vs PTFE yield 10-20 MPa
+------------------------------------------------------------------------
+Nothing here is a measurement: all values are arithmetic from labeled
+inputs. No cable exists on hand (MUST-PROCURE per 55585471 3b); no
+outbound fetch was performed (standing operator constraint).
