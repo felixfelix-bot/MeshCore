@@ -1,0 +1,14 @@
+Form row                          option    interior ink %   verdict
+Pollution degree (PD 1)          PD 1             2.38   known NOT selected (calibration EMPTY)
+Pollution degree (PD 2)          PD 2             7.04   known SELECTED (clause 5.4.1.5 states 'PD2')
+Pollution degree (PD 3)          PD 3             5.59   not selected
+IP protection class              IPX0             9.42   SELECTED
+IP protection class              IP___            4.76   not selected
+
+Reading: the empty-box calibration (PD 1) and the known-checked box
+(PD 2) are separated by ~3x in interior ink; the IPX0 box matches
+the CHECKED class and the adjacent write-in option (IP___) matches
+the EMPTY class. Selected IP protection class: IPX0.
+Caveat recorded in REPORT.md: the check marks are hand-drawn X
+glyphs; this is an ink-density + visual-shape determination, not
+a text-layer read. Clause 5.4.1.5 'PD2' is the text-layer corroboration.
