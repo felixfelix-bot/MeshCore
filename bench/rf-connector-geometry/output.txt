@@ -1,0 +1,57 @@
+==========================================================================
+RF PATH GEOMETRY INPUTS -- swept-envelope arithmetic (UNVERIFIED inputs)
+==========================================================================
+
+INPUTS (no measurement performed; every input is a planning value)
+  cable OD t               = 2.50 mm     INDUSTRY NOMINAL, UNVERIFIED
+  min bend R, static       = 12.70 mm     INDUSTRY NOMINAL, UNVERIFIED (absolute)
+  min bend R, rule-of-thumb = 10x OD          RULE OF THUMB, UNVERIFIED
+  min bend R, dynamic       = UNKNOWN      not on any on-host source
+  SMA hex across flats     = 7.94 mm     INDUSTRY-STANDARD SMA, UNVERIFIED on host
+  SMA thread major OD      = 6.35 mm     1/4"-36 UNS family key, UNVERIFIED
+  SMA thread pitch         = 36 TPI -> 0.7056 mm/thread (family key, UNVERIFIED)
+  panel hole (bulkhead)    = 6.50 mm     DOCUMENTED project pattern (balloon
+                                          enclosure README_big.md:21)
+
+CANDIDATE MIN BEND RADII
+  R_static  = 12.70 mm (0.500 in)
+  R_rule10  = 10x 2.50 = 25.00 mm
+  OD-multiple audit: R_static / OD = 5.08x -- the industry
+    nominal is an ABSOLUTE mm value that COINCIDENTALLY equals ~5x OD;
+    it was NOT derived as an OD multiple (fe700201 2b).
+
+SWEPT ENVELOPE AT A 90-DEG TURN AT THE BULKHEAD (2R + t; R + t/2)
+  R_static  (12.7 mm): swept diameter = 2(12.70) + 2.50 = 27.90 mm; port-face clearance = 12.70 + 1.25 = 13.95 mm
+  R_rule10  (10x OD): swept diameter = 2(25.00) + 2.50 = 52.50 mm; port-face clearance = 25.00 + 1.25 = 26.25 mm
+
+CROSS-CHECK vs COMMITTED FIGURES (fe700201 section 2d)
+  swept diameter @ R_static    computed   27.90 vs committed  27.90  -> PASS
+  clearance @ R_static         computed   13.95 vs committed  14.00  -> PASS
+  swept diameter @ R_rule10    computed   52.50 vs committed  52.50  -> PASS
+  clearance @ R_rule10         computed   26.25 vs committed  26.25  -> PASS
+
+SMA CONNECTOR HEX / WRENCH GEOMETRY (industry-standard SMA, UNVERIFIED on host)
+  across flats  = 7.94 mm (5/16 in)  -> wrench: 5/16-in torque wrench
+                  (0.9 N*m / 8 in-lb breakaway, BOM t_0d86117f B9) or 8 mm
+                  open-end spanner for the bulkhead jam nut (B10)
+  across corners = AF / cos(30 deg) = 7.94 / 0.8660 = 9.17 mm   -> cross-check vs committed 9.17 mm: PASS
+  mating (coupling) thread = 1/4"-36 UNS, major OD 6.35 mm,
+                  pitch 0.7056 mm/thread; ENGAGEMENT LENGTH (mating depth) = UNKNOWN --
+                  no vendor datasheet on host; no on-record value.
+
+BULKHEAD PASS-THROUGH GEOMETRY (documented project pattern)
+  SMA threaded barrel (6.35 mm major OD) through the
+  documented 6.50 mm panel hole: diametral clearance = 6.50 - 6.35 = 0.15 mm (0.075 mm radial).
+  The hex nut/jam nut (7.94 mm AF, 9.17 mm AC) CANNOT pass the
+  6.50 mm hole (9.17 > 6.50) -- the connector
+  is mounted nut-one-side; the feedthrough IS the penetration (fe700201).
+
+MIN BEND RADIUS, DYNAMIC (repeated flex)
+  UNKNOWN -- not stated in any on-host source (no vendor datasheet;
+  industry-typical dynamic values for RG316-class assemblies are ~10x OD
+  or greater, ENGINEERING KNOWLEDGE, UNVERIFIED).
+
+==========================================================================
+RESULT: ALL CROSS-CHECKS PASS (byte-identical rerun expected;
+stdlib only, no randomness, no clock, no network, nothing measured).
+==========================================================================
