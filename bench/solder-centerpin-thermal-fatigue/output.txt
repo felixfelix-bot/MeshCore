@@ -1,0 +1,53 @@
+
+== 1. CTE mismatch ratio: pin alloy vs PTFE (order-of-magnitude deliverable) ==
+  PTFE/pin(brass): 5.3x..7.1x (midpoint 6.2x); dCTE 81..116 ppm/K
+  PTFE/pin(stainless): 5.9x..7.9x (midpoint 6.9x); dCTE 83..118 ppm/K
+  PTFE/pin(copper): 5.9x..7.9x (midpoint 6.9x); dCTE 83..118 ppm/K
+  brass-vs-stainless pin spread: 2 ppm/K (material choice of pin alloy is a second-order term)
+
+== 2. Differential free strain per swing, pin-vs-PTFE ==
+  -20 C cycle (dT=45 K): free strain 0.44% (4432 ue); axial slip over 5 mm bead 22.2 um; diametral gap change at 1 mm bore radius 4.4 um
+  -40 C cycle (dT=65 K): free strain 0.64% (6402 ue); axial slip over 5 mm bead 32.0 um; diametral gap change at 1 mm bore radius 6.4 um
+
+== 3. What the mismatch implies for shear/stress: compliant-member bound ==
+  If the differential strain were FULLY CLAMPED into each member (sigma=E*da*dT):
+    fully-clamped sigma(brass pin) over 65 K = 640 MPa
+    fully-clamped sigma(stainless pin) over 65 K = 1236 MPa
+    fully-clamped sigma(PTFE) over 65 K = 3 MPa
+  brass yield is ~350-500 MPa class [INDUSTRY-TYPICAL]: a clamped pin would
+  yield -> the stack CANNOT stay clamped; it must relieve. The reliever is the
+  softest member: PTFE, modulus 200x lower than brass.
+  Delivered stress bound at the pin/PTFE interface: ~3.2 MPa
+  (PTFE shear/flow strength ~7-25 MPa class [INDUSTRY-TYPICAL]: the interface
+   slides/creeps at low stress instead of storing load -> the ~6x CTE mismatch
+   appears as um-scale micro-slip, NOT as stress delivered into the pin or its
+   solder joint. Modulus ratio brass/PTFE = 200x, stainless/PTFE = 386x.
+
+== 4. Solder-joint delivered shear vs SAC elastic limit (the fatigue threshold) ==
+  SAC: E=45 GPa, G=16.5 GPa, RT yield ~28 MPa -> elastic shear limit gamma_y ~0.10%
+  Cu-vs-FR4 worst (dCTE=4), L=0.5 mm, h=0.10 mm: d_gamma(65K)=0.130%  d_gamma(45K)=0.090%  -> ABOVE elastic limit
+  Cu-vs-FR4 worst (dCTE=4), L=1.0 mm, h=0.10 mm: d_gamma(65K)=0.260%  d_gamma(45K)=0.180%  -> ABOVE elastic limit
+  Cu-vs-FR4 best (dCTE=0), L=0.5 mm, h=0.10 mm: d_gamma(65K)=0.000%  d_gamma(45K)=0.000%  -> below elastic limit
+  Cu-vs-FR4 best (dCTE=0), L=1.0 mm, h=0.10 mm: d_gamma(65K)=0.000%  d_gamma(45K)=0.000%  -> below elastic limit
+  brass-pin-vs-Cu (dCTE=2), L=0.5 mm, h=0.10 mm: d_gamma(65K)=0.065%  d_gamma(45K)=0.045%  -> at/below elastic limit
+  brass-pin-vs-Cu (dCTE=2), L=1.0 mm, h=0.10 mm: d_gamma(65K)=0.130%  d_gamma(45K)=0.090%  -> ABOVE elastic limit
+  SAC-vs-Cu (dCTE=4), L=0.5 mm, h=0.10 mm: d_gamma(65K)=0.130%  d_gamma(45K)=0.090%  -> ABOVE elastic limit
+  SAC-vs-Cu (dCTE=4), L=1.0 mm, h=0.10 mm: d_gamma(65K)=0.260%  d_gamma(45K)=0.180%  -> ABOVE elastic limit
+  Cu-wire-on-Cu-pad (wire dipole): dCTE~0 -> d_gamma ~ 0 (no cyclic strain source)
+
+== 5. Where in the cycle damage can accumulate: SAC homologous temperature ==
+  T=+25 C: T/Tm(SAC)=0.608  creep active (relaxation on 10-min holds)
+  T=+0 C: T/Tm(SAC)=0.557  creep active (relaxation on 10-min holds)
+  T=-20 C: T/Tm(SAC)=0.517  creep active (relaxation on 10-min holds)
+  T=-40 C: T/Tm(SAC)=0.476  creep strongly suppressed (cold half-cycle ~elastic)
+
+== 6. Coffin-Manson scaling and campaign utilization ==
+  dT^2 relative damage per cycle: -40 vs -20 = (65/45)^2 = 2.09x  [04db4fae Sec 2.10 conservative bound]
+  strain-range scaling (elastic regime, damage at warm end): 65/45 = 1.44x
+  utilization at 3 cycles/run-day vs 1000-cycle class life: 0.3% per run-day
+  utilization at 4 cycles/run-day vs 1000-cycle class life: 0.4% per run-day
+
+== 7. Ramp-rate context (no thermal-shock term) ==
+  on-record rates: heating 3.0, cooling 1.5, feedthrough-derated cooling 1.05 C/min (472922d4, planning estimates LOW confidence)
+  deepest single ramp 20 K at 1.05 C/min = 19.0 min (matches 472922d4)
+  full-session swing seen by the joints per run-day: 65 K (25 -> -40 -> 25)
