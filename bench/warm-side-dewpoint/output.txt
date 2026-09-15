@@ -1,0 +1,80 @@
+=== Formula anchors (Magnus, E0 = 610.94 Pa) ===
+  es_water(0 C) = 610.94 Pa  (published triple point: 611.2 Pa)
+  es_ice(0 C)   = 610.94 Pa  (published triple point: 611.2 Pa)
+
+=== Sanity checks (flag if |deviation| > 1.0 C) ===
+  22 C / 30 % -> Td =  3.62 C  (expected ~4 C, dev -0.38 C)  [PASS]
+  22 C / 50 % -> Td = 11.10 C  (expected ~11 C, dev +0.10 C)  [PASS]
+  22 C / 60 % -> Td = 13.88 C  (expected ~14 C, dev -0.12 C)  [PASS]
+  25 C / 50 % -> Td = 13.86 C  (expected ~14 C, dev -0.14 C)  [PASS]
+
+=== Independent cross-check: Alduchov-Eskridge vs Bolton (1980) ===
+  Max |Td_AE96 -Td_Bolton80| over the 12-cell grid: 0.015 C  -> agree within 0.0 C everywhere
+
+=== Cross-check vs ASHRAE Fundamentals Ch.1 saturation table ===
+  es(20 C): Magnus  2333.4 Pa vs ASHRAE  2338.8 Pa  (-0.23 %)
+  es(22 C): Magnus  2638.6 Pa vs ASHRAE  2645.2 Pa  (-0.25 %)
+  es(25 C): Magnus  3161.7 Pa vs ASHRAE  3169.8 Pa  (-0.25 %)
+
+=== Warm-side ambient table (ALL CELLS ASSUMED) ===
+Td = water dew point; Tf = ice frost point (only meaningful if < 0 C);
+e  = ambient vapor pressure; frost point is sub-zero only if e < 611.2 Pa.
+
+| T [C] | RH [%] | e [Pa] | Td water [C] | Tf ice [C] | sub-zero Tf? |
+|-------|--------|--------|--------------|------------|--------------|
+| 20 | 30 |   700.0 |         1.89 |       1.66 | no |
+| 20 | 40 |   933.4 |         5.99 |       5.24 | no |
+| 20 | 50 |  1166.7 |         9.26 |       8.09 | no |
+| 20 | 60 |  1400.1 |        12.00 |      10.45 | no |
+| 22 | 30 |   791.6 |         3.62 |       3.18 | no |
+| 22 | 40 |  1055.4 |         7.78 |       6.80 | no |
+| 22 | 50 |  1319.3 |        11.10 |       9.68 | no |
+| 22 | 60 |  1583.1 |        13.88 |      12.07 | no |
+| 25 | 30 |   948.5 |         6.22 |       5.45 | no |
+| 25 | 40 |  1264.7 |        10.47 |       9.13 | no |
+| 25 | 50 |  1580.9 |        13.86 |      12.05 | no |
+| 25 | 60 |  1897.0 |        16.70 |      14.48 | no |
+
+Cells with sub-zero frost point: 0 of 12 (none: every cell has e > 611.2 Pa, so the
+ice-saturation isotherm lies at/above 0 C everywhere in the grid).
+
+=== Hand-worked example: T = 22 C, RH = 50 % ===
+  ln(RH/100)          = ln(0.50)              = -0.693147
+  17.625*T/(243.04+T) = 17.625*22/(243.04+22) = 1.462987
+  numerator   = 243.04*(-0.693147+1.462987) = 187.101801
+  denominator = 17.625--0.693147-1.462987  = 16.855160
+  Td = 187.101801/16.855160 = 11.10 C
+
+=== RH threshold above which a surface at Ts condenses (per ambient T) ===
+  (RH above which Td(T,RH) > Ts, i.e. the surface is below the dew point)
+  Surface at Ts =  +0 C:
+    T = 20 C: condenses when RH >  26.18 %  (all 4 grid RH values condense at this T)
+    T = 22 C: condenses when RH >  23.15 %  (all 4 grid RH values condense at this T)
+    T = 25 C: condenses when RH >  19.32 %  (all 4 grid RH values condense at this T)
+  Surface at Ts = -20 C:
+    T = 20 C: condenses when RH >   5.39 %  (all 4 grid RH values condense at this T)
+    T = 22 C: condenses when RH >   4.77 %  (all 4 grid RH values condense at this T)
+    T = 25 C: condenses when RH >   3.98 %  (all 4 grid RH values condense at this T)
+  Surface at Ts = -40 C:
+    T = 20 C: condenses when RH >   0.81 %  (all 4 grid RH values condense at this T)
+    T = 22 C: condenses when RH >   0.72 %  (all 4 grid RH values condense at this T)
+    T = 25 C: condenses when RH >   0.60 %  (all 4 grid RH values condense at this T)
+
+=== Margin: dew point minus coldest warm-side surface (Ts = setpoint, worst case) ===
+  Negative margin = surface below dew point = condensation/frost certain.
+| T [C] | RH [%] | Td [C] | Td-(-20 C) [K] | Td-(-40 C) [K] | condenses at -20/-40? |
+|-------|--------|--------|----------------|----------------|----------------------|
+| 20 | 30 |  1.89 |          21.89 |          41.89 | YES / YES |
+| 20 | 40 |  5.99 |          25.99 |          45.99 | YES / YES |
+| 20 | 50 |  9.26 |          29.26 |          49.26 | YES / YES |
+| 20 | 60 | 12.00 |          32.00 |          52.00 | YES / YES |
+| 22 | 30 |  3.62 |          23.62 |          43.62 | YES / YES |
+| 22 | 40 |  7.78 |          27.78 |          47.78 | YES / YES |
+| 22 | 50 | 11.10 |          31.10 |          51.10 | YES / YES |
+| 22 | 60 | 13.88 |          33.88 |          53.88 | YES / YES |
+| 25 | 30 |  6.22 |          26.22 |          46.22 | YES / YES |
+| 25 | 40 | 10.47 |          30.47 |          50.47 | YES / YES |
+| 25 | 50 | 13.86 |          33.86 |          53.86 | YES / YES |
+| 25 | 60 | 16.70 |          36.70 |          56.70 | YES / YES |
+
+  All 12 cells: Td in [1.9, 16.7] C; every Td > 0 C; every Td > both setpoints.
