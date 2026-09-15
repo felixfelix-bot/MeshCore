@@ -1,0 +1,88 @@
+MODULE RIGID ENVELOPE — CHECKABLE ARITHMETIC (card meshcore:t_69bc5ef5)
+------------------------------------------------------------------------
+1. DXF body outline [DXF]
+   sharp-corner rectangle, insert placement points (SMOOTH_10 corners):
+   x: -295.5905 .. 294.9607 mil -> span 590.5512 mil =  15.0000 mm (short axis = width)
+   y: -388.1252 .. 388.1252 mil -> span 776.2504 mil =  19.7168 mm (long axis  = length)
+   half-length 388.1252 mil =   9.8584 mm
+   half-width  295.2756 mil =   7.5000 mm (rectangle slightly off-center
+   in x: edges at -295.5905 and 294.9607 mil, i.e. -7.5080/+7.4920 mm)
+   corner smoothing radius 2.5 mil = 0.0635 mm rounds corners INWARD
+   (material outline <= sharp rectangle; projection 0.00 mm outward)
+------------------------------------------------------------------------
+2. Pad arithmetic closure [DXF] vs [DRAWING]
+   pitch                 78.7402 mil =   2.0000 mm (drawing: 2.0+/-0.1)
+   pad center half-span   8.0000 mm
+   edge margin            1.8584 mm  (drawing callout: 1.86+/-0.10)
+   9 pads/side -> 8 pitches =  16.0000 mm
+   closure:  16.0000 + 2 x   1.8584 =  19.7168 mm
+   drawing length 19.72+/-0.50 -> closure delta -0.0032 mm  -> PASS (well inside tolerance)
+------------------------------------------------------------------------
+3. Cross-source concordance (module rigid body, mm)
+   source                        length    width    thick
+   [DRAWING] ds V1.3 s.9           19.72     15.00      2.20   (tol +/-0.5, +/-0.5, +/-0.1)
+   [DXF] package drawing         19.7168   15.0000     n/a
+   [RECORD] footprint json         19.81     14.98      2.32
+   [RECORD] BOM 55585471           19.72     15.05     n/a
+   [RECORD] enclosure README       19.72     15.00     n/a
+   BOUNDING (max of record)        19.81     15.05      2.32
+   TOLERANCE-INCLUSIVE worst       20.22     15.50      2.32   (drawing upper tol;
+   thickness uses max(2.2+0.1, record 2.32) because record exceeds drawing tol)
+   thickness anomaly: record 2.32 exceeds drawing upper tol 2.3 by +0.02 mm
+   -> bounding thickness 2.32 mm adopted (conservative); interpretation
+      (pad/solder bump on the measured unit) UNVERIFIED
+------------------------------------------------------------------------
+4. Fit arithmetic (all computed from the bounding values above)
+   face diagonal sqrt(19.81^2 + 15.05^2) = 24.88 mm  (bounding)
+   face diagonal sqrt(20.22^2 + 15.50^2) = 25.48 mm  (tolerance-inclusive)
+   min round bore, module lengthwise-first (sqrt(W^2+T^2)):
+     bounding 15.23 mm  /  tolerance-inclusive 15.67 mm  (zero clearance)
+   with 10% handling clearance: 17.24 mm (tolerance-inclusive)
+   min slot, module flat: 20.22 x 2.32 mm (tolerance-inclusive, zero clearance)
+------------------------------------------------------------------------
+5. Protrusion deltas beyond the nominal body
+   DXF NOTE: this decal is the LAND PATTERN (host-side copper), not
+   a module drawing: the STK lands (3.0 x 1.2 mm, +/-59.06 mil spine)
+   center on the outline edge and extend 59.06 mil = 1.50 mm OUTBOARD
+   of it - that is HOST PCB copper, NOT module material, and adds
+   nothing to the MODULE envelope.
+   the MODULE's own edge feature is the castellation half-hole
+   (DRIL_HOLE dia 39.37 mil = 1.00 mm) centered exactly ON the
+   outline edge x = 294.9607 mil: half-moon plated barrel opening at
+   the edge; module material extends exactly TO the edge and no
+   further -> rigid projection 0.00 mm beyond L x W
+------------------------------------------------------------------------
+   pin-1 marker (PADs decal semicircle, DXF vertices x 329.19-360.81
+   mil, y -395 mil) sits OUTSIDE the outline near terminal 1 (ANT
+   end) -> NOT material; no envelope effect (decal convention)
+------------------------------------------------------------------------
+5b. Castellation notch geometry (drill holes through the edge)
+   DXF DRIL_HOLE_0 is a DIMENSIONLESS decal symbol (zero-size
+   polyline; no diameter anywhere in the DXF); the 1.0 mm diameter
+   is the DRAWING callout 1.0+/-0.1 [DRAWING].
+   -> castellation half-moon notches cut 0.50 mm deep INTO the body
+      (material REMOVED, not added: each notch is a half-circle of
+      dia 1.0 mm at the edge; body remains L x W at the pad
+      centerlines; depth = radius = 1.0/2 mm)
+------------------------------------------------------------------------
+   antenna wires: bendable 30 AWG stiff copper [RECORD] -> rigid projection
+      0.00 mm (bends; does not sweep a rigid envelope)
+   [UNVERIFIED] as-built extended tip-to-tip of the sub-GHz dipole:
+      reading 1 (one 164 mm wire bent 180 deg at center): span ~164 mm
+      reading 2 (two 86 mm legs): span ~172 mm
+      -> bound 164-172 mm, which reading is as-built UNKNOWN (DUT absent)
+   2.4 GHz stub: 31 mm wire [RECORD], same non-rigid treatment
+------------------------------------------------------------------------
+6. HEADLINE NUMBERS (card step 4)
+   max cross-section (W x H, face-on): 19.81 x 15.05 mm  (bounding of record)
+   max cross-section tolerance-inclusive: 20.22 x 15.50 mm
+   max rigid dimension (L, end-to-end incl. mounting hardware):
+     19.81 mm  (module body; NO connectors, standoffs, fins, or screws exist
+      on the module - dut-rf-ports 0b7bfe92: RF exits are soldered wire)
+   effective swept cross-section incl. protrusions: UNCHANGED =
+     19.81 x 15.05 x 2.32 mm (every rigid protrusion projects 0.00 mm beyond
+      the outline; only bendable wires extend, up to 164-172 mm non-rigid)
+   end-to-end maximum extent with dipole laid collinear (NON-RIGID,
+     orientation-dependent): 19.81 + 164 = 183.81 mm (reading 1 bound)
+------------------------------------------------------------------------
+END
