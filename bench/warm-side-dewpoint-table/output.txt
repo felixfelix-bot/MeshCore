@@ -1,0 +1,44 @@
+=== Sanity checks (card anchors, tolerance 1.0 C) ===
+  22 C / 30 % -> Td =  3.62 C (expected ~4 C, dev -0.38 C)  [PASS]
+  22 C / 50 % -> Td = 11.10 C (expected ~11 C, dev +0.10 C)  [PASS]
+  22 C / 60 % -> Td = 13.88 C (expected ~14 C, dev -0.12 C)  [PASS]
+  25 C / 50 % -> Td = 13.86 C (expected ~14 C, dev -0.14 C)  [PASS]
+
+=== Magnus dew/frost-point table, warm-side ambient grid (ALL 12 CELLS ASSUMED) ===
+Td = dew point over water (A=17.625, B=243.04, Alduchov & Eskridge 1996).
+Tf = frost point over ice (A=22.46, B=272.62, Sonntag 1990), same functional form;
+     reported only where Td < 0 C, else 'n/a'.
+
+| T [C] | RH [%] | Td water [C] | Tf ice [C] |
+|-------|--------|--------------|------------|
+| 20 | 30 |          1.9 |        n/a |
+| 20 | 40 |          6.0 |        n/a |
+| 20 | 50 |          9.3 |        n/a |
+| 20 | 60 |         12.0 |        n/a |
+| 22 | 30 |          3.6 |        n/a |
+| 22 | 40 |          7.8 |        n/a |
+| 22 | 50 |         11.1 |        n/a |
+| 22 | 60 |         13.9 |        n/a |
+| 25 | 30 |          6.2 |        n/a |
+| 25 | 40 |         10.5 |        n/a |
+| 25 | 50 |         13.9 |        n/a |
+| 25 | 60 |         16.7 |        n/a |
+
+Sub-zero frost-point cells: 0 of 12.
+  Coldest cell (20 C / 30 % RH): Td = 1.89 C (~1.9 C), still ABOVE 0 C.
+  -> NO cell in this grid yields a sub-zero frost point.
+     Explicit negative statement: in every cell the ambient
+     vapor pressure exceeds the triple-point pressure, so the
+     ice-saturation isotherm sits above 0 C; vapor deposits
+     as LIQUID at the Td isotherm (all Td = +1.9 to +16.7 C),
+     and it can freeze only where a surface is below 0 C.
+
+=== Hand-worked example: T = 22 C, RH = 50 % (numeric proof) ===
+  ln(RH/100)      = ln(0.50)              = -0.693147
+  A*T/(B+T)       = 17.625*22/(243.04+22)       = 1.462987
+  s = ln(RH/100) + A*T/(B+T)   = -0.693147 + 1.462987 = 0.769840
+  numerator  B*s  = 243.04*(0.769840)  = 187.101801
+  denominator A-s = 17.625 - (0.769840)   = 16.855160
+  Td = 187.101801 / 16.855160 = 11.10 C  -> table row 22 / 50 -> 11.1 C
+
+Sanity checks: ALL PASS
