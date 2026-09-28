@@ -52,6 +52,11 @@ This is the controlling general specification for the SMA connector series
 | **TABLE II. Qualification inspection** (PDF p10) | Groups I–VII. Group II contains "Corrosion 3.13 / 4.6.10"; Group III contains "VSWR (cabled) 3.14 / 4.6.11"; Group IV contains "Thermal shock 3.20 / 4.6.17" and "Moisture resistance 3.21 / 4.6.18" | C6, C11, C13 — the moisture, corrosion and VSWR requirements are all qualification tests with requirement/test-method paragraph pairs. |
 | §4.6.7 **Leakage (pressurized)** (PDF p16) | "…the whole assembly immersed in water at a temperature of 15º to 25ºC. The connector shall remain immersed for at least 2 minutes." | C7 — where liquid ingress is qualified at all, it is qualified by actual water immersion of the assembly. |
 
+Locator note: the 41-page copy consulted carries a document header on every page whose
+printed footer numbers run 0–40, i.e. `PDF p<N>` is the printed number + 1 (verified at
+PDF p5 → footer "5" on the Table I page; PDF p10 → footer "10" on the Table II page).
+Both readings are given wherever the distinction matters.
+
 ### S2 `[CITED]` — MIL-STD-348A (US DoD), *RADIO FREQUENCY CONNECTOR INTERFACES …*
 20 April 1988 (Change notice; supersedes MIL-STD-348, 25 Mar 1986). Copy consulted:
 Everyspec mirror, `everyspec.com/MIL-STD/MIL-STD-0300-0499/MIL-STD-348A_420/`
@@ -174,7 +179,7 @@ DOI `10.1088/0022-3727/20/12/013` (IOP Publishing).
 *Journal of Geophysical Research*, vol. 76, no. 20, pp. 4922–4931, 10 July 1971.
 DOI `10.1029/JB076i020P04922` (American Geophysical Union).
 
-- **Claim supports C9 and C13.** The primary source for the dielectric effect of **NaCl**
+- **Claim supports C9.** The primary source for the dielectric effect of **NaCl**
   in ice at UHF/microwave frequencies. This is the nameable source behind the catalogue's
   brine-contamination branch: adding sodium chloride to the ice raises both ε′ and, via the
   ionic-conduction term, the loss. Note it is *sodium chloride* ice specifically, which
@@ -190,7 +195,7 @@ DOI `10.1063/1.435955` (AIP Publishing). Abstract, as published:
 > present data conform to a critical exponent expression with the same **critical temperature
 > (228 K)** found for many other properties of supercooled water…"
 
-- **Claim supports C9 and C14 — and this is the decisive one for the −20 °C case.** It
+- **Claim supports C14 — and this is the decisive one for the −20 °C case.** It
   establishes by measurement that liquid water's relative permittivity is a defined,
   tabulated quantity **down to −35 °C**, i.e. below the catalogue's −20 °C case, and that
   the permittivity *increases* as temperature falls toward a 228 K singularity rather than
@@ -221,7 +226,7 @@ DOI `10.1063/1.555853` (AIP Publishing / NIST).
   Also: "Magnesium perchlorate has a eutectic point of **−64 °C** (−83 °F)."
 - **"Calcium chloride"**: "Solutions of calcium chloride can prevent freezing at
   temperatures as low as **−52 °C** (−62 °F)…"
-- **Claim supports C9, C14 and the §4 likelihood ranking.** These give the hard temperature
+- **Claim supports C9 and the §4 likelihood ranking.** These give the hard temperature
   boundaries for a *liquid* brine film: an NaCl brine film can exist as liquid at −20 °C
   (its eutectic is −21.1 °C, so −20 °C is just above it, and only at near-saturation
   concentration), and **no NaCl brine liquid exists at −40 °C**. The CaCl₂ (−52 °C) and
@@ -277,19 +282,27 @@ nameable source.**
    S14) remain liquid well below this.
 
 **Is liquid water possible at −40 °C? Bulk supercooled liquid: below the homogeneous
-nucleation limit.** Wikipedia **"Supercooling"** §*Explanation* states water can be
-"supercooled … down to its crystal homogeneous nucleation at almost −48 °C"; so −40 °C
-sits between the ~−38 °C heterogeneous limit and the ~−48 °C homogeneous limit — a
-metastable window in which bulk liquid is only possible in the absence of nucleating
-surfaces, i.e. **not** in a droplet in contact with a metal/PTFE connector face.
-`[CITED]` — H. R. Pruppacher / water-activity route: **Koop, T., Luo, B., Tsias, A. and
+nucleation limit.** `[CITED]` — Wikipedia **"Supercooling"** §*Explanation* states water can
+be "supercooled … down to its crystal homogeneous nucleation at almost **−48 °C**" (and,
+in the same section, that demineralised water supercools "down to **−48.3 °C**"). So −40 °C
+lies **above** the cited homogeneous-nucleation limit for pure water by roughly 8 °C.
+`[CITED]` for the solution case — **Koop, T., Luo, B., Tsias, A. and
 Peter, T., "Water activity as the determinant for homogeneous ice nucleation in aqueous
 solutions", *Nature*, vol. 406, no. 6796, pp. 611–614, August 2000, DOI
 `10.1038/35020537`** — provides the water-activity formulation for homogeneous freezing
 across aqueous-solution compositions, which is what makes a *salty* film's freezing point
-different from pure water's. **Brine: no NaCl brine liquid at −40 °C** — S14's −21.1 °C
+different from pure water's.
+`[FIRST-PRINCIPLES]` **flag:** the further statement that a liquid phase at −40 °C requires
+the *absence of nucleating surfaces* — i.e. that it is not available to a droplet in
+contact with a metal/PTFE connector face — is the catalogue's own inference, **not** a
+cited claim. It rests on the general nucleation requirement quoted in "Supercooling"
+("Lacking any such nuclei, the liquid phase can be maintained…") rather than on a source
+that speaks to connector surfaces. Likewise, a commonly quoted ~−38 °C heterogeneous
+nucleation limit was **not** verified against any source and is therefore not relied on
+here; only the cited −48.3 °C figure is used.
+**Brine: no NaCl brine liquid at −40 °C** — S14's −21.1 °C
 eutectic and S15's −22.9 °C equation limit both exclude it. **Exotic brines: still liquid**
-— S14's CaCl₂ (−52 °C) and Mg(ClO₄)₂ (−64 °C) entries. **QLL: documented** — the S4
+— S14's CaCl₂ (−52 °C) and Mg(ClO₄)₂ (−64 °C) entries. **QLL: documented** — the §4
 quasi-liquid-layer preprint explicitly reports QLL behaviour at −85 °C to −70 °C.
 
 **Net statement the sources support:** at −20 °C the interface can carry a *conductive
@@ -336,6 +349,10 @@ The single unverified geometric input worth naming explicitly is the shield/PTFE
 radius **b = 2.10 mm** (C2). Only the 0.050″ centre-pin figure comes from a standard;
 everything derived from ln(b/a) — including the 1.465 mm radial gap used for the E-field
 rows — inherits that assumption.
+
+**One flag on §4:** the statement that a liquid phase at −40 °C is unavailable to a droplet
+*in contact with a connector surface* has no source that speaks to connector surfaces. It
+is recorded as first-principles in §4 itself rather than promoted to a cited claim.
 
 ## 6. Sources checked and rejected (ledger)
 
