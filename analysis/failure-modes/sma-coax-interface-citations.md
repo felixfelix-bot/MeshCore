@@ -48,7 +48,7 @@ This is the controlling general specification for the SMA connector series
 | §4.6.11 **VSWR** (PDF p16) | "The measurement shall be made on a Vector Network Analyzer using a full 12 term error correction … A minimum of 400 data points shall be used." | C11 — the reference method against which a degraded interface would be compared is a full 12-term-corrected VNA sweep. |
 | §6.6 **Engineering parameters** (PDF p27) | "The parameters of nominal impedance, voltage rating, frequency range, and temperature range will be as specified." | C15 — the general specification does **not** fix a numeric temperature range; it is deferred to the detail specification (`3.1`, "as specified"). See the honest flag in §5. |
 | **TABLE I. Materials** (PDF p5) | Dielectric-relevant rows: "PTFE fluorocarbon — ASTM D4894, ASTM D4895"; "FEP fluorocarbon — ASTM D2116"; "Silicon rubber — A-A-59588" | C3 — the SMA-class insulator material is PTFE by specification, with the material standard named; the dielectric the bridge film sits against is PTFE (ε_r ≈ 2.1), not air. |
-| §3.1.1 / **TABLE I** (PDF p5) | Materials table also lists "Copper-Beryllium — ASTM B194, ASTM B196/B196M, ASTM B197/B197M"; §3.3.1.1 covers centre-contact plating, §3.3.1.2 brass bodies silver plated per ASTM B700 | C13 — the conductor/dissimilar-metal combination at the interface is specified, which is the galvanic context for a wet interface. |
+| §3.3.1 / **TABLE I** (PDF p5) | Materials table also lists "Copper-Beryllium — ASTM B194, ASTM B196/B196M, ASTM B197/B197M"; §3.3.1.1 covers centre-contact plating, §3.3.1.2 brass bodies silver plated per ASTM B700 | C13 — the conductor/dissimilar-metal combination at the interface is specified, which is the galvanic context for a wet interface. |
 | **TABLE II. Qualification inspection** (PDF p10) | Groups I–VII. Group II contains "Corrosion 3.13 / 4.6.10"; Group III contains "VSWR (cabled) 3.14 / 4.6.11"; Group IV contains "Thermal shock 3.20 / 4.6.17" and "Moisture resistance 3.21 / 4.6.18" | C6, C11, C13 — the moisture, corrosion and VSWR requirements are all qualification tests with requirement/test-method paragraph pairs. |
 | §4.6.7 **Leakage (pressurized)** (PDF p16) | "…the whole assembly immersed in water at a temperature of 15º to 25ºC. The connector shall remain immersed for at least 2 minutes." | C7 — where liquid ingress is qualified at all, it is qualified by actual water immersion of the assembly. |
 
@@ -81,7 +81,7 @@ Field label (as printed on the page) → value:
 | Environmental data → Operation temperature | "**−65 °C … 165 °C**" | C15 — a numeric operating-temperature range for a real SMA part. This is the nameable number MIL-PRF-39012F §6.6 declines to give (see §5). |
 | Environmental data → Ingress protection (IP Rating) | "Mated / **IP67**" | C7 — the ingress rating is specified **in the mated condition**; it does not describe an unmated interface. |
 | Electrical Data (frequency related) | "**0 GHz … 6 GHz: Return loss 25 dB, VSWR 1.12**; **6.01 GHz … 18 GHz: Return loss 23 dB, VSWR 1.15**" | **C10 — the baseline anchor.** Vendor-specified nominal return loss for a good mated 50 Ω SMA interface across exactly the catalogue's 0–6 GHz band (25 dB ⇒ |Γ| = 0.0562; 1.12 VSWR ⇒ |Γ| = 0.0566). |
-| Impedance / Interface frequency | "50 Ω" / "18 GHz" | C10, C14. |
+| Impedance / Interface frequency | "50 Ω" / "18 GHz" | C10, C3 — the nominal 50 Ω system impedance, and an 18 GHz interface rating well above the catalogue's 6 GHz ceiling. |
 | Mechanical data → Mating cycles | "500" | C5 — a second, part-level mating-cycle datum (compare S2's 2,000 for the standard test connector). |
 
 ### S4 `[CITED]` — MIL-STD-810H, **Method 507.6, Humidity**
@@ -130,9 +130,9 @@ Millimeter-Wave Frequencies — Part 1*, DOI `10.1109/IEEESTD.2022.9889249`.
 
 - **Claim supported: C10.** The standards body reference for what a *precision* (as opposed
   to production SMA) 50 Ω coax interface is required to achieve in return loss and
-  dimensional tolerance. Use as the upper bound of achievable interface quality when
-  comparing a production SMA against a precision connector. `[NUMBERED]` because the
-  standard's own numeric limits were not read (the standard is paywalled).
+  dimensional tolerance — the upper bound of achievable interface quality against which a
+  production SMA is compared. `[NUMBERED]` because the standard's own numeric limits were
+  not read (the standard is paywalled).
 
 ## 3. Ice / water / brine dielectric and conductivity data
 
