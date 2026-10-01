@@ -7,7 +7,8 @@ independent cross-check on die-vs-crystal lag.
 Date: 2026-09-12 (initial); re-verified 2026-09-14 (third dispatch of
 parent t_380a431f — NO-DATA verdict unchanged, tool self-test PASS) ·
 re-verified 2026-10-01 (fourth dispatch, task t_474e6323 — verdict
-unchanged, fresh evidence below) ·
+unchanged, fresh evidence below) · re-verified 2026-10-01 (fifth
+dispatch, post-unblock — verdict unchanged, evidence below) ·
 Repo: c03rad0r/MeshCore (main) · artifacts:
 `bench/thermal-hysteresis/hysteresis_fit.py` (this directory).
 
@@ -42,6 +43,42 @@ the 09-14 report:
 
 VERDICT unchanged: NO DATA. Numeric hysteresis remains UNDEFINED and is
 not fabricated.
+
+### Re-verification 2026-10-01 (fifth dispatch, t_474e6323 — post-unblock)
+
+The card was unblocked 13:37 UTC with an empty payload (no comment, no
+attachment) and re-dispatched. Every check re-executed fresh this
+session; the unblock delivered no data:
+
+- Tool: `--self-test` PASS, exit 0 — same numbers as the fourth
+  dispatch (tau_hyst = 24.4 s vs planted 25.0 s, 7/7 levels, bootstrap
+  CI [23.6, 25.9] s). Analyzer intact at main HEAD 1a49efc6.
+- Availability gate: `--csv bench/ramp_session_t380a431f.csv` ->
+  `CSV error: file not found` (exit 1). 0 cooling / 0 warming ramps.
+- Filesystem (fresh): full walk of the task workspace
+  (~/worktrees/t_e1408991 incl. raw/ ledger dirs — research probes
+  only), /media + /run/media (empty), /mnt (bitcoind data disk, no
+  bench data), and a bounded name-scan (ramp|soak|freezer|session|xosc|
+  die_temp|hyster + csv/tsv/jsonl/parquet, depth 4) of every human drop
+  dir (Downloads, Desktop, Documents, Sync, work, reports, scratch*,
+  sessions, state, lr2021-scratch, pae7-bench*, Public, mesh-build):
+  41 hits since 09-28, ALL sibling literature/audit artifacts (chamber
+  ramp-rate *literature* extracts, gasket/condensation studies, kanban
+  audit inventories) — zero die-temp/ppm time series.
+- Hardware: lsusb shows no external frequency reference on the bus
+  (only NIC, BT, a Lexar storage stick, an old USB-audio/HID device;
+  /dev/ttyUSB* / ttyACM* / serial/by-id all empty) — the capture
+  precondition that guard-tripped the parent twice on 09-11 is still
+  unmet.
+- Board (meshcore, fresh DB read): 0 ramp attachments anywhere; capture
+  card t_a132b6cd still blocked; bench-session card + prep chain still
+  archived with zero runs; producer cards unchanged since 09-14.
+- Concurrent sibling confirmation: the thermal-lag card t_f6f826be
+  independently re-verified NO-DATA at 13:52–13:53, AFTER this card's
+  unblock; the atcut-fit card t_3f930320 completed 13:33 with n=0 soak
+  points, k/T0 UNDEFINED (optional step-5 input still absent).
+
+VERDICT unchanged: NO DATA.
 
 ## VERDICT: NO DATA — hysteresis not measurable. Median ΔT, spread, and
 ## per-level table are UNDEFINED because the input ramp time series does
