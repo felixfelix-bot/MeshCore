@@ -258,3 +258,44 @@ parser proof, and the full argument spec in `CAL-CLI-SPEC.md` /
 `CAL-COMMAND.md` — so the moment a real soak CSV lands, the fitted
 command is one `fit_atcut.py --csv` invocation away and is
 parser-legal by construction.
+
+---
+
+## Dispatch 5 — 2026-10-01 (fleet board `meshcore`, task t_3f930320, run 2)
+
+NO-FIT verdict unchanged; the input CSV still does not exist. Fresh
+verification, every item executed this session:
+
+1. **Board state**: the bench-prep chain on the new fleet board is still
+   dataless — t_03259d94 ("Run freezer dwell sweep…", the direct parent)
+   archived with **0 runs**; t_e80e80cb / t_db8ffdd6 / t_a132b6cd (soak
+   capture at +25/0/−20/−40 C) all `blocked` on `fleet-offload:dq05`;
+   soak rollup t_6ece027b's ledger commit (c4be4400) states "all four
+   UNVERIFIED (no calshow access + parent stability not PASS) — zero
+   samples at every setpoint, nothing fabricated".
+2. **Filesystem (2026-10-01)**: `find` over /home/c03rad0r/{worktrees,
+   repos/meshcore, reports, scratch} (depth 4, .git pruned) for
+   `*.csv|*soak*|*sweep*|*measured*|*dwell*|*freezer*` → only unrelated
+   projects (hermes-bot sweep scripts, mining partitions, frame audits).
+   Content grep for `offset_ppm|freq_err_ppm|drift_ppm` in data files →
+   **0 hits**. Sibling thermal-hyst re-verification today (59982540)
+   independently confirms ramp CSV absent since 09-14.
+3. **Firmware fork**: `git ls-remote fork feat/passive-mapper` → still
+   `d7ae93fa` (unchanged); its calibration ledger RESULTS.md still reads
+   "_not yet measured_ — pending: needs the freezer/dry-ice sweep".
+4. **Tool integrity re-run**: `fit_atcut.py --self-test` → **6/6 PASS**,
+   exit 0 (bracketed-sweep recovery k_err 2e-5 ppm/C², T0_err 0.05 C;
+   refusals on upward curvature / single-sided sweep / n=3 / parser
+   quirks; pure-Python fallback == numpy to 1e-13).
+   `verify_cal_domain.py` → **DOMAIN PROOF PASS** (worst-case
+   %.6g/%.2f round-trip 2.1e-3 ppm; f32 ulp 1.6e-5 ppm).
+
+**Quantitative NO-FIT (METHOD step 2):** soak dwell points available
+**0** (need ≥ 4 spanning +25…−40 C, ≥ 20 C span, T0 bracketed). n = 0 ⇒
+k, T0, residuals, R² all undefined; the (T, offset_ppm, residual) table
+has zero rows. Root cause (unchanged since dispatch 1): no external
+frequency reference on the host (0 instrument-class USB devices) and no
+thermal chamber — the `offset_ppm` column is unproducible here. No fit
+forced, nothing fabricated, `cal <k> <T0>` stays unfilled. The turnkey
+path remains: real soak CSV → `python3 bench/atcut-fit/fit_atcut.py
+--csv <file>` → parser-verified `cal %.6g %.2f` line.
