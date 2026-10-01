@@ -6,8 +6,42 @@ independent cross-check on die-vs-crystal lag.
 
 Date: 2026-09-12 (initial); re-verified 2026-09-14 (third dispatch of
 parent t_380a431f — NO-DATA verdict unchanged, tool self-test PASS) ·
+re-verified 2026-10-01 (fourth dispatch, task t_474e6323 — verdict
+unchanged, fresh evidence below) ·
 Repo: c03rad0r/MeshCore (main) · artifacts:
 `bench/thermal-hysteresis/hysteresis_fit.py` (this directory).
+
+### Re-verification 2026-10-01 (fourth dispatch, t_474e6323)
+
+Every check re-executed fresh this session; nothing taken on trust from
+the 09-14 report:
+
+- Tool: `--self-test` PASS, exit 0 (planted tau = 25.0 s recovered as
+  tau_hyst = 24.4 s, |err| 0.56 s; median dT = +1.34 C, 7/7 levels,
+  bootstrap CI [23.6, 25.9] s — synthetic validation only, as labeled).
+- Availability gate on the parent deliverable:
+  `--csv bench/ramp_session_t380a431f.csv` -> `CSV error: file not found`
+  (exit 1). 0 cooling / 0 warming ramps => all statistics undefined.
+- Filesystem: `find` (2026-09-14 → today, patterns
+  ramp|soak|freezer|die_temp|thermal*.csv|session*.csv, /home/c03rad0r,
+  caches pruned): ZERO hits — no bench session has run since 09-14.
+- Repos: content grep for die_temp|measured_error_ppm|freq_err|xosc over
+  meshcore, balloon, balloon-e80bench, e80-bench (*.csv/tsv/log/jsonl/
+  parquet/md): zero files. Only CSVs on host remain the e80 PER/RSSI
+  sweeps (header `idx,label,pkt_idx,...,rssi_dbm,snr_db,crc_ok,...` — no
+  die-temp, no ppm-error column) plus meshcore's 2 mechanical tables
+  (penetrations, feedthrough list).
+- Kanban DB: the bench-session card (t_03259d94) and the entire prep
+  chain (align t_96b58dfc, QC t_34efc124, package t_d05769b5, assemble
+  t_e77f6e2d) are archived with ZERO runs/events; capture card t_a132b6cd
+  never ran; no task_attachments anywhere in the family; the fleet-offload
+  "done" probe card (t_75ddf77a) left no probe_report.json on disk.
+- Sibling concurrence unchanged: thermal-lag REPORT (9b9fb897) and
+  atcut-fit REPORT re-verified zero soak/ramp rows; parent guard-tripped
+  twice 2026-09-11 (no external frequency reference on the USB bus).
+
+VERDICT unchanged: NO DATA. Numeric hysteresis remains UNDEFINED and is
+not fabricated.
 
 ## VERDICT: NO DATA — hysteresis not measurable. Median ΔT, spread, and
 ## per-level table are UNDEFINED because the input ramp time series does
