@@ -21,3 +21,6 @@ Format: finding -> status -> files touched
    finding: origin (c03rad0r/MeshCore) push = 403 (only credential is felixfelix-bot; no write to c03rad0r).
    Pushed to the bot-owned fork felixfelix-bot/MeshCore instead. commit c958a8d, branch worker-base/t_0e98e408 VERIFIED in ls-remote.
 8. Durable local mirror -> DONE -> ~/reports/chamber-holds-t_0e98e408-2026-10-09/ (outside repo, local-only)
+9. Ad-hoc verification -> DONE -> scripts/verify_report.sh (22/22 PASS)
+   finding: no canonical suite exists (evidence capture + report). Fidelity check asserts every §3/§5
+   claim against raw/ and that both scripts are reproducible. Not a green test suite.

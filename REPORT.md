@@ -121,6 +121,7 @@ raw/50-chamber-software.txt     host-wide chamber-software + python-module sweep
 raw/60-kanban-prior-evidence.txt meshcore kanban DB evidence dump
 scripts/attach_probe.sh         reproduces raw/00..40,50
 scripts/kanban_evidence.py      reproduces raw/60
+scripts/verify_report.sh        ad-hoc fidelity check: asserts every claim in §3/§5 against raw/
 ```
 
 Reproduce: `bash scripts/attach_probe.sh && python3 scripts/kanban_evidence.py`
@@ -151,4 +152,25 @@ running §8's script on this host.
 - **Local mirror (durable, local-only):** `~/reports/chamber-holds-t_0e98e408-2026-10-09/`.
 - **Sensitivity note:** `raw/40-nmap-lan.txt` contains only RFC1918 addresses and latencies
   (no MAC addresses, no hostnames); it is the only network-topology artifact here.
+
+## 11. Ad-hoc verification of this report (no canonical suite exists)
+
+This deliverable is evidence capture + a report, so there is no project test/lint/build
+command. I ran a focused ad-hoc check instead — `bash scripts/verify_report.sh` (kept in the
+repo) — which passed all 22 assertions against the raw captures:
+
+- both scripts parse clean (`bash -n`; `ast.parse`) and leave no bytecode artifacts;
+- all 9 raw captures exist and are non-empty;
+- serial claims: exactly 3 `/dev/serial/by-id` links, all `Sierra_Wireless_EM7455`; the
+  controller identity query `*IDN?` returned an **empty** reply on **every** port tried;
+- USB claim: the "no usb-serial bridge" grep matched;
+- network claim: nmap reported **512** hosts and **zero** `open` ports;
+- `kanban_evidence.py` re-run reproduces `raw/60` with **0** removed/changed lines (only
+  lines added by comments posted after the snapshot);
+- the acceptance table has **4** rows, each **UNVERIFIED**; and the working tree is clean.
+
+This is **ad-hoc verification, not a green test suite** — it proves the report's numbers match
+its own raw evidence and that the scripts are reproducible; it does not (and cannot) prove a
+chamber run, which §1–§4 already state never occurred.
+
 
