@@ -136,3 +136,19 @@ it is complete in the sense of "the precondition was tested with real evidence a
 hold, so the holds are correctly marked UNVERIFIED." Note that this report is a
 worker **self-report**; the load-bearing negative in §3 is independently reproducible by
 running §8's script on this host.
+
+## 10. Publication / push record
+
+- **Commit:** `c958a8d` on branch `worker-base/t_0e98e408` (base `c8eb3c8`).
+- **Push target:** `https://github.com/felixfelix-bot/MeshCore.git` — the **bot-owned fork** of
+  this repo. Verified with `git ls-remote`: `c958a8d… refs/heads/worker-base/t_0e98e408`.
+- **Why not origin:** `origin` = `https://github.com/c03rad0r/MeshCore.git` rejected the push
+  with **HTTP 403** — *"Permission to c03rad0r/MeshCore.git denied to felixfelix-bot."* The only
+  GitHub credential on this host is `felixfelix-bot`, which has no write access to the
+  `c03rad0r/*` namespace; SSH to GitHub is also denied (`git@github.com: Permission denied
+  (publickey)`). Pushed to the bot fork after one retry of origin. **Manager: if this must land
+  on `c03rad0r/MeshCore`, a `c03rad0r`-scoped token/key is required.**
+- **Local mirror (durable, local-only):** `~/reports/chamber-holds-t_0e98e408-2026-10-09/`.
+- **Sensitivity note:** `raw/40-nmap-lan.txt` contains only RFC1918 addresses and latencies
+  (no MAC addresses, no hostnames); it is the only network-topology artifact here.
+

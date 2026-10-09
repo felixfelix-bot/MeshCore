@@ -17,5 +17,7 @@ Format: finding -> status -> files touched
    finding: t_8d1cf920 (attachment proof) done; t_135fbd0e controller inventory = all UNKNOWN; t_23e2f894 nameplate = NOT FOUND; t_ed6c996b = "chamber never located on any record".
 6. Verdict + report authored -> DONE -> REPORT.md, PROGRESS.md
    finding: no chamber was run; all four setpoints (+25, 0, -20, -40) = UNVERIFIED.
-7. Commit + push -> PENDING -> REPORT.md, PROGRESS.md, scripts/, raw/
-8. Durable mirror to ~/reports -> PENDING -> (outside repo)
+7. Commit + push -> DONE -> REPORT.md, PROGRESS.md, scripts/, raw/
+   finding: origin (c03rad0r/MeshCore) push = 403 (only credential is felixfelix-bot; no write to c03rad0r).
+   Pushed to the bot-owned fork felixfelix-bot/MeshCore instead. commit c958a8d, branch worker-base/t_0e98e408 VERIFIED in ls-remote.
+8. Durable local mirror -> DONE -> ~/reports/chamber-holds-t_0e98e408-2026-10-09/ (outside repo, local-only)
