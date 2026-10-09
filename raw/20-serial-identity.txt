@@ -1,0 +1,7 @@
+# serial identity probe; query bytes written verbatim, reply captured byte-for-byte
+/dev/ttyUSB0 @ 9600  sent=b'*IDN?\r\n'  recv=b''
+/dev/ttyUSB0 @ 115200  sent=b'ATI\r\n'  recv=b''
+/dev/ttyUSB1 @ 9600  sent=b'*IDN?\r\n'  recv=b''
+/dev/ttyUSB1 @ 115200  sent=b'ATI\r\n'  recv=b''
+/dev/ttyUSB2 @ 9600  sent=b'*IDN?\r\n'  recv=b''
+/dev/ttyUSB2 @ 115200  sent=b'ATI\r\n'  recv=b'\r\nManufacturer: Sierra Wireless, Incorporated\r\nModel: EM7455\r\nRevision: SWI9X30C_02.33.03.00 r8209 CARMD-EV-FRMWR2 2019/08/28 20:59:30\r\nMEID: 01510500559486\r\nIMEI: 015105005594866\r\nIMEI SV: 20\r\nFSN: LF841671620110\r\n+GCAP: +CGSM\r\n\r\n\r\nOK\r\n'

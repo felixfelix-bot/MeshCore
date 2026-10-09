@@ -1,0 +1,52 @@
+# filesystem names matching *chamber*/*thermotron*/*espec*/*watlow*/*environmental-chamber*
+/home/c03rad0r/toolchains/go1.26.8/go/src/internal/goexperiment/exp_sizespecializedmalloc_on.go
+/home/c03rad0r/toolchains/go1.26.8/go/src/internal/goexperiment/exp_sizespecializedmalloc_off.go
+/home/c03rad0r/toolchains/node-v22.17.0-linux-x64/lib/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/plebeian-market-pr/node_modules/shiki/dist/langs/typespec.mjs
+/home/c03rad0r/plebeian-market-pr/node_modules/shiki/dist/langs/typespec.d.mts
+/home/c03rad0r/plebeian-market-pr/node_modules/@shikijs/langs/dist/typespec.mjs
+/home/c03rad0r/plebeian-market-pr/node_modules/@shikijs/langs/dist/typespec.d.mts
+/home/c03rad0r/tg-tools/node/lib/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/.npm/_npx/676e59db29371ba5/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/.npm/_npx/3d4e74a75dc68f52/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/.npm/_npx/0216dc40637bdfd5/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/.npm/_npx/b0271877f536be0e/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/.npm/_npx/b6e504e3e67f6921/node_modules/npm/node_modules/node-gyp/gyp/tools/Xcode/Specifications/gyp.pbfilespec
+/home/c03rad0r/.npm/_npx/dcb6eef266efc402/node_modules/npm/node_modules/node-gyp/gyp/docs/LanguageSpecification.md
+/home/c03rad0r/tollgate-infrastructure-kit/kanbanstr/node_modules/shiki/dist/langs/typespec.mjs
+/home/c03rad0r/tollgate-infrastructure-kit/kanbanstr/node_modules/shiki/dist/langs/typespec.d.mts
+/home/c03rad0r/tollgate-infrastructure-kit/kanbanstr/node_modules/@shikijs/langs/dist/typespec.mjs
+/home/c03rad0r/tollgate-infrastructure-kit/kanbanstr/node_modules/@shikijs/langs/dist/typespec.d.mts
+/home/c03rad0r/tg-code/packages-master/utils/open-vm-tools/patches/0003-Use-configure-test-for-struct-timespec.patch
+/home/c03rad0r/tg-code/packages-master/utils/hplip/patches/070-respect-cflags.patch
+/home/c03rad0r/tg-code/packages-master/utils/canutils/patches/010-Include-time-h-for-timespec-struct-definition.patch
+/home/c03rad0r/tg-code/packages-master/net/boinc/patches/002-hosttypeRespected
+/home/c03rad0r/tg-code/packages-master/libs/db/patches/060-clock-Do-not-define-own-timespec.patch
+/home/c03rad0r/hermes-orchestration/state/manager/skills/devops/shared-tree-commit-hygiene/references/json-respec-reformat-churn-and-untracked-merge-block.md
+/home/c03rad0r/market/node_modules/shiki/dist/langs/typespec.mjs
+/home/c03rad0r/market/node_modules/shiki/dist/langs/typespec.d.mts
+/home/c03rad0r/market/node_modules/@shikijs/langs/dist/typespec.mjs
+/home/c03rad0r/market/node_modules/@shikijs/langs/dist/typespec.d.mts
+/home/c03rad0r/playwright-transform-cache-1001/63/635ce0ef47_e40f436_deliverysmokespec.js
+/home/c03rad0r/playwright-transform-cache-1001/63/635ce0ef47_e40f436_deliverysmokespec.map
+/home/c03rad0r/playwright-transform-cache-1001/98/9819871354_e94d6d7_themetogglespec.map
+/home/c03rad0r/playwright-transform-cache-1001/98/9819871354_e94d6d7_themetogglespec.js
+/home/c03rad0r/market-repo/node_modules/shiki/dist/langs/typespec.mjs
+/home/c03rad0r/market-repo/node_modules/shiki/dist/langs/typespec.d.mts
+/home/c03rad0r/market-repo/node_modules/@shikijs/langs/dist/typespec.mjs
+/home/c03rad0r/market-repo/node_modules/@shikijs/langs/dist/typespec.d.mts
+/home/c03rad0r/.tmp/pytest-of-c03rad0r/pytest-832/test_find_state_dbs_respects_pcurrent
+/home/c03rad0r/.tmp/pytest-of-c03rad0r/pytest-832/test_sync_respects_excludes0
+/home/c03rad0r/.tmp/pytest-of-c03rad0r/pytest-832/test_find_state_dbs_respects_p0
+/home/c03rad0r/.tmp/pytest-of-c03rad0r/pytest-832/test_sync_respects_excludescurrent
+[none above => no chamber-control software/data found]
+
+# python modules that would drive a controller
+pymodbus: ABSENT
+minimalmodbus: ABSENT
+pyvisa: ABSENT
+gpib: ABSENT
+labjack: ABSENT
+nidaqmx: ABSENT
+smbus: ABSENT
+labx: ABSENT

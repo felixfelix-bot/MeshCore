@@ -1,0 +1,15 @@
+$ lsusb
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 058f:9540 Alcor Micro Corp. AU9540 Smartcard Reader
+Bus 001 Device 003: ID 1199:9079 Sierra Wireless, Inc. EM7455
+Bus 001 Device 004: ID 8087:0a2b Intel Corp. Bluetooth wireless interface
+Bus 001 Device 005: ID 5986:111c Bison Electronics Inc. Integrated Camera
+Bus 001 Device 006: ID 138a:0097 Validity Sensors, Inc. 
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 002 Device 002: ID 0bda:0316 Realtek Semiconductor Corp. Card Reader
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 004 Device 002: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
+
+$ lsusb | grep -iE "ftdi|prolific|cp210|ch34|serial|rs232|rs485|usb-serial"
+(no match — no USB-serial bridge chip present)

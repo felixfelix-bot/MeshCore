@@ -1,0 +1,94 @@
+# meshcore kanban evidence dump — generated 2026-10-09T16:40:49Z
+# source DB: /home/c03rad0r/.hermes/kanban/boards/meshcore/kanban.db (read-only)
+
+==============================================================================
+t_8d1cf920 | status=done | assignee=default
+title: Prove physical attachment to the chamber controller
+result: <none>
+
+==============================================================================
+t_135fbd0e | status=done | assignee=default
+title: Record chamber, controller, firmware and sensor-role inventory
+result: tags: no-code, docs — deliverable is a documentation comment (id 1307) + report at ~/reports/chamber-controller-sensor-role-inventory-t_135fbd0e-2026-10-01.md; no code, no repo change, no branch, no CI lane. Root verdict: every card field is an explicit UNKNOWN/SENSOR-ROLE-UNKNOWN; nothing fabricated; zero chamber operation.
+
+==============================================================================
+t_23e2f894 | status=done | assignee=worker-admin
+title: Find and transcribe existing thermal chamber nameplate photo
+result: tags: no-code, docs
+
+Deliverable: search + transcription report for task t_23e2f894
+("Find and transcribe existing thermal chamber nameplate photo").
+
+Artifact (durable, non-git, ~/reports):
+- /home/c03rad0r/reports/thermal-chamber-nameplate-photo-search-t_23e2f894-2026-10-01.md (11822 bytes)
+  (also copied into the shared scratch workspace $HERMES_KANBAN_WORKSPACE)
+
+VERDICT: NO PHOTO EXISTS - NOT FOUND at every location. No verbatim text could be transcribed
+because there is no source image. A fresh photo or a physical on-site read is required.
+
+Locations searched, in the card's prescribed order, each with path/section + existence status:
+1. Shared drive - no network share mounted (no cifs/nfs/smb/sshfs). Local offload volumes searched:
+   /mnt/cw-offload, /mnt/cobrador-offload, /mnt/archive, /mnt/quarantine, /mnt/fleet-store; plus a
+   full /mnt image sweep. STATUS EXISTS (volumes) but NAME PLATE PHOTO: NOT FOUND.
+2. Equipment asset folder - NOT EXISTS (find for *asset*/*equip*/*inventory* returns only web-asset
+   dirs; no fleet asset/inventory state file). NOT FOUND.
+3. Equipment binder - NOT EXISTS (keyword document scan of *.pdf/.docx/.doc/.xlsx/.xls/.odt/.ods/.pptx
+   across /home/c03rad0r + /mnt returned 0 candidate documents). NOT FOUND.
+4. Phone-photo dumps - NOT EXISTS (no DCIM/camera-import/phone-sync dir; ~/Pictures, ~/Documents,
+   ~/Downloads, ~/Desktop all EMPTY on host). NOT FOUND.
+5. Project photo libraries - EXISTS (repo image assets) but only brand/UI logos, RF-characterization
+   plots, CI frames, balloon renders. meshcore git history across all branches contains exactly one
+   image (assets/images/favicon.png). NOT FOUND.
+6. Installation/commissioning records - NOT EXISTS (grep 'commissioning' = 0 hits; only software
+   installers on host). NOT FOUND.
+7. Corroborating: programmatic scan of task_attachments across EVERY board DB found 0 image
+   attachments (meshcore board = 0 rows total), so no nameplate photo was ever attached to a card.
+   No camera device on host (/dev/video*, /sys/class/video4linux absent; no UVC in lsusb) so a fresh
+   photo cannot be taken from this host either.
+
+Verbatim nameplate fields (acceptance rule: path/photo ref or explicit NOT FOUND):
+- manufacturer: NOT FOUND
+- model (incl. suffix/option codes): NOT FOUND
+- serial number exactly as printed: NOT FOUND
+- electrical ratings (V/phase/Hz/kW/FLA): NOT FOUND
+- rate-spec text (degC/min, heating/cooling, ramp, slew, pull-down, heat-up): NOT FOUND
+- visible date on document / photo metadata: NOT FOUND
+- source photo filename/full path: NOT FOUND
+Nameplate MODEL: NOT FOUND. Nameplate SERIAL: NOT FOUND.
+
+Only hardware photos anywhere on the mounts are three orphaned DUT RF-port scratch shots
+(/mnt/cw-offload/reports/dut-rf-port-connector-evidence/scratch/{hi-1.jpg,v0-1.jpg,v0-2.jpg}) - of
+the DUT port, not the chamber, no nameplate text, referenced by no report. Recorded for completeness.
+
+Nothing fabricated: no make/model/serial/rating/date/rate was invented or estimated. Every field is an
+explicit NOT FOUND with the searched location. Zero chamber operation: nothing powered, commanded,
+instrumented, or measured; no controller log read (read-only enumeration only).
+
+Class: docs-only, no code, no repo change; nothing to build or test; ~/reports is local-only and never
+pushed. No CI line written (no ngit remote for this card => no kind-9842 result can exist). Gate dry
+run: tier=docs via the tags line above; the code-tier gates (tests_green, ci_evidence,
+cold_cross_family_review, review_artifact, consolidated, secrets_clean) do not apply to a no-code docs
+deliverable; this tag declaration is the sanctioned escape hatch.
+
+Unblock: a human on site attaches/uses a camera to photograph the nameplate (wide + legible close-up)
+or performs a physical read of the plate. This card is downstream of the location gate -
+t_a2f7f281/t_b09424f1/t_ffc911f6 are all blocked and resultless (unit never located/named).
+
+==============================================================================
+t_ed6c996b | status=done | assignee=worker-base
+title: Inventory physical bench/chamber booking artefacts on site
+result: tags: no-code
+Physical/on-site artefact inventory for bench + thermal chamber (physical channel of the t_4d87333a discovery fan-up). Deliverable posted as comment 1288 on this task; durable local copy ~/reports/physical-artefacts-inventory-t_ed6c996b-2026-10-01.md (7855 B).
+Result: 5 candidate artefact classes recorded, 0 verifiable — no camera on host (/dev/video* absent, re-measured; lsusb shows no camera-class device), chamber never located on any record, only QR asset host-wide is meshcore:// protocol formats (not lab signage), host-wide logbook/signage filename sweep zero hits. Every load-bearing negative re-measured this session from primary sources; prior committed inventory bench/booking-systems-inventory/REPORT.md @ 799930cc corroborated (candidate-12 row matches exactly).
+Read-only inventory: no source file changed by this run, nothing to commit, nothing pushed — the deliverable is the card comment plus a local-only ~/reports file, which per fleet push policy is never pushed. Within-channel multiplicity: none (0 verifiable artefacts); cross-channel multiplicity anomaly (3 near-duplicate FLASH-QUEUE.md copies + dangling balloon-fresh canonical pointer) flagged for consolidator t_60100fb7.
+
+==============================================================================
+t_0e98e408 | status=todo | assignee=manager
+title: Run chamber 10-min holds at +25/0/-20/-40 C and capture logs
+result: <none>
+  [comment 3370 by manager @ 2026-09-14 04:58:43] BLOCKED: fleet-offload:dq05
+  [comment 3500 by fleet-writeback @ 2026-09-14 05:49:44] fleet-done rc=0 verified=True (offloaded); status -> done
+  [comment 3511 by manager @ 2026-09-14 05:50:33] BLOCKED: fleet-offload:dq05
+  [comment 3560 by gate-tick @ 2026-09-14 06:00:26] gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  [comment 3612 by manager @ 2026-09-14 06:06:51] BLOCKED: fleet-offload:dq05
+  [comment 3645 by auto-decomposer @ 2026-09-14 06:25:44] Decomposed into t_42dadf86, t_80950496, t_59e80a86. Root will wake when all children complete.
