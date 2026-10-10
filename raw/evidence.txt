@@ -1,0 +1,92 @@
+# raw evidence capture — t_c1c07af9 (thermal chamber custodian identification)
+# host: CobradorWave
+# captured: 2026-10-10 ~17:00 UTC by worker-heavy
+# every line below is a verbatim command result read this run.
+
+### [E1] kanban card t_93217530 (meshcore board) — bench-owner doc sweep, status=done
+sqlite3 ~/.hermes/kanban/boards/meshcore/kanban.db "select result from tasks where id='t_93217530';"
+-> "Cold sweep of ops-runbook/onboarding/booking/maintenance/approval doc spaces for test-bench
+ownership. One individual named: Felix as 'the operator' who does the bench work (meshcore
+examples/passive_mapper/bench/README.md @ d7ae93fa) - HIGH for the work role, MEDIUM as a literal
+custodian title. Bench booking/approval names no individual: flash authority is the balloon-hermes
+orchestrator GROUP; the only filled approved_by cell (felix (orchestrator)) is on the E80 bench
+queue; meshcore bench queue EMPTY. Deliverable:
+~/reports/bench-owner-runbooks-onboarding-booking-t_93217530-2026-10-01.md"
+
+### [E2] FLASH-QUEUE.md — read directly this run
+cat /home/c03rad0r/repos/balloon-fresh/docs/coordination/FLASH-QUEUE.md
+-> "# Flash Queue — Board Access Coordination"
+   "> **NO flashing without orchestrator (balloon-hermes) approval.**"
+   "> Sub-managers escalate flash requests to the orchestrator."
+   table header: | track | board | purpose | requested_time | approved_by | duration | status |
+   row: | balloon-range-tests | E80 #1+#2 | PRBS-15 harmonization ... | 2026-08-20T09:00Z |
+        felix (orchestrator) | 8m | DONE (PARTIAL) |
+(byte-identical twin exists at /home/c03rad0r/repos/balloon-e80bench/docs/coordination/FLASH-QUEUE.md)
+
+### [E3] booking audit card t_8e264236 (meshcore board) — status=done, assignee=worker-heavy
+-> "verified near-zero: 0 confirmed thermal chamber bookings exist; 19 rows in
+records/thermal_chamber_bookings.csv (1 unconfirmed reservation request + 6 NO_AUDIT_LOG +
+9 NO_BOOKING_EVENT + 3 RECONCILED_NEAR_MISS), each citing raw_file_path + raw_line_id + verbatim
+text; per-source counts reconcile to the extracted count."
+(records/thermal_chamber_bookings.csv is NOT present on disk any more)
+
+### [E4] card t_ed6c996b (meshcore board) — physical bench/chamber artefact inventory, done
+-> "5 candidate artefact classes recorded, 0 verifiable - no camera on host ... chamber never
+located on any record, only QR asset host-wide is meshcore:// protocol formats (not lab signage),
+host-wide logbook/signage filename sweep zero hits."
+
+### [E5] card t_135fbd0e — chamber/controller/firmware/sensor-role inventory, done
+-> "every card field is an explicit UNKNOWN/SENSOR-ROLE-UNKNOWN; nothing fabricated; zero chamber
+operation."
+
+### [E6] card t_23e2f894 — nameplate photo search, done
+-> "VERDICT: NO PHOTO EXISTS - NOT FOUND at every location. ... manufacturer: NOT FOUND / model:
+NOT FOUND / serial number: NOT FOUND / electrical ratings: NOT FOUND ... No camera device on host
+..."
+
+### [E7] chamber-holds raw/50-chamber-software.txt (prior run)
+-> filename sweep *chamber*/*thermotron*/*espec*/*watlow*/*environmental-chamber* :
+   "[none above => no chamber-control software/data found]"
+   "pymodbus: ABSENT / minimalmodbus: ABSENT / pyvisa: ABSENT / gpib: ABSENT / labjack: ABSENT /
+    nidaqmx: ABSENT / smbus: ABSENT / labx: ABSENT"
+
+### [E8] chamber-holds REPORT.md §1
+-> "NO CHAMBER WAS RUN. There is no thermal chamber controller attached to this host, and no
+controller is reachable on the local networks."
+
+### [E9] chamber-holds raw/20-serial-identity.txt + raw/11-usb-devices.txt + raw/40-nmap-lan.txt
+-> only serial device = Sierra Wireless EM7455 LTE modem (ttyUSB0/1/2); no SCPI *IDN? reply;
+   no USB-serial bridge; nmap 192.168.2.0/24 + 10.177.21.0/24 for 502/111/102/5000:
+   512 hosts up, ZERO open ports.
+
+### [E10] card t_fbfead68 comment 7363 (chamber controller classification) — blocked
+-> "cannot be executed by this worker ... the assigned worker is a headless software process
+(worker-base)..."  and card body/title describe it as a "freezer/thermal chamber".
+
+### [E11] chat-history sweep (task step 1e) — this run
+python3 sweep over ~/.hermes/profiles/*/state.db  messages table, LIKE '%chamber%' (user/assistant)
+-> TOTAL chamber-mentioning messages: 37 across manager/urgency-triage/worker-base/worker-heavy
+   state DBs. ALL are agent task prompts or prior worker reports; ZERO human chat about a chamber
+   or a custodian. (script: /tmp/chatsweep.py)
+
+### [E12] operator identity + channels
+grep AGENTS.md -> "One voice per operator message. Klaus + Felix run the same responder; the
+resource-elected leader (D-129) answers untagged messages ..."
+channel_directory.json platforms with entries -> signal: [balloon-hermes, balloon-speed-tests,
+balloon-range-tests, Home]; matrix: [!cdcrYBHmOFBNMdxeqw:matrix.org]. No slack/discord/telegram.
+
+### [E13] negative checks for the MY-task children / siblings
+meshcore board, all empty result:
+  t_e96fa5ad (Identify physical thermal chamber custodian)      status=todo,     result=NULL
+  t_3e537b94 (controller/software admin + maint approvers)      status=blocked,  result=NULL
+  t_857a8fa7 (reconcile + post final cited custodian report)    status=archived, result=NULL
+  t_80b7a769 / t_cf9112e0 (synthesize custodian / admin lists)  status=archived, result=NULL
+  t_4d87333a, t_f57dd8e9, t_9f83752a, t_9e9ce304, t_8b1ede4a, t_a867fd64, t_c086a169,
+  t_88006d69, t_0839e236, t_dcabf917, t_900659a7, t_4e41856d : no result
+  t_0d0fe29c, t_9782fb4c, t_42141f77, t_681802a8 (booking/reservation) : no result
+
+### [E14] unverifiable-on-disk artifacts (weak link)
+find ~/reports -iname '*bench-owner*' -o -iname '*thermal-chamber*' -o -iname '*chamber*booking*'
+-> only ./chamber-holds-t_0e98e408-2026-10-09 (dir) and its raw/50-chamber-software.txt
+git -C /home/c03rad0r/repos/meshcore-fork-fix fetch bot feat/passive-mapper
+-> fatal: pack has 50 unresolved deltas ; fatal: fetch-pack: invalid index-pack output
