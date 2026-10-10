@@ -56,11 +56,13 @@ requested workspace: /home/c03rad0r/repos/meshcore-fork-fix (CORRUPT — see fin
   -> files touched: analysis/failure-modes/verify_entry.py,
      analysis/failure-modes/verify_entry.out
 
-commit 1: bc2b7256 — analysis/failure-modes/{feedthrough-mount-cold-loosening.md,
-  feedthrough_mount_thermal_calc.py, feedthrough_mount_thermal_calc.out,
-  verify_entry.py, verify_entry.out} + PROGRESS.md
-commit 2: 527c7131 — verify_entry.py + verify_entry.out (check-5 lexicon hardened from
-  substring `in` tests to word-boundary regexes; behaviour identical on the shipped entry)
+commit log on this branch (in order):
+  commit 1  bc2b7256  entry + calculator + frozen transcript + gate + this file
+  commit 2  527c7131  gate lexicon hardened (substring -> word-boundary regexes)
+  commit 3  6ab8766   this file: record the ad-hoc verification run and both SHAs
+  commit 4  (this commit) corrects the commit log above to include commit 3
+Branch HEAD after commit 4 is the last SHA in `git log --oneline`; everything is pushed
+to origin (felixfelix-bot/MeshCore), verified with `git ls-remote` after each push.
 
 - finding: AD-HOC verification harness written and PASSING (33/33). The repo has no
   canonical test/lint/build command, so this is ad-hoc, not suite green. It verifies:
