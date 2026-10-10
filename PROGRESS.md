@@ -56,10 +56,31 @@ requested workspace: /home/c03rad0r/repos/meshcore-fork-fix (CORRUPT — see fin
   -> files touched: analysis/failure-modes/verify_entry.py,
      analysis/failure-modes/verify_entry.out
 
-commit 1: (this commit) analysis/failure-modes/{feedthrough-mount-cold-loosening.md,
+commit 1: bc2b7256 — analysis/failure-modes/{feedthrough-mount-cold-loosening.md,
   feedthrough_mount_thermal_calc.py, feedthrough_mount_thermal_calc.out,
   verify_entry.py, verify_entry.out} + PROGRESS.md
+commit 2: 527c7131 — verify_entry.py + verify_entry.out (check-5 lexicon hardened from
+  substring `in` tests to word-boundary regexes; behaviour identical on the shipped entry)
+
+- finding: AD-HOC verification harness written and PASSING (33/33). The repo has no
+  canonical test/lint/build command, so this is ad-hoc, not suite green. It verifies:
+  calculator determinism + frozen-transcript freshness, dF_thermal invariants pinned to
+  the entry's 392 N / 589 N, gate PASS on the shipped entry, and 7 mutants each making
+  the gate FAIL (attribute removed, template field removed, single source, unnumbered
+  source, corrupted number in the entry, corrupted number in the transcript, mitigation
+  sentence injected into the body).
+  -> status: harness archived at <fe-feedthrough-ev>/hermes-verify-fmft.py (outside git);
+     temp copy removed. Transcript of the run is in REPORT.md.
+  -> files touched: analysis/failure-modes/verify_entry.py (lexicon hardened)
+
+- finding: three FALSE POSITIVES of naive substring scanning surfaced and were fixed
+  ('action' inside 'contraction', 'should' inside 'shoulder', descriptive "scale is
+  fixed elsewhere"). Also two of my own first-draft mutants were invalid (M4 stripped
+  the [S1] tag itself; M5 replaced only 1 of 4 occurrences of 342) — the gate had caught
+  both, so no gate defect, but the mutants were rewritten to be sound.
+  -> status: lexicon now word-boundary anchored in both gate and harness
+
 copies for the requested workspace: REPORT.md, PROGRESS.md and the entry itself are copied to
   /home/c03rad0r/repos/meshcore-fork-fix/ (untracked there — that clone cannot be pushed from)
 
-REMAINING: none; push verification recorded in REPORT.md.
+REMAINING: none; both pushes verified by ls-remote, recorded in REPORT.md.
