@@ -3,6 +3,14 @@
 task: pin byte-exact `cal <k> <T0>` grammar at commit 3fdfbc8e (feat/passive-mapper)
 worktree: /home/c03rad0r/worktrees/cal-serial-pin
 pin: 3fdfbc8e120e13d7543fe224c380e27533e720aa (git rev-parse HEAD, detached)
+branch: worker-heavy/t_cal-serial-pin
+commit 1: e4d8430985cc8baa224b4852baea26100e2c9a5c — PUSHED and verified
+          (`git ls-remote … refs/heads/worker-heavy/t_cal-serial-pin` = same SHA)
+artifacts: REPORT.md (repo root), PROGRESS.md (repo root),
+           analysis/passive-mapper-cal-cli/{verify_citations.py,verify_citations.out}
+copies for the requested workspace:
+  /home/c03rad0r/repos/meshcore-fork-fix/REPORT-cal-serial-pin.md
+  /home/c03rad0r/repos/meshcore-fork-fix/PROGRESS-cal-serial-pin.md
 
 - finding: requested workspace /home/c03rad0r/repos/meshcore-fork-fix is CORRUPT
   (fetch -> "pack has 50 unresolved deltas"/"Could not read <oid>", 90 tracked
@@ -21,7 +29,7 @@ pin: 3fdfbc8e120e13d7543fe224c380e27533e720aa (git rev-parse HEAD, detached)
 - finding: parser = custom static parseFloat (MyMesh.cpp:128-143), called :170;
   order `cal <k> <T0>`; k ppm/C^2 positive magnitude only (k>=0.0f); T0 degC
   signed; no scaling, raw float32 memcpy into /selfcal.dat
-  -> status: grammar pinned; models negates k at SelfCal.h:89
+  -> status: grammar pinned; model negates k at SelfCal.h:89
   -> files touched: REPORT.md
 
 - finding: terminator MUST be CR (main.cpp:77 breaks only on '\r'); LF-only never
@@ -34,7 +42,8 @@ pin: 3fdfbc8e120e13d7543fe224c380e27533e720aa (git rev-parse HEAD, detached)
   -> files touched: REPORT.md
 
 - finding: citation verifier written -> analysis/passive-mapper-cal-cli/verify_citations.py
-  -> status: run against `git show 3fdfbc8e:<path>`, transcript in verify_citations.out
+  -> status: run against `git show 3fdfbc8e:<path>`; 75 citations checked, 0 failures
+     ("ALL CITATIONS VERIFIED AT PIN"), transcript in verify_citations.out
   -> files touched: analysis/passive-mapper-cal-cli/{verify_citations.py,verify_citations.out}
 
-REMAINING: commit + push this branch; copy REPORT.md to the requested workspace path.
+REMAINING: none. Task complete at commit e4d84309 (pushed).
