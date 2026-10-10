@@ -89,11 +89,21 @@ def main():
     # source titles/URLs are citations by definition (the source S2 is literally
     # titled "Bulkhead Jamb Nut Torque Recommendations"); §R is still scanned for
     # the presence of a number per source in check 3 above.
+    #
+    # Patterns are word-boundary anchored on purpose. A bare substring scan
+    # false-positives on legitimate analysis prose: "contraction" contains
+    # 'action', "shoulder" contains 'should', and "the register's scale is fixed
+    # elsewhere" is descriptive, not corrective. Those three were observed
+    # against this entry, hence regexes rather than `in` tests.
     print("\n== 5. mitigation / corrective-action lexicon (must be empty) ==")
-    lex = ["mitigat", "corrective", "recommend", "remediat", "should be", "must be",
-           "shall be", "redesign", "design change", "lock washer", "threadlock",
-           "loctite", "action item", "best practice", "to prevent", "in order to avoid",
-           "add a ", "increase the torque", "specify a", "improve", "solution", "fix "]
+    lex = [r"\bmitigat\w*", r"\bcorrective\b", r"\brecommend\w*", r"\bremedi\w*",
+           r"\bremedy\b", r"\bshould\b", r"\bmust\b", r"\bshall\b", r"\bredesign\b",
+           r"\bdesign change\w*", r"\block ?washer\w*", r"\bthreadlock\w*",
+           r"\bloctite\b", r"\baction items?\b", r"\bbest practice\w*",
+           r"\bto prevent\b", r"\bin order to avoid\b", r"\bimprove\w*",
+           r"\bsolution\b", r"\bfix (it|this|that|the|by)\b", r"\bfixing the\b",
+           r"\badd a\b", r"\bincrease the torque\b", r"\bspecify a\b", r"\bcounters?measure\w*",
+           r"\bgoing forward\b", r"\bnext steps?\b", r"\badvise\w*"]
     exempt_marker = "no mitigation, no design change, no corrective action"
     ref_start = low.find("## §r references")
     hits = []
@@ -105,11 +115,11 @@ def main():
         if exempt_marker in l:
             skipped += 1
             continue
-        for tok in lex:
-            if tok in l:
-                hits.append((tok, lineno, line.strip()[:110]))
-    for tok, line, ctx in hits:
-        print("   HIT  '%s'  L%d  %s" % (tok, line, ctx))
+        for pat in lex:
+            if re.search(pat, l):
+                hits.append((pat, lineno, line.strip()[:110]))
+    for pat, line, ctx in hits:
+        print("   HIT  %s  L%d  %s" % (pat, line, ctx))
     print("   exempt lines skipped: %d (negated scope sentence); reference list excluded" % skipped)
     check("zero mitigation vocabulary in entry body", not hits, "%d hits" % len(hits))
 
