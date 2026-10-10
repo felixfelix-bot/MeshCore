@@ -34,8 +34,15 @@ Format: finding -> status -> files touched
    controller/software admin = UNKNOWN (no controller exists); maintenance approver =
    felix (orchestrator) per FLASH-QUEUE.md (HIGH for HW access, MEDIUM for chamber maintenance);
    ambiguity = ABSENT DATA, not split ownership.
-9. Commit + push -> see below
-10. Post kanban comment on t_c1c07af9 -> see below
+9. Commit -> DONE -> REPORT.md, PROGRESS.md, raw/evidence.txt
+   finding: commit b264269 on worker-heavy/t_c1c07af9 (base c8eb3c8).
+10. Push -> DONE (VERIFIED)
+   finding: pushed to bot fork `https://github.com/felixfelix-bot/MeshCore.git`;
+   `git ls-remote bot worker-heavy/t_c1c07af9` == b2642698fe33889314461bbd03e733af8dec381d
+   == local HEAD. origin (c03rad0r/MeshCore) NOT used (felixfelix-bot token has no write there).
+11. Post kanban deliverable comment -> DONE (VERIFIED)
+   finding: comment id 7913 posted on t_c1c07af9 (meshcore board) at 2026-10-10 17:31:29 local,
+   5065 bytes, author worker-heavy. Read back from kanban.db.
 
 ## Unverified / weak links (carry forward)
 - ~/reports/bench-owner-runbooks-onboarding-booking-t_93217530-2026-10-01.md,

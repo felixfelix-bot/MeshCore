@@ -206,6 +206,13 @@ reproducible via §4.
 
 ## 7. Publication record
 
-- Artifacts: `REPORT.md`, `PROGRESS.md`, `raw/` (this worktree).
+- Artifacts: `REPORT.md`, `PROGRESS.md`, `raw/evidence.txt` (this worktree).
 - Branch: `worker-heavy/t_c1c07af9`.
-- Push target and commit SHA: recorded in `PROGRESS.md` after the push (see final entries).
+- **Commit:** `b264269` (base `c8eb3c8`).
+- **Push (VERIFIED):** `https://github.com/felixfelix-bot/MeshCore.git` — the bot-owned fork.
+  `git ls-remote bot worker-heavy/t_c1c07af9` returned `b2642698fe33889314461bbd03e733af8dec381d`
+  == local HEAD. `origin` (`c03rad0r/MeshCore`) was not used: the only GitHub credential on this
+  host is `felixfelix-bot`, which has no write to the `c03rad0r/*` namespace.
+- **Kanban comment (VERIFIED):** comment id **7913** posted on `t_c1c07af9` (meshcore board)
+  2026-10-10 17:31:29 local, 5065 bytes, author `worker-heavy`; read back from
+  `~/.hermes/kanban/boards/meshcore/kanban.db`.
