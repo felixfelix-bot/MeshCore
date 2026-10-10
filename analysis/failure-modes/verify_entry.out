@@ -1,0 +1,107 @@
+== 1. four labelled attributes ==
+PASS attribute (a) MECHANISM
+PASS attribute (b) LIKELIHOOD
+PASS attribute (c) REVERSIBILITY
+PASS attribute (d) CONSEQUENCE CLASS
+
+== 2. template fields ==
+PASS field **ID**
+PASS field **Title**
+PASS field **(a) Mechanism**
+PASS field **(b) Likelihood −20 °C**
+PASS field **(b) Likelihood −40 °C**
+PASS field **(c) Reversibility**
+PASS field **(d) Consequence class**
+PASS field **References**
+
+== 3. cited sources with numbers ==
+PASS >= 2 distinct sources
+PASS source S1 carries a number
+PASS source S2 carries a number
+PASS source S3 carries a number
+PASS source S4 carries a number
+PASS source S5 carries a number
+PASS source S6 carries a number
+PASS source S7 carries a number
+   distinct tags cited inline: ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S<n>', 'S_in-repo']
+PASS >= 2 distinct tags cited inline
+
+== 4. quoted numbers reproduce in the calculator output ==
+PASS number 17.3 in entry
+PASS number 17.3 in transcript
+PASS number 16.0 in entry
+PASS number 16.0 in transcript
+PASS number 14.4 in entry
+PASS number 14.4 in transcript
+PASS number 9.9 in entry
+PASS number 9.9 in transcript
+PASS number 18 - 19 in entry
+PASS number 18 - 19 in transcript
+PASS number 23 in entry
+PASS number 23.0 in transcript
+PASS number 21 - 24 in entry
+PASS number 21 - 24 in transcript
+PASS number 24 in entry
+PASS number 24.0 in transcript
+PASS number 112 - 135 in entry
+PASS number 112 - 135 in transcript
+PASS number 8.1 in entry
+PASS number 8.1 in transcript
+PASS number 1068 in entry
+PASS number 1068 in transcript
+PASS number 1334 in entry
+PASS number 1334 in transcript
+PASS number 712 in entry
+PASS number 712 in transcript
+PASS number 890 in entry
+PASS number 890 in transcript
+PASS number 392 in entry
+PASS number 392 in transcript
+PASS number 589 in entry
+PASS number 589 in transcript
+PASS number 461 in entry
+PASS number 461 in transcript
+PASS number 692 in entry
+PASS number 692 in transcript
+PASS number 255 in entry
+PASS number 255 in transcript
+PASS number 382 in entry
+PASS number 382 in transcript
+PASS number 195 in entry
+PASS number 195 in transcript
+PASS number 292 in entry
+PASS number 292 in transcript
+PASS number 0.30 in entry
+PASS number 0.30 in transcript
+PASS number 0.46 in entry
+PASS number 0.456 in transcript
+PASS number 0.68 in entry
+PASS number 0.684 in transcript
+PASS number 49 in entry
+PASS number 49.0 in transcript
+PASS number 546 in entry
+PASS number 545.9 in transcript
+PASS number 764 in entry
+PASS number 764.2 in transcript
+PASS number 2.7 in entry
+PASS number 2.7 in transcript
+PASS number 0.15 in entry
+PASS number 0.152 in transcript
+PASS number 0.23 in entry
+PASS number 0.228 in transcript
+PASS number 1.09 in entry
+PASS number 1.086 in transcript
+PASS number 228 in entry
+PASS number 228 in transcript
+PASS number 342 in entry
+PASS number 342 in transcript
+PASS number 117.7 in entry
+PASS number 117.7 in transcript
+
+== 5. mitigation / corrective-action lexicon (must be empty) ==
+   exempt lines skipped: 1 (negated scope sentence); reference list excluded
+PASS zero mitigation vocabulary in entry body
+
+== verdict ==
+ALL CHECKS PASS — one structured entry, attributes (a)-(d) present,
+>= 2 numbered sources, zero mitigation content.
