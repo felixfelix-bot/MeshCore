@@ -157,7 +157,51 @@ reading. That is the entire remaining cost of this card.
 
 ---
 
-## 6. Ship record — commits and push verification
+## 6. Verification — fresh run (ad-hoc + canonical suite)
+
+Re-run on the final tree. Two layers, and they are different kinds of evidence:
+
+**(a) Canonical suite** — `test_validate_setup_record.py`, the committed test file:
+
+```
+$ python3 test_validate_setup_record.py
+Ran 40 tests in 0.341s
+OK
+```
+
+**(b) Ad-hoc CLI differential** — a throwaway harness (not committed; deleted after
+the run) that drives `validate_setup_record.py` as a *subprocess* and asserts the
+observed **exit codes**, so the claims below rest on process behaviour rather than
+on reading the code. 11/11 checks, 0 failures:
+
+```
+  PASS  gate on shipped record exits BLOCKED (2)                    [exit=2]
+  PASS  BLOCKED output enumerates the unset fields                [33 named]
+  PASS  verdict line is BLOCKED
+  PASS  fully-observed record reaches COMPLETE (0)                  [exit=0]
+  PASS  COMPLETE emits the downstream constants contract
+  PASS  radius that contradicts its own chord+sagitta is INVALID (1) [exit=1]
+  PASS  rejection names the recomputation                    [92.5 ... sagitta]
+  PASS  resolution without a unit is INVALID (1)                    [exit=1]
+  PASS  rejection asks for the unit 'mm'
+  PASS  a single unset field re-blocks the record (2)               [exit=2]
+  PASS  unit-aware match: '0.01 mm' does not satisfy '1 mm'
+AD-HOC RESULT: 0 failure(s)
+```
+
+**(c) Static checks** on every changed file: `bash -n` clean on
+`probe_host_capability.sh`; `py_compile` clean on all three `.py` files;
+`setup_state.json` parses as JSON.
+
+Scope of this evidence: it proves the **gate and record contract** — that the
+record cannot be marked frozen while unmeasured, that a value without units is
+rejected, and that a radius contradicting its own raw chord+sagitta is rejected.
+It proves nothing about the physical setup, because no physical measurement was
+taken (see §3, §5).
+
+---
+
+## 7. Ship record — commits and push verification
 
 Branch `worker-base/t_e5d5eaae-coax-routing-freeze` on remote **`bot`**
 (`felixfelix-bot/MeshCore`):
@@ -181,7 +225,7 @@ in `git log` on the branch (`docs(coax-routing-freeze): task report`).
 
 ---
 
-## 7. Corrections made while cross-checking (recorded so they are not repeated)
+## 8. Corrections made while cross-checking (recorded so they are not repeated)
 
 * Modem model `EM7450` → `EM7455` — **read back from the probe evidence**, not
   recalled.
@@ -194,7 +238,7 @@ in `git log` on the branch (`docs(coax-routing-freeze): task report`).
 
 ---
 
-## 8. Hand-off
+## 9. Hand-off
 
 The record is self-contained: hand `SETUP_FREEZE_RECORD.md` plus a caliper, a
 tape measure and a thermometer to the person at the bench; §5 above is their
