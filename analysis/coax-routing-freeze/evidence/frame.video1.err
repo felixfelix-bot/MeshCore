@@ -1,0 +1,4 @@
+[video4linux2,v4l2 @ 0x5e30c00faf00] ioctl(VIDIOC_G_INPUT): Inappropriate ioctl for device
+[in#0 @ 0x5e30c00fac40] Error opening input: Inappropriate ioctl for device
+Error opening input file /dev/video1.
+Error opening input files: Inappropriate ioctl for device

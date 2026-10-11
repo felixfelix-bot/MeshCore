@@ -1,0 +1,56 @@
+host capability probe (read-only) -- 2026-10-11T02:50:46Z
+host: CobradorWave   kernel: Linux 7.0.0-38-generic
+
+=== 1. v4l2 video devices present ===
+crw-rw----+  1 root video 81, 0 Oct  8 21:16 /dev/video0
+crw-rw----+  1 root video 81, 1 Oct  8 21:16 /dev/video1
+
+=== 2. frame grabs (the host's ONLY visual channel) ===
+GRAB_OK /dev/video0 -> analysis/coax-routing-freeze/evidence/frame.video0.gray (307200 bytes, via sudo -n (mode 660 blocks uid 1001))
+{
+ "ok": true,
+ "declared_size": [
+  640,
+  480
+ ],
+ "bytes_read": 307200,
+ "bytes_expected": 307200,
+ "yavg_255": 0.21,
+ "yavg_norm": 0.0008,
+ "ymin": 0,
+ "ymax": 3,
+ "distinct_levels": 4,
+ "usable_scene": false,
+ "verdict": "frame is effectively black/flat -- sensor sees no scene"
+}
+GRAB_FAIL /dev/video1 -- no frame bytes produced (via sudo -n (mode 660 blocks uid 1001))
+  ffmpeg stderr (first 3 lines):
+    [video4linux2,v4l2 @ 0x5e30c00faf00] ioctl(VIDIOC_G_INPUT): Inappropriate ioctl for device
+    [in#0 @ 0x5e30c00fac40] Error opening input: Inappropriate ioctl for device
+    Error opening input file /dev/video1.
+
+=== 3. USB instruments (VNA / SDR / power meter / DMM) ===
+(nothing beyond enumerated peripherals)
+
+=== 4. serial ports (an RF instrument would appear here) ===
+/dev/ttyUSB0 -> ID_MODEL=Sierra_Wireless_EM7455_Qualcomm_Snapdragon_X7_LTE-A ID_VENDOR=Sierra_Wireless__Incorporated 
+/dev/ttyUSB1 -> ID_MODEL=Sierra_Wireless_EM7455_Qualcomm_Snapdragon_X7_LTE-A ID_VENDOR=Sierra_Wireless__Incorporated 
+/dev/ttyUSB2 -> ID_MODEL=Sierra_Wireless_EM7455_Qualcomm_Snapdragon_X7_LTE-A ID_VENDOR=Sierra_Wireless__Incorporated 
+
+=== 5. operator-supplied photos / measurement notes on disk ===
+(end of photo/notes search)
+
+=== 6. any physical-evidence attachment or comment fleet-wide for this cable run ===
+boards_scanned=183 attachments_seen=1238 coax/caliper_comments=2
+  board e80-bench: 1 matching comment(s)
+  board meshcore: 1 matching comment(s)
+NOTE: a comment is prose, not a measurement; no attachment anywhere carries a
+      caliper/tape/bundle-OD number for this run (see the card thread).
+
+=== 7. conclusion ===
+This host can run software. It cannot route, tie, caliper, tape-measure,
+thermally characterise, or label a physical cable run, and it has no
+instrument to read one. Every physical field in the setup record therefore
+stays unfilled rather than guessed.
+
+probe complete -- 2026-10-11T02:50:46Z
