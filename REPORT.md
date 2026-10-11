@@ -202,3 +202,24 @@ checklist. When step 13 returns `COMPLETE (0)`, the emitted
 `frozen_constants.json` becomes the single source of uncertainty and cable
 identity for `t_7a16e421` (per-cable OD), `t_54865987` (bundle OD + slack/bend),
 `t_2a16c491` (characterisation) and `t_48e048a1` (port fit).
+
+### Escalation — for the manager or a dispatched card worker
+
+This session is **not** a dispatched kanban worker (no `HERMES_KANBAN_TASK`, and
+no `kanban_block`/`kanban_comment` tools), so it cannot itself move the card to
+the human-gate state. A session that has those tools should run:
+
+```
+kanban_block(kind="capability",
+             reason="human-gate: route/tie the coax bundle, then read caliper + tape "
+                    "resolutions, bench conditions and cable IDs — see "
+                    "analysis/coax-routing-freeze/SETUP_FREEZE_RECORD.md")
+kanban_comment(<card t_e5d5eaae>, <raw gate output: VERDICT: BLOCKED (2) + the 33 unset fields>)
+```
+
+Do **not** create the `human-gate` shadow card: per the `request-human-action`
+skill's own verified pitfall (2026-10-02) that board is archived on this host
+(`boards/_archived/human-gate-*`), so the resolver has no DB to read and the
+shadow would never be seen. The blocked-capability card is the surface that
+appears in the manager's blocked sweeps.
+
