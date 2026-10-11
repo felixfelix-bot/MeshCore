@@ -1,0 +1,88 @@
+{
+ "record_id": "coax-setup-freeze-t_e5d5eaae",
+ "task": "t_e5d5eaae",
+ "physical_work_performed_by_agent": false,
+
+ "_readme": [
+  "Machine-readable half of the frozen setup record. Every value marked",
+  "<<UNSET>> is a PHYSICAL OBSERVATION nobody has made yet. Fill a field only",
+  "from an actual observation at the bench; never estimate it.",
+  "Measured values are strings that CARRY their unit, because the acceptance",
+  "criterion is 'stated as a number with units' - '0.02 mm', not '0.02'.",
+  "The two derived values (tape_pitch.derived_pitch_mm and",
+  "chamber_wall_segment.bend.derived_radius_mm) are computed from the raw",
+  "numbers beside them; validate_setup_record.py recomputes both and rejects a",
+  "record whose derived value disagrees with its own raw measurement.",
+  "Gate: python3 validate_setup_record.py   (exit 0 COMPLETE / 1 INVALID / 2 BLOCKED)"
+ ],
+
+ "routing": {
+  "frozen": false,
+  "reference_frame": "<<UNSET>>",
+  "bundle_entry_point": "<<UNSET>>",
+  "placement_description": "<<UNSET>>",
+  "placement_steps": [],
+  "tie_points": [
+   {
+    "id": "T0",
+    "arc_from_reference_mm": "<<UNSET>>",
+    "type": "<<UNSET>>",
+    "anchors_to": "<<UNSET>>",
+    "note": "<<UNSET>>"
+   }
+  ],
+  "tape_pitch": {
+   "method": "span_over_wrap_count",
+   "wrap_count": "<<UNSET>>",
+   "span_mm": "<<UNSET>>",
+   "derived_pitch_mm": "<<UNSET>>"
+  },
+  "loom_or_jacket": {
+   "type": "<<UNSET>>",
+   "material": "<<UNSET>>",
+   "id": "<<UNSET>>",
+   "coverage_pct": "<<UNSET>>"
+  },
+  "chamber_wall_segment": {
+   "description": "<<UNSET>>",
+   "crossing": "<<UNSET>>",
+   "clearance_mm": "<<UNSET>>",
+   "bend": {
+    "method": "chord_sagitta",
+    "chord_mm": "<<UNSET>>",
+    "sagitta_mm": "<<UNSET>>",
+    "derived_radius_mm": "<<UNSET>>"
+   }
+  },
+  "routing_changed_mid_documentation": false,
+  "change_log": [],
+  "placed_by": "<<UNSET>>",
+  "placed_on": "<<UNSET>>"
+ },
+
+ "caliper": {
+  "make_model": "<<UNSET>>",
+  "resolution_mm": "<<UNSET>>"
+ },
+
+ "tape": {
+  "make_model": "<<UNSET>>",
+  "resolution_mm": "<<UNSET>>"
+ },
+
+ "bench": {
+  "ambient_temp_c": "<<UNSET>>",
+  "jacket_state": "<<UNSET>>",
+  "tension": "<<UNSET>>",
+  "notes": "<<UNSET>>"
+ },
+
+ "cable_ids": [
+  {
+   "id": "<<UNSET>>",
+   "label_state": "<<UNSET>>",
+   "applied_on_cable": false,
+   "note": "<<UNSET>>"
+  }
+ ]
+}
