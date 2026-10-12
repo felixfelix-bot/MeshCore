@@ -1,0 +1,263 @@
+# S9 kanban DB export — calibration-session cards, full verbatim audit trail
+# DB: /home/c03rad0r/.hermes/kanban/boards/meshcore/kanban.db (read-only URI)
+# generated: 2026-10-12T21:37:11Z by kanban_session_events.py (deterministic SQL, no edits)
+# line id convention: TASK_EVENTS.id (ev-N) / TASK_COMMENTS.id (cm-N) — primary keys of the DB tables
+
+===== CARD t_e1408991 [blocked] assignee=manager created_by=worker-base
+      title: Bench-calibrate passive_mapper LR2021 thermal model (freezer sweep: k, T0) + die-vs-crystal lag
+      created_at: 1789093447 (2026-09-11T02:24:07Z)  completed_at: None
+      block_kind: capability  block_recurrences: 2
+      task_events: 117 total, 28 non-heartbeat
+ev-289|t_e1408991|created|created_at=1789093447|2026-09-11T02:24:07Z|payload={"assignee": "manager", "status": "todo", "parents": ["t_80b8cdd4"], "tenant": null, "workspace_kind": "scratch", "workspace_path": null, "branch_name": null, "project_id": null, "skills": null, "goal_mode": null, "model_override": null, "provider_override": null}
+ev-292|t_e1408991|promoted|created_at=1789093481|2026-09-11T02:24:41Z|payload=
+ev-294|t_e1408991|claimed|created_at=1789097610|2026-09-11T03:33:30Z|payload={"lock": "CobradorWave:2786505", "expires": 1789098510, "run_id": 18}
+ev-295|t_e1408991|spawned|created_at=1789097643|2026-09-11T03:34:03Z|payload={"pid": 2787831}
+ev-296|t_e1408991|heartbeat|created_at=1789097708|2026-09-11T03:35:08Z|payload=
+ev-297|t_e1408991|heartbeat|created_at=1789097770|2026-09-11T03:36:10Z|payload=
+ev-298|t_e1408991|heartbeat|created_at=1789097830|2026-09-11T03:37:10Z|payload=
+ev-299|t_e1408991|heartbeat|created_at=1789097890|2026-09-11T03:38:10Z|payload=
+ev-300|t_e1408991|heartbeat|created_at=1789097950|2026-09-11T03:39:10Z|payload=
+ev-301|t_e1408991|heartbeat|created_at=1789098011|2026-09-11T03:40:11Z|payload=
+ev-302|t_e1408991|heartbeat|created_at=1789098071|2026-09-11T03:41:11Z|payload=
+ev-303|t_e1408991|heartbeat|created_at=1789098131|2026-09-11T03:42:11Z|payload=
+ev-304|t_e1408991|heartbeat|created_at=1789098197|2026-09-11T03:43:17Z|payload=
+ev-305|t_e1408991|heartbeat|created_at=1789098265|2026-09-11T03:44:25Z|payload=
+ev-306|t_e1408991|heartbeat|created_at=1789098326|2026-09-11T03:45:26Z|payload=
+ev-307|t_e1408991|heartbeat|created_at=1789098402|2026-09-11T03:46:42Z|payload=
+ev-308|t_e1408991|heartbeat|created_at=1789098463|2026-09-11T03:47:43Z|payload=
+ev-309|t_e1408991|heartbeat|created_at=1789098523|2026-09-11T03:48:43Z|payload=
+ev-310|t_e1408991|heartbeat|created_at=1789098608|2026-09-11T03:50:08Z|payload=
+ev-311|t_e1408991|heartbeat|created_at=1789098675|2026-09-11T03:51:15Z|payload=
+ev-312|t_e1408991|heartbeat|created_at=1789098751|2026-09-11T03:52:31Z|payload=
+ev-313|t_e1408991|heartbeat|created_at=1789098813|2026-09-11T03:53:33Z|payload=
+ev-314|t_e1408991|heartbeat|created_at=1789098879|2026-09-11T03:54:39Z|payload=
+ev-315|t_e1408991|heartbeat|created_at=1789098967|2026-09-11T03:56:07Z|payload=
+ev-316|t_e1408991|heartbeat|created_at=1789099041|2026-09-11T03:57:21Z|payload=
+ev-317|t_e1408991|heartbeat|created_at=1789099115|2026-09-11T03:58:35Z|payload=
+ev-318|t_e1408991|heartbeat|created_at=1789099176|2026-09-11T03:59:36Z|payload=
+ev-319|t_e1408991|heartbeat|created_at=1789099238|2026-09-11T04:00:38Z|payload=
+ev-320|t_e1408991|heartbeat|created_at=1789099297|2026-09-11T04:01:37Z|payload=
+ev-321|t_e1408991|heartbeat|created_at=1789099360|2026-09-11T04:02:40Z|payload=
+ev-322|t_e1408991|heartbeat|created_at=1789099422|2026-09-11T04:03:42Z|payload=
+ev-323|t_e1408991|heartbeat|created_at=1789099482|2026-09-11T04:04:42Z|payload=
+ev-324|t_e1408991|heartbeat|created_at=1789099542|2026-09-11T04:05:42Z|payload=
+ev-325|t_e1408991|heartbeat|created_at=1789099602|2026-09-11T04:06:42Z|payload=
+ev-326|t_e1408991|heartbeat|created_at=1789099662|2026-09-11T04:07:42Z|payload=
+ev-327|t_e1408991|heartbeat|created_at=1789099724|2026-09-11T04:08:44Z|payload=
+ev-328|t_e1408991|heartbeat|created_at=1789099784|2026-09-11T04:09:44Z|payload=
+ev-329|t_e1408991|heartbeat|created_at=1789099845|2026-09-11T04:10:45Z|payload=
+ev-330|t_e1408991|timed_out|created_at=1789099881|2026-09-11T04:11:21Z|payload={"error": "Iteration budget exhausted (50/50) — task could not complete within the allowed iterations", "failures": 1, "retry_status": "ready"}
+ev-331|t_e1408991|claimed|created_at=1789104928|2026-09-11T05:35:28Z|payload={"lock": "CobradorWave:2998482", "expires": 1789105827, "run_id": 19}
+ev-332|t_e1408991|spawned|created_at=1789104979|2026-09-11T05:36:19Z|payload={"pid": 3000698}
+ev-333|t_e1408991|heartbeat|created_at=1789105058|2026-09-11T05:37:38Z|payload=
+ev-334|t_e1408991|heartbeat|created_at=1789105119|2026-09-11T05:38:39Z|payload=
+ev-335|t_e1408991|heartbeat|created_at=1789105203|2026-09-11T05:40:03Z|payload=
+ev-336|t_e1408991|heartbeat|created_at=1789105263|2026-09-11T05:41:03Z|payload=
+ev-337|t_e1408991|heartbeat|created_at=1789105323|2026-09-11T05:42:03Z|payload=
+ev-338|t_e1408991|heartbeat|created_at=1789105384|2026-09-11T05:43:04Z|payload=
+ev-339|t_e1408991|heartbeat|created_at=1789105448|2026-09-11T05:44:08Z|payload=
+ev-340|t_e1408991|heartbeat|created_at=1789105509|2026-09-11T05:45:09Z|payload=
+ev-341|t_e1408991|heartbeat|created_at=1789105578|2026-09-11T05:46:18Z|payload=
+ev-342|t_e1408991|heartbeat|created_at=1789105638|2026-09-11T05:47:18Z|payload=
+ev-343|t_e1408991|heartbeat|created_at=1789105698|2026-09-11T05:48:18Z|payload=
+ev-344|t_e1408991|heartbeat|created_at=1789105758|2026-09-11T05:49:18Z|payload=
+ev-345|t_e1408991|heartbeat|created_at=1789105819|2026-09-11T05:50:19Z|payload=
+ev-346|t_e1408991|heartbeat|created_at=1789105882|2026-09-11T05:51:22Z|payload=
+ev-347|t_e1408991|heartbeat|created_at=1789105942|2026-09-11T05:52:22Z|payload=
+ev-348|t_e1408991|heartbeat|created_at=1789106002|2026-09-11T05:53:22Z|payload=
+ev-349|t_e1408991|gave_up|created_at=1789106061|2026-09-11T05:54:21Z|payload={"failures": 2, "effective_limit": 2, "limit_source": "dispatcher", "error": "Iteration budget exhausted (50/50) — task could not complete within the allowed iterations", "trigger_outcome": "timed_out", "retry_status": "ready", "budget_used": 50, "budget_max": 50}
+ev-350|t_e1408991|commented|created_at=1789107045|2026-09-11T06:10:45Z|payload={"author": "manager", "len": 90}
+ev-351|t_e1408991|unblocked|created_at=1789107045|2026-09-11T06:10:45Z|payload=
+ev-352|t_e1408991|claimed|created_at=1789108357|2026-09-11T06:32:37Z|payload={"lock": "CobradorWave:3071264", "expires": 1789109257, "run_id": 20}
+ev-353|t_e1408991|spawned|created_at=1789108368|2026-09-11T06:32:48Z|payload={"pid": 3071666}
+ev-354|t_e1408991|heartbeat|created_at=1789108394|2026-09-11T06:33:14Z|payload=
+ev-355|t_e1408991|heartbeat|created_at=1789108457|2026-09-11T06:34:17Z|payload=
+ev-356|t_e1408991|heartbeat|created_at=1789108529|2026-09-11T06:35:29Z|payload=
+ev-357|t_e1408991|heartbeat|created_at=1789108597|2026-09-11T06:36:37Z|payload=
+ev-358|t_e1408991|heartbeat|created_at=1789108657|2026-09-11T06:37:37Z|payload=
+ev-359|t_e1408991|heartbeat|created_at=1789108726|2026-09-11T06:38:46Z|payload=
+ev-360|t_e1408991|heartbeat|created_at=1789108801|2026-09-11T06:40:01Z|payload=
+ev-361|t_e1408991|heartbeat|created_at=1789108878|2026-09-11T06:41:18Z|payload=
+ev-362|t_e1408991|heartbeat|created_at=1789108942|2026-09-11T06:42:22Z|payload=
+ev-363|t_e1408991|heartbeat|created_at=1789109007|2026-09-11T06:43:27Z|payload=
+ev-364|t_e1408991|heartbeat|created_at=1789109075|2026-09-11T06:44:35Z|payload=
+ev-365|t_e1408991|heartbeat|created_at=1789109140|2026-09-11T06:45:40Z|payload=
+ev-366|t_e1408991|heartbeat|created_at=1789109200|2026-09-11T06:46:40Z|payload=
+ev-367|t_e1408991|heartbeat|created_at=1789109284|2026-09-11T06:48:04Z|payload=
+ev-368|t_e1408991|commented|created_at=1789109308|2026-09-11T06:48:28Z|payload={"author": "manager", "len": 2285}
+ev-369|t_e1408991|blocked|created_at=1789109308|2026-09-11T06:48:28Z|payload={"reason": "human-gate: run the LR2021 thermal bench sweep — no agent host has a NiceRF LR2021 module attached and a freezer hold is physical. Kit is landed+tested+pushed (feat/passive-mapper @ d7ae93fa); Felix runs soak/edgescan/fit/ramp+hyst per /home/c03rad0r/t_e1408991-bench-runbook.md, persists \\`cal <k> <T0>\\`, records the row in bench/RESULTS.md and pastes the fit+hyst output back on this card. Then the card can resume to verify and land the record.", "kind": "capability", "recurrences": 1, "source_status": "ready"}
+ev-373|t_e1408991|commented|created_at=1789109969|2026-09-11T06:59:29Z|payload={"author": "manager", "len": 99}
+ev-374|t_e1408991|unblocked|created_at=1789109969|2026-09-11T06:59:29Z|payload=
+ev-375|t_e1408991|commented|created_at=1789109974|2026-09-11T06:59:34Z|payload={"author": "manager", "len": 674}
+ev-376|t_e1408991|commented|created_at=1789110011|2026-09-11T07:00:11Z|payload={"author": "manager", "len": 636}
+ev-377|t_e1408991|claimed|created_at=1789110041|2026-09-11T07:00:41Z|payload={"lock": "CobradorWave:3117758", "expires": 1789110941, "run_id": 21}
+ev-378|t_e1408991|commented|created_at=1789110042|2026-09-11T07:00:42Z|payload={"author": "manager", "len": 676}
+ev-379|t_e1408991|blocked|created_at=1789110169|2026-09-11T07:02:49Z|payload={"reason": "operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak/edgescan/fit/ramp+hyst). No agent host has an LR2021 module attached and a freezer hold is physical. Kit is landed, tested and pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); copy-paste runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>` on the module, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output back on this card so the run can resume to verify and land the record.", "kind": "capability", "recurrences": 1, "source_status": "ready"}
+ev-385|t_e1408991|commented|created_at=1789112131|2026-09-11T07:35:31Z|payload={"author": "manager", "len": 90}
+ev-386|t_e1408991|unblocked|created_at=1789112131|2026-09-11T07:35:31Z|payload=
+ev-416|t_e1408991|claimed|created_at=1789115625|2026-09-11T08:33:45Z|payload={"lock": "CobradorWave:3254960", "expires": 1789116525, "run_id": 23}
+ev-417|t_e1408991|spawned|created_at=1789115640|2026-09-11T08:34:00Z|payload={"pid": 3255485}
+ev-418|t_e1408991|heartbeat|created_at=1789115672|2026-09-11T08:34:32Z|payload=
+ev-419|t_e1408991|heartbeat|created_at=1789115736|2026-09-11T08:35:36Z|payload=
+ev-420|t_e1408991|heartbeat|created_at=1789115802|2026-09-11T08:36:42Z|payload=
+ev-421|t_e1408991|heartbeat|created_at=1789115862|2026-09-11T08:37:42Z|payload=
+ev-422|t_e1408991|heartbeat|created_at=1789115922|2026-09-11T08:38:42Z|payload=
+ev-423|t_e1408991|heartbeat|created_at=1789115983|2026-09-11T08:39:43Z|payload=
+ev-424|t_e1408991|heartbeat|created_at=1789116042|2026-09-11T08:40:42Z|payload=
+ev-425|t_e1408991|heartbeat|created_at=1789116122|2026-09-11T08:42:02Z|payload=
+ev-426|t_e1408991|heartbeat|created_at=1789116185|2026-09-11T08:43:05Z|payload=
+ev-427|t_e1408991|heartbeat|created_at=1789116245|2026-09-11T08:44:05Z|payload=
+ev-428|t_e1408991|heartbeat|created_at=1789116305|2026-09-11T08:45:05Z|payload=
+ev-429|t_e1408991|heartbeat|created_at=1789116368|2026-09-11T08:46:08Z|payload=
+ev-430|t_e1408991|heartbeat|created_at=1789116435|2026-09-11T08:47:15Z|payload=
+ev-431|t_e1408991|heartbeat|created_at=1789116524|2026-09-11T08:48:44Z|payload=
+ev-432|t_e1408991|heartbeat|created_at=1789116584|2026-09-11T08:49:44Z|payload=
+ev-433|t_e1408991|heartbeat|created_at=1789116645|2026-09-11T08:50:45Z|payload=
+ev-434|t_e1408991|heartbeat|created_at=1789116705|2026-09-11T08:51:45Z|payload=
+ev-435|t_e1408991|heartbeat|created_at=1789116766|2026-09-11T08:52:46Z|payload=
+ev-436|t_e1408991|heartbeat|created_at=1789116827|2026-09-11T08:53:47Z|payload=
+ev-437|t_e1408991|heartbeat|created_at=1789116888|2026-09-11T08:54:48Z|payload=
+ev-438|t_e1408991|heartbeat|created_at=1789116948|2026-09-11T08:55:48Z|payload=
+ev-439|t_e1408991|heartbeat|created_at=1789117010|2026-09-11T08:56:50Z|payload=
+ev-440|t_e1408991|heartbeat|created_at=1789117071|2026-09-11T08:57:51Z|payload=
+ev-441|t_e1408991|heartbeat|created_at=1789117131|2026-09-11T08:58:51Z|payload=
+ev-442|t_e1408991|heartbeat|created_at=1789117194|2026-09-11T08:59:54Z|payload=
+ev-443|t_e1408991|commented|created_at=1789117222|2026-09-11T09:00:22Z|payload={"author": "manager", "len": 2477}
+ev-444|t_e1408991|block_loop_detected|created_at=1789117230|2026-09-11T09:00:30Z|payload={"reason": "operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak -> edgescan -> fit -> ramp+hyst). No agent host has an LR2021 module attached and a freezer/temperature hold is physical. Kit is landed, tested and pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); copy-paste runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>` on the module, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output back on this card so it can resume to verify and land the record. (The auto-unblock flap is fixed: hermes-manager-scripts b55cfcb — provider-exhaustion-recovery no longer unblocks operator-gated cards, so the card will stay parked instead of burning a worker run per cycle.)", "kind": "capability", "recurrences": 2, "limit": 2, "source_status": "ready"}
+ev-453|t_e1408991|decomposed|created_at=1789117712|2026-09-11T09:08:32Z|payload={"child_ids": ["t_a132b6cd", "t_20f98f15", "t_380a431f", "t_bef90304"], "root_assignee": "manager"}
+      task_comments: 10
+cm-51|t_e1408991|author=manager|created_at=1789107045|2026-09-11T06:10:45Z|body=UNBLOCK: circuit-breaker reset — provider-exhaustion-recovery: outage cleared, re-dispatch
+cm-52|t_e1408991|author=manager|created_at=1789109308|2026-09-11T06:48:28Z|body=## Run 20 — agent-side scope is DONE; the measurement is operator bench work\n\n**Decision (the card asked for it): bench work for Felix, not a worker with the board attached.**\n\nEvidence re-probed this run on CobradorWave: `/dev/ttyACM0` = Raspberry Pi Debugprobe (CMSIS-DAP SWD), `/dev/ttyUSB0-2` = Sierra EM7455 LTE modem, `/dev/ttyUSB3-4` = CH340 USB-serial (balloon bridges). Nothing enumerates as a NiceRF LR2021 / MeshCore DUT, and a temperature hold is physical either way.\n\n### State of the deliverable\n* Kit landed + pushed by the earlier runs of this card: `feat/passive-mapper` @ `d7ae93fa` (remote ref == HEAD, tree clean, 0 unpushed).\n* `bench/thermal_bench.py` (soak, edgescan, refsweep, fit, lag, ramp, hyst), `bench/calib.py`, `bench/test_calib.py`, README (protocol + sign convention), RESULTS.md (per-module table, empty row ready).\n* Verified this run: `python3 examples/passive_mapper/bench/test_calib.py` → ALL BENCH-KIT TESTS PASSED (18); `bash examples/passive_mapper/host/run_tests.sh` → ALL HOST TESTS PASSED + ALL BENCH-KIT TESTS PASSED (54 assertions).\n* End-to-end simulated pipeline recovers the injected truth: `fit` → **k=0.04174 ppm/C^2, T0=21.92 C** (truth 0.04/22.0), residual 1.08 ppm rms; blob `19f52a3d295caf4100000000435301`; `hyst` → **tau ≈ 42 s** (truth 45 s). So the parsers/fit/blob/lag estimators are proven — only the RawSerial termios path is untested until the first real run.\n\n### What Felix has to do (one session, ~2-3 h)\nFull copy-paste runbook: `/home/c03rad0r/t_e1408991-bench-runbook.md` (also the "Protocol" section of `examples/passive_mapper/bench/README.md`).\n1. `soak` the module at `+40,+25,0,-20,-40,-55 C` (ref TX **warm**, SF8/BW62.5) → soak.csv\n2. `edgescan` at the same points, module still cold → measured.csv\n3. `fit` → prints the exact `cal <k> <T0>` line + blob; persist on the module, verify `calshow`/`status`\n4. `ramp` up + down, `hyst` → tau (tunes `SelfCal::TEMP_TC_SECS`, currently 10 s)\n5. add the row to `bench/RESULTS.md` (module id, k, T0, span, residual, tau, blob hex) and paste the `fit` + `hyst` output back onto this card.\n\nNo data can be invented here: an uncalibrated module keeps k=0 and just pays 2x noise bandwidth via the BW125 fallback, which is why the card stays blocked rather than completed.
+cm-53|t_e1408991|author=manager|created_at=1789109969|2026-09-11T06:59:29Z|body=UNBLOCK: Re-blocking with the correct operator-action prefix (human-gate board retired 2026-09-09).
+cm-54|t_e1408991|author=manager|created_at=1789109974|2026-09-11T06:59:34Z|body=BLOCKED: operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak/edgescan/fit/ramp+hyst). No agent host has an LR2021 module attached and a freezer hold is physical. Kit is landed, tested and pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); copy-paste runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>` on the module, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output back on this card so the run can resume to verify and land the record. (Re-blocked 2026-09-11: the first reason used the retired human-gate: prefix, which the daily digest ignores.)
+cm-55|t_e1408991|author=manager|created_at=1789110011|2026-09-11T07:00:11Z|body=BLOCKED: operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak/edgescan/fit/ramp+hyst). No agent host has an LR2021 module attached and a freezer hold is physical. Kit is landed+tested+pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>`, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output on this card so it can resume to verify and land the record. (Re-blocked 2026-09-11: the earlier reason used the retired human-gate: prefix, which the daily digest ignores.)
+cm-56|t_e1408991|author=manager|created_at=1789110042|2026-09-11T07:00:42Z|body=BLOCKED: operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak/edgescan/fit/ramp+hyst). No agent host has an LR2021 module attached and a freezer hold is physical. Kit is landed, tested and pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); copy-paste runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>` on the module, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output back on this card so the run can resume to verify and land the record. (Re-blocked 2026-09-11: the earlier reason used the retired human-gate: prefix, which the daily digest ignores.)
+cm-58|t_e1408991|author=manager|created_at=1789112131|2026-09-11T07:35:31Z|body=UNBLOCK: circuit-breaker reset — provider-exhaustion-recovery: outage cleared, re-dispatch
+cm-59|t_e1408991|author=manager|created_at=1789117222|2026-09-11T09:00:22Z|body=## Run 23 — found and fixed WHY this card kept flapping (unblocker bug), then re-blocked for the bench measurement\n\nThe agent-side deliverable was already done in run 20; what this run adds is the\nroot cause of the 4 re-dispatch cycles, because every one of them burned a full\n50-iteration worker run on work no agent can perform.\n\n### Root cause: `provider-exhaustion-recovery.py` unblocked this card every tick\nThat cron is supposed to skip human/operator-gated cards. Its guard read the\ntask **title**:\n\n```python\nif any(h in title.lower() for h in NON_RECOVERABLE_BLOCK_HINTS):  # titles never contain these\n    continue\n```\n\nso the guard never fired. At 13:05 the card's last run was `reclaimed`\n(crash-family) and the 6h window matched → auto-unblock → re-dispatch → burn 50\niterations → re-block. Repeat.\n\n### Fix (pushed)\n`felixfelix-bot/hermes-manager-scripts` @ **b55cfcb** — classify on the block\n**reason + `tasks.block_kind`** via the shared `kanban_blocked_lib.classify`\n(the same classifier behind daily-liaison-digest / capability-block-alert), with\na local marker fallback. Genuine D3 blocks stay recoverable (`circuit-breaker\n(D3): …`, `block_kind` NULL) — verified, `host-driven-bench/t_561d8a41` is still\na candidate.\n\n* `tests/test_provider_exhaustion_recovery.py` — 11 cases, incl. the exact\n  t_e1408991 shape (`operator-action` reason + `kind=capability` + last run\n  `reclaimed`). RED first (8 failures), then GREEN.\n* Deterministic replay on a **copy** of the real meshcore board: with the run\n  history restored to the 13:05 state, old logic → candidate, new logic → `[]`.\n* Skill `kanban-stuck-task-triage` @ **59b8247** now documents the flap-loop\n  diagnosis path.\n\n### Remaining work — operator bench session (unchanged)\nRunbook: `/home/c03rad0r/t_e1408991-bench-runbook.md`. Run `soak` → `edgescan`\n→ `fit` → `cal <k> <T0>` → `ramp` + `hyst`, paste `fit`/`hyst` output here and\nthe row into `examples/passive_mapper/bench/RESULTS.md`. Kit is pushed on\n`feat/passive-mapper` @ `d7ae93fa` (0 unpushed, clean tree).\n\n### Unrelated observation (not touched)\n`kanban_blocked_lib.py` + `tests/test_kanban_blocked_lib.py` are **untracked**\nWIP from another session and `test_triage_card_is_surfaced` fails there (a\ntriage card whose reason carries a human marker buckets as NEEDS-FELIX before\nthe `status == 'triage'` branch). It still *surfaces*, so it is a mis-bucket, not\na silent park — flagging rather than editing someone else's uncommitted file.
+cm-60|t_e1408991|author=auto-decomposer|created_at=1789117712|2026-09-11T09:08:32Z|body=Decomposed into t_a132b6cd, t_20f98f15, t_380a431f, t_bef90304. Root will wake when all children complete.
+cm-7998|t_e1408991|author=fleet-writeback|created_at=1791671649|2026-10-10T22:34:09Z|body=fleet-done rc=75 verified=True (offloaded); status -> blocked
+
+===== CARD t_a132b6cd [blocked] assignee=manager created_by=auto-decomposer
+      title: Capture raw LR2021 thermal dataset: freezer dwell sweep + ramp telemetry
+      created_at: 1789117712 (2026-09-11T09:08:32Z)  completed_at: None
+      block_kind: None  block_recurrences: 3
+      task_events: 16 total, 16 non-heartbeat
+ev-445|t_a132b6cd|created|created_at=1789117712|2026-09-11T09:08:32Z|payload={"by": "auto-decomposer", "from_decompose_of": "t_e1408991"}
+ev-454|t_a132b6cd|promoted|created_at=1789117712|2026-09-11T09:08:32Z|payload=
+ev-457|t_a132b6cd|claimed|created_at=1789119248|2026-09-11T09:34:08Z|payload={"lock": "CobradorWave:3437142", "expires": 1789120148, "run_id": 25}
+ev-458|t_a132b6cd|spawned|created_at=1789119248|2026-09-11T09:34:08Z|payload={"pid": 3437545}
+ev-460|t_a132b6cd|reclaimed|created_at=1789119279|2026-09-11T09:34:39Z|payload={"manual": true, "reason": "dispatcher guard: dead worker pid", "prev_lock": "CobradorWave:3437142", "retry_status": "ready", "prev_pid": 3437545, "host_local": true, "termination_attempted": true, "terminated": true, "sigkill": false}
+ev-466|t_a132b6cd|commented|created_at=1789144868|2026-09-11T16:41:08Z|payload={"author": "manager", "len": 27}
+ev-467|t_a132b6cd|blocked|created_at=1789144868|2026-09-11T16:41:08Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 1, "source_status": "ready"}
+ev-469|t_a132b6cd|unblocked|created_at=1789147401|2026-09-11T17:23:21Z|payload=
+ev-472|t_a132b6cd|commented|created_at=1789147660|2026-09-11T17:27:40Z|payload={"author": "manager", "len": 27}
+ev-473|t_a132b6cd|block_loop_detected|created_at=1789147660|2026-09-11T17:27:40Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 2, "limit": 2, "source_status": "ready"}
+ev-474|t_a132b6cd|specified|created_at=1789148517|2026-09-11T17:41:57Z|payload={"changed_fields": ["title", "body"]}
+ev-475|t_a132b6cd|promoted|created_at=1789148517|2026-09-11T17:41:57Z|payload=
+ev-2923|t_a132b6cd|unblocked|created_at=1789309324|2026-09-13T14:22:04Z|payload=
+ev-2936|t_a132b6cd|commented|created_at=1789309671|2026-09-13T14:27:51Z|payload={"author": "manager", "len": 27}
+ev-2937|t_a132b6cd|block_loop_detected|created_at=1789309671|2026-09-13T14:27:51Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 3, "limit": 2, "source_status": "ready"}
+ev-3503|t_a132b6cd|decomposed|created_at=1789333877|2026-09-13T21:11:17Z|payload={"child_ids": ["t_f719b612", "t_0ce45dbf", "t_03259d94", "t_e77f6e2d", "t_32004e49"], "root_assignee": "manager"}
+      task_comments: 9
+cm-62|t_a132b6cd|author=manager|created_at=1789144868|2026-09-11T16:41:08Z|body=BLOCKED: fleet-offload:dq05
+cm-64|t_a132b6cd|author=manager|created_at=1789147660|2026-09-11T17:27:40Z|body=BLOCKED: fleet-offload:dq05
+cm-65|t_a132b6cd|author=auto-decomposer|created_at=1789148517|2026-09-11T17:41:57Z|body=Specified — updated title, body and promoted to todo.
+cm-69|t_a132b6cd|author=fleet-writeback|created_at=1789204939|2026-09-12T09:22:19Z|body=fleet-done rc=0 (offloaded); status -> done
+cm-2480|t_a132b6cd|author=gate-tick|created_at=1789309252|2026-09-13T14:20:52Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review (tier=code).
+cm-2493|t_a132b6cd|author=gate-tick|created_at=1789309259|2026-09-13T14:20:59Z|body=gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review. tier=code author_family=deepseek. Resolve and re-run to pass.
+cm-2512|t_a132b6cd|author=manager|created_at=1789309671|2026-09-13T14:27:51Z|body=BLOCKED: fleet-offload:dq05
+cm-3060|t_a132b6cd|author=auto-decomposer|created_at=1789333877|2026-09-13T21:11:17Z|body=Decomposed into t_f719b612, t_0ce45dbf, t_03259d94, t_e77f6e2d, t_32004e49. Root will wake when all children complete.
+cm-7838|t_a132b6cd|author=fleet-writeback|created_at=1791625090|2026-10-10T09:38:10Z|body=fleet-done rc=75 verified=True (offloaded); status -> blocked
+
+===== CARD t_20f98f15 [done] assignee=manager created_by=auto-decomposer
+      title: Fit AT-cut thermal model (k, T0) from freezer-sweep data
+      created_at: 1789117712 (2026-09-11T09:08:32Z)  completed_at: None
+      block_kind: None  block_recurrences: 3
+      task_events: 13 total, 13 non-heartbeat
+ev-446|t_20f98f15|created|created_at=1789117712|2026-09-11T09:08:32Z|payload={"by": "auto-decomposer", "from_decompose_of": "t_e1408991"}
+ev-449|t_20f98f15|linked|created_at=1789117712|2026-09-11T09:08:32Z|payload={"parent": "t_a132b6cd", "child": "t_20f98f15"}
+ev-490|t_20f98f15|promoted|created_at=1789205741|2026-09-12T09:35:41Z|payload=
+ev-496|t_20f98f15|commented|created_at=1789217555|2026-09-12T12:52:35Z|payload={"author": "manager", "len": 27}
+ev-497|t_20f98f15|blocked|created_at=1789217555|2026-09-12T12:52:35Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 1, "source_status": "ready"}
+ev-498|t_20f98f15|unblocked|created_at=1789229514|2026-09-12T16:11:54Z|payload=
+ev-515|t_20f98f15|commented|created_at=1789230512|2026-09-12T16:28:32Z|payload={"author": "manager", "len": 27}
+ev-516|t_20f98f15|block_loop_detected|created_at=1789230512|2026-09-12T16:28:32Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 2, "limit": 2, "source_status": "ready"}
+ev-532|t_20f98f15|decomposed|created_at=1789231011|2026-09-12T16:36:51Z|payload={"child_ids": ["t_3f930320", "t_bda8423b", "t_2763e650"], "root_assignee": "manager"}
+ev-690|t_20f98f15|promoted|created_at=1789242360|2026-09-12T19:46:00Z|payload=
+ev-3857|t_20f98f15|commented|created_at=1789344755|2026-09-14T00:12:35Z|payload={"author": "manager", "len": 27}
+ev-3858|t_20f98f15|block_loop_detected|created_at=1789344755|2026-09-14T00:12:35Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 3, "limit": 2, "source_status": "ready"}
+ev-3866|t_20f98f15|decomposed|created_at=1789344770|2026-09-14T00:12:50Z|payload={"child_ids": ["t_c4680711", "t_c11f2cbe", "t_cc323204"], "root_assignee": "manager"}
+      task_comments: 11
+cm-72|t_20f98f15|author=manager|created_at=1789217555|2026-09-12T12:52:35Z|body=BLOCKED: fleet-offload:dq05
+cm-89|t_20f98f15|author=manager|created_at=1789230512|2026-09-12T16:28:32Z|body=BLOCKED: fleet-offload:dq05
+cm-99|t_20f98f15|author=auto-decomposer|created_at=1789231011|2026-09-12T16:36:51Z|body=Decomposed into t_3f930320, t_bda8423b, t_2763e650. Root will wake when all children complete.
+cm-3290|t_20f98f15|author=manager|created_at=1789344755|2026-09-14T00:12:35Z|body=BLOCKED: fleet-offload:dq05
+cm-3292|t_20f98f15|author=auto-decomposer|created_at=1789344770|2026-09-14T00:12:50Z|body=Decomposed into t_c4680711, t_c11f2cbe, t_cc323204. Root will wake when all children complete.
+cm-3352|t_20f98f15|author=fleet-writeback|created_at=1789351699|2026-09-14T02:08:19Z|body=fleet-done rc=0 verified=True (offloaded); status -> done
+cm-7230|t_20f98f15|author=gate-tick|created_at=1790224602|2026-09-24T04:36:42Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7485|t_20f98f15|author=gate-tick|created_at=1791459916|2026-10-08T11:45:16Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7496|t_20f98f15|author=gate-tick|created_at=1791459940|2026-10-08T11:45:40Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7507|t_20f98f15|author=gate-tick|created_at=1791459964|2026-10-08T11:46:04Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7518|t_20f98f15|author=gate-tick|created_at=1791459974|2026-10-08T11:46:14Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+
+===== CARD t_380a431f [done] assignee=manager created_by=auto-decomposer
+      title: Characterize die-vs-crystal thermal lag from ramp logs
+      created_at: 1789117712 (2026-09-11T09:08:32Z)  completed_at: None
+      block_kind: None  block_recurrences: 3
+      task_events: 13 total, 13 non-heartbeat
+ev-447|t_380a431f|created|created_at=1789117712|2026-09-11T09:08:32Z|payload={"by": "auto-decomposer", "from_decompose_of": "t_e1408991"}
+ev-450|t_380a431f|linked|created_at=1789117712|2026-09-11T09:08:32Z|payload={"parent": "t_a132b6cd", "child": "t_380a431f"}
+ev-491|t_380a431f|promoted|created_at=1789205741|2026-09-12T09:35:41Z|payload=
+ev-494|t_380a431f|commented|created_at=1789217096|2026-09-12T12:44:56Z|payload={"author": "manager", "len": 27}
+ev-495|t_380a431f|blocked|created_at=1789217096|2026-09-12T12:44:56Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 1, "source_status": "ready"}
+ev-499|t_380a431f|unblocked|created_at=1789229516|2026-09-12T16:11:56Z|payload=
+ev-517|t_380a431f|commented|created_at=1789230513|2026-09-12T16:28:33Z|payload={"author": "manager", "len": 27}
+ev-518|t_380a431f|block_loop_detected|created_at=1789230513|2026-09-12T16:28:33Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 2, "limit": 2, "source_status": "ready"}
+ev-544|t_380a431f|decomposed|created_at=1789231168|2026-09-12T16:39:28Z|payload={"child_ids": ["t_f6f826be", "t_474e6323", "t_d48d7599"], "root_assignee": "manager"}
+ev-691|t_380a431f|promoted|created_at=1789242360|2026-09-12T19:46:00Z|payload=
+ev-3859|t_380a431f|commented|created_at=1789344756|2026-09-14T00:12:36Z|payload={"author": "manager", "len": 27}
+ev-3860|t_380a431f|block_loop_detected|created_at=1789344756|2026-09-14T00:12:36Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 3, "limit": 2, "source_status": "ready"}
+ev-3890|t_380a431f|decomposed|created_at=1789344843|2026-09-14T00:14:03Z|payload={"child_ids": ["t_00609f61", "t_36a8d8ce", "t_0ace94c6", "t_307caabf"], "root_assignee": "manager"}
+      task_comments: 11
+cm-71|t_380a431f|author=manager|created_at=1789217096|2026-09-12T12:44:56Z|body=BLOCKED: fleet-offload:dq05
+cm-90|t_380a431f|author=manager|created_at=1789230513|2026-09-12T16:28:33Z|body=BLOCKED: fleet-offload:dq05
+cm-103|t_380a431f|author=auto-decomposer|created_at=1789231168|2026-09-12T16:39:28Z|body=Decomposed into t_f6f826be, t_474e6323, t_d48d7599. Root will wake when all children complete.
+cm-3291|t_380a431f|author=manager|created_at=1789344756|2026-09-14T00:12:36Z|body=BLOCKED: fleet-offload:dq05
+cm-3295|t_380a431f|author=auto-decomposer|created_at=1789344843|2026-09-14T00:14:03Z|body=Decomposed into t_00609f61, t_36a8d8ce, t_0ace94c6, t_307caabf. Root will wake when all children complete.
+cm-3351|t_380a431f|author=fleet-writeback|created_at=1789351227|2026-09-14T02:00:27Z|body=fleet-done rc=0 verified=True (offloaded); status -> done
+cm-7231|t_380a431f|author=gate-tick|created_at=1790224602|2026-09-24T04:36:42Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7486|t_380a431f|author=gate-tick|created_at=1791459916|2026-10-08T11:45:16Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7497|t_380a431f|author=gate-tick|created_at=1791459940|2026-10-08T11:45:40Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7508|t_380a431f|author=gate-tick|created_at=1791459964|2026-10-08T11:46:04Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7519|t_380a431f|author=gate-tick|created_at=1791459974|2026-10-08T11:46:14Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+
+===== CARD t_bef90304 [done] assignee=esp32-balloon-integration-hardware-fligh created_by=auto-decomposer
+      title: Apply cal blob on module, verify, and record per-module values
+      created_at: 1789117712 (2026-09-11T09:08:32Z)  completed_at: None
+      block_kind: None  block_recurrences: 1
+      task_events: 8 total, 8 non-heartbeat
+ev-448|t_bef90304|created|created_at=1789117712|2026-09-11T09:08:32Z|payload={"by": "auto-decomposer", "from_decompose_of": "t_e1408991"}
+ev-451|t_bef90304|linked|created_at=1789117712|2026-09-11T09:08:32Z|payload={"parent": "t_20f98f15", "child": "t_bef90304"}
+ev-452|t_bef90304|linked|created_at=1789117712|2026-09-11T09:08:32Z|payload={"parent": "t_380a431f", "child": "t_bef90304"}
+ev-4098|t_bef90304|promoted|created_at=1789352219|2026-09-14T02:16:59Z|payload=
+ev-4216|t_bef90304|commented|created_at=1789354997|2026-09-14T03:03:17Z|payload={"author": "manager", "len": 27}
+ev-4217|t_bef90304|blocked|created_at=1789354997|2026-09-14T03:03:17Z|payload={"reason": "fleet-offload:dq05", "kind": null, "recurrences": 1, "source_status": "ready"}
+ev-4313|t_bef90304|unblocked|created_at=1789356908|2026-09-14T03:35:08Z|payload=
+ev-4525|t_bef90304|commented|created_at=1789358717|2026-09-14T04:05:17Z|payload={"author": "manager", "len": 27}
+      task_comments: 8
+cm-3402|t_bef90304|author=manager|created_at=1789354997|2026-09-14T03:03:17Z|body=BLOCKED: fleet-offload:dq05
+cm-3595|t_bef90304|author=fleet-writeback|created_at=1789358685|2026-09-14T04:04:45Z|body=fleet-done rc=0 verified=True (offloaded); status -> done
+cm-3596|t_bef90304|author=manager|created_at=1789358717|2026-09-14T04:05:17Z|body=BLOCKED: fleet-offload:dq05
+cm-7232|t_bef90304|author=gate-tick|created_at=1790224602|2026-09-24T04:36:42Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7487|t_bef90304|author=gate-tick|created_at=1791459916|2026-10-08T11:45:16Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7498|t_bef90304|author=gate-tick|created_at=1791459940|2026-10-08T11:45:40Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7509|t_bef90304|author=gate-tick|created_at=1791459964|2026-10-08T11:46:04Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+cm-7520|t_bef90304|author=gate-tick|created_at=1791459974|2026-10-08T11:46:14Z|body=gate-tick: advisory — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean (tier=code).
+
+===== RECONCILIATION COUNTS (source-of-truth = SQL GROUP BY on this DB)
+RECON|t_e1408991|events_total=117|comments=10|block_loop_detected=1;blocked=2;claimed=5;commented=8;created=1;decomposed=1;gave_up=1;heartbeat=89;promoted=1;spawned=4;timed_out=1;unblocked=3
+RECON|t_a132b6cd|events_total=16|comments=9|block_loop_detected=2;blocked=1;claimed=1;commented=3;created=1;decomposed=1;promoted=2;reclaimed=1;spawned=1;specified=1;unblocked=2
+RECON|t_20f98f15|events_total=13|comments=11|block_loop_detected=2;blocked=1;commented=3;created=1;decomposed=2;linked=1;promoted=2;unblocked=1
+RECON|t_380a431f|events_total=13|comments=11|block_loop_detected=2;blocked=1;commented=3;created=1;decomposed=2;linked=1;promoted=2;unblocked=1
+RECON|t_bef90304|events_total=8|comments=8|blocked=1;commented=2;created=1;linked=2;promoted=1;unblocked=1
+RECON|TOTAL|events_total=167|comments=49
