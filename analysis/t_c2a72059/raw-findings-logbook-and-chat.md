@@ -156,6 +156,41 @@ analysis/t_c2a72059/verify_upstream_empty.py   exhaustive emptiness proof (5 che
 analysis/t_c2a72059/verify_upstream_empty.out  captured output of that run
 ```
 
+### Ad-hoc verification of the proof script (not suite green)
+
+`verify_upstream_empty.py` is itself the evidence, so its discrimination was tested directly with
+a throwaway harness under `~/.cache/hermes/tmp` (tempfile path, `hermes-verify-` prefix, removed
+after the run). Synthetic board DBs carried all 11 upstream task ids; the script's `BOARD_DB` /
+`ATTACH_DIR` constants were rewritten to point at them.
+
+| Case | Input | Expected | Observed |
+|---|---|---|---|
+| A | all upstream results empty | exit 0 | exit 0 |
+| B | logbook task carries a real result | exit 1 | exit 1 |
+| C | result is a single newline | exit 0 | exit 0 |
+| D | chat task carries a real result | exit 1 | exit 1 |
+| E | NULL result | exit 0 | exit 0 |
+| F | real meshcore board, script as shipped | exit 0 | exit 0 |
+
+**Result: 6/6 PASS** — the script exits 0 when upstream is empty and 1 when genuine upstream
+output exists, so it discriminates rather than always passing.
+
+Two SQLite traps were found and fixed during this verification (both would have produced a false
+verdict on real data):
+
+1. `coalesce(result, 0)` coerces `NULL` → integer `0` → `'0'` → length 1, i.e. a **false
+   NON-EMPTY**. Fixed to `coalesce(result, '')`.
+2. bare `trim(X)` strips **space (0x20) only**, so a newline/tab result would read as
+   **NON-EMPTY**. Fixed to trim an explicit whitespace set
+   (`char(32)||char(9)||char(10)||char(13)`).
+
+Case C is the regression test for trap 2 and fails against the pre-fix script. Neither trap
+changes the conclusion for this board (all 11 results are genuinely `NULL`), but the shipped
+script is now correct for boards that carry whitespace-only results.
+
+This is **ad-hoc verification**, not a project test suite: the repo has no canonical
+test/lint/build command for a standalone analysis script.
+
 ---
 
 ## Honesty statement

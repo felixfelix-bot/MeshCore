@@ -36,13 +36,16 @@ con = sqlite3.connect("file:%s?mode=ro" % BOARD_DB, uri=True)
 cur = con.cursor()
 
 sec("1. upstream result columns must be empty (whitespace-only counts as empty)")
-# NOTE: on this board some rows carry a single newline/space in `result`; that is
-# semantically empty. Compare the STRIPPED value, and report the raw length too so
-# the distinction is visible rather than hidden.
+# Two SQLite traps this guards against:
+#   * coalesce(result, 0) coerces NULL -> integer 0 -> '0' -> length 1 (false NON-EMPTY).
+#     Use coalesce(result, '') so NULL reads as empty.
+#   * bare trim(X) strips SPACE (0x20) only, so a newline/tab result would read as
+#     NON-EMPTY. Trim an explicit whitespace set.
+WS = "char(32)||char(9)||char(10)||char(13)"
 rows = cur.execute(
     "SELECT id,status,length(coalesce(result,'')),"
-    "length(trim(coalesce(result,''))) FROM tasks WHERE id IN (%s)"
-    % ",".join("'%s'" % i for i in ALL_UPSTREAM)
+    "length(trim(coalesce(result,''), %s)) FROM tasks WHERE id IN (%s)"
+    % (WS, ",".join("'%s'" % i for i in ALL_UPSTREAM))
 ).fetchall()
 seen = {r[0] for r in rows}
 for tid in ALL_UPSTREAM:

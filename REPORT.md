@@ -69,6 +69,19 @@ character (`SELECT hex(result)` returned empty; the value prints blank) — sema
 corrected the script to compare the **stripped** value while still printing the raw length, so the
 distinction is visible rather than hidden. No upstream output exists in either revision.
 
+**Ad-hoc verification of the proof script (not suite green).** `verify_upstream_empty.py` is
+itself the evidence, so its discrimination was tested directly with a throwaway harness under
+`~/.cache/hermes/tmp` (`hermes-verify-` prefix, removed after the run). Synthetic boards carried
+all 11 upstream task ids; the script's `BOARD_DB`/`ATTACH_DIR` were rewritten to point at them.
+**6/6 PASS:** empty → exit 0; a real result on the logbook task or the chat task → exit 1; a
+newline-only result → exit 0; `NULL` → exit 0; the real board as shipped → exit 0. The script
+therefore discriminates rather than always passing. Two SQLite traps were found and fixed while
+doing this — `coalesce(result, 0)` turns `NULL` into `'0'` (false NON-EMPTY), and bare `trim()`
+strips space only so a newline result read as NON-EMPTY; neither changes this board's conclusion
+(all 11 results are genuinely `NULL`), but the shipped script is now correct for whitespace-only
+results. The repo has no canonical test/lint/build command for a standalone analysis script, so
+this is ad-hoc verification, not a project suite run.
+
 ---
 
 ## 4. ADJACENT TASKS CHECKED AND NOT USED AS SUBSTITUTES
