@@ -1,4 +1,3 @@
-
 == 1. upstream result columns must be empty (whitespace-only counts as empty) ==
 rows: 11
   t_10fc09c8   status=blocked   raw_len=0 trim_len=0  EMPTY
@@ -12,13 +11,10 @@ rows: 11
   t_d4f21d6a   status=archived  raw_len=0 trim_len=0  EMPTY
   t_edec6674   status=triage    raw_len=0 trim_len=0  EMPTY
   t_f089005b   status=blocked   raw_len=0 trim_len=0  EMPTY
-
 == 2. zero task_attachments for every upstream task ==
 attachment rows: 0
-
 == 3. zero comments delivering upstream output under those ids ==
 substantive (deliverable-bearing) comments: 0
-
 == 4. no on-disk attachment directory for any upstream task ==
   t_43a2de9b   absent
   t_47c20593   absent
@@ -31,7 +27,6 @@ substantive (deliverable-bearing) comments: 0
   t_f089005b   absent
   t_196899e3   absent
   t_9dc97260   absent
-
 == 5. no on-disk report/raw artifact naming a logbook review or chat search ==
 artifact hits: 0
 

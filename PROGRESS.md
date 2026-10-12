@@ -30,6 +30,11 @@ Format: finding -> status -> files touched
     newline-only->exit 0, NULL->exit 0, real board->exit 0. Found+fixed 2 SQLite traps
     (coalesce(result,0) NULL->'0'; bare trim() strips space only). Conclusion unchanged.
     -> DONE -> commit 0ce7726, pushed to bot.
+11. Made verification DURABLE: refactored proof into evaluate()/main() (same output/behavior)
+    and committed test_verify_upstream_empty.py (canonical command, 8/8 PASS, no network/deps).
+    Re-derived both traps against the LIVE board via hermes-verify- harness: old
+    coalesce(result,0) => 11 false NON-EMPTY, fixed => 0; bare trim(newline)=1, WS-trim=0.
+    -> DONE -> commit <see REPORT.md §8>
 
 STATUS: COMPLETE (blocked/negative deliverable — both upstream inputs empty, 0 records)
-Remote: bot refs/heads/worker-admin/t_c2a72059 = 0ce7726 (verified via git ls-remote)
+Remote: bot refs/heads/worker-admin/t_c2a72059 (verified via git ls-remote after each push)

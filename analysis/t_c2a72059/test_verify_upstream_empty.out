@@ -1,0 +1,10 @@
+all upstream EMPTY                             exit=0 want=0  OK  (the shipped deliverable's claim)
+logbook task has a real result                 exit=1 want=1  OK  (genuine upstream output must be flagged)
+chat task has a real result                    exit=1 want=1  OK  (genuine upstream output must be flagged)
+newline-only result counts EMPTY               exit=0 want=0  OK  (regression: bare trim() strips space only)
+tab/space-only result counts EMPTY             exit=0 want=0  OK  (regression: whitespace-only is empty)
+status meta comment is not a deliverable       exit=0 want=0  OK  (BLOCKED:/fleet-done must not be read as output)
+deliverable-bearing comment IS flagged         exit=1 want=1  OK  (a real comment deliverable must be flagged)
+real board, script as shipped                  exit=0 want=0  OK  (real meshcore board)
+
+PASS: 8/8 cases — script discriminates empty vs non-empty upstream

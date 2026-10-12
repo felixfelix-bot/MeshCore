@@ -70,17 +70,24 @@ corrected the script to compare the **stripped** value while still printing the 
 distinction is visible rather than hidden. No upstream output exists in either revision.
 
 **Ad-hoc verification of the proof script (not suite green).** `verify_upstream_empty.py` is
-itself the evidence, so its discrimination was tested directly with a throwaway harness under
-`~/.cache/hermes/tmp` (`hermes-verify-` prefix, removed after the run). Synthetic boards carried
-all 11 upstream task ids; the script's `BOARD_DB`/`ATTACH_DIR` were rewritten to point at them.
-**6/6 PASS:** empty → exit 0; a real result on the logbook task or the chat task → exit 1; a
-newline-only result → exit 0; `NULL` → exit 0; the real board as shipped → exit 0. The script
-therefore discriminates rather than always passing. Two SQLite traps were found and fixed while
-doing this — `coalesce(result, 0)` turns `NULL` into `'0'` (false NON-EMPTY), and bare `trim()`
-strips space only so a newline result read as NON-EMPTY; neither changes this board's conclusion
-(all 11 results are genuinely `NULL`), but the shipped script is now correct for whitespace-only
-results. The repo has no canonical test/lint/build command for a standalone analysis script, so
-this is ad-hoc verification, not a project suite run.
+itself the evidence, so it ships with a **committed regression test**
+(`analysis/t_c2a72059/test_verify_upstream_empty.py`, canonical command
+`python3 analysis/t_c2a72059/test_verify_upstream_empty.py`, exit 0 = pass). It builds synthetic
+boards in a tempdir (all 11 upstream ids, no network, no third-party deps) and asserts the script
+discriminates rather than always passing. **8/8 PASS** (captured in
+`test_verify_upstream_empty.out`): empty → 0; a real result on the logbook task or the chat task →
+1; a newline-only result → 0; tab/space-only → 0; a `BLOCKED:`/`fleet-done` meta comment → 0; a
+deliverable-bearing comment → 1; the real board as shipped → 0.
+
+Two SQLite traps were found and fixed while writing this, both of which produced a false verdict on
+real data: `coalesce(result, 0)` turns `NULL` into `'0'` (re-measured on the live board: the old
+expression reports **11 false NON-EMPTY** rows; the fixed form reports 0), and bare `trim()` strips
+space only so a newline result read as NON-EMPTY (`length(trim(char(10)))` = 1; explicit-whitespace
+trim yields 0). Neither changes this board's conclusion (all 11 results are genuinely `NULL`), but
+the shipped script is now correct for whitespace-only results. The repo has no canonical
+test/lint/build command for a standalone analysis script, so this is a purpose-built regression
+test, not a project suite run; a throwaway `hermes-verify-` harness under `~/.cache/hermes/tmp`
+(cleaned up) re-derived both traps independently against the live board.
 
 ---
 
@@ -134,11 +141,13 @@ total:0}`, `records: []`).
 ## 7. FILES TOUCHED (all inside the worktree)
 
 ```
-PROGRESS.md                                        crash-recovery map
-REPORT.md                                          this report
-analysis/t_c2a72059/raw-findings-logbook-and-chat.md   THE DELIVERABLE
-analysis/t_c2a72059/verify_upstream_empty.py       emptiness proof (5 checks)
-analysis/t_c2a72059/verify_upstream_empty.out      captured output, exit 0
+PROGRESS.md                                            crash-recovery map
+REPORT.md                                              this report
+analysis/t_c2a72059/raw-findings-logbook-and-chat.md    THE DELIVERABLE
+analysis/t_c2a72059/verify_upstream_empty.py           emptiness proof (5 checks)
+analysis/t_c2a72059/verify_upstream_empty.out          captured output, exit 0
+analysis/t_c2a72059/test_verify_upstream_empty.py      regression test for the proof
+analysis/t_c2a72059/test_verify_upstream_empty.out     captured output, 8/8 PASS
 ```
 
 Read-only external inputs (not modified): `~/.hermes/kanban/boards/meshcore/kanban.db` (opened
