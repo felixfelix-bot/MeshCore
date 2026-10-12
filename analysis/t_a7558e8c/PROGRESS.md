@@ -14,9 +14,12 @@ finding -> status -> files touched
    cards), `raw/04,05 FLASH-QUEUE.md`.
 3. Wrote categorized deliverable -> DONE -> `analysis/t_a7558e8c/categorized-actors.md`
    (3 categories all stated zero-evidence; §4b adjacent-not-logbook/chat bucket; coverage summary).
-4. Commit + push milestone 1 -> IN PROGRESS
-5. Write REPORT.md (full) + finalize PROGRESS.md -> PENDING
-6. Commit + push milestone 2, verify via `git ls-remote bot` -> PENDING
+4. Commit + push milestone 1 -> DONE -> commit `5d891fa` on `worker-heavy/t_a7558e8c`,
+   pushed to `bot`; `git ls-remote bot refs/heads/worker-heavy/t_a7558e8c` == local HEAD.
+5. Write REPORT.md (full) + finalize PROGRESS.md -> DONE ->
+   `analysis/t_a7558e8c/REPORT.md` (9,156 B). Milestone 1 verified: commit `5d891fa`
+   pushed to `bot`, `git ls-remote` SHA == local HEAD.
+6. Commit + push milestone 2, verify via `git ls-remote bot` -> IN PROGRESS
 
 Key decision: the input's own instructions forbid substituting adjacent-sourced records; so the
 three categories are reported EMPTY (true evidence state) and the adjacent, role-relevant material
