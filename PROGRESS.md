@@ -24,6 +24,12 @@ Format: finding -> status -> files touched
    refs/heads/worker-admin/t_c2a72059 = 46dcca4 (= local HEAD). origin push refused 403 (no
    write access for bot account); bot is the canonical remote for this repo.
 8. Wrote full REPORT.md + validated deliverable JSON (parseable, counts match header) -> DONE -> REPORT.md
-9. Committed + pushed milestone 2 (REPORT.md + PROGRESS.md update) -> see REPORT.md §8
+9. Committed + pushed milestone 2 (REPORT.md + PROGRESS.md update) -> DONE -> commit f7d57f8
+10. Ad-hoc verification of the proof script (temp harness in ~/.cache/hermes/tmp,
+    hermes-verify- prefix, cleaned up): 6/6 PASS - empty->exit 0, real upstream result->exit 1,
+    newline-only->exit 0, NULL->exit 0, real board->exit 0. Found+fixed 2 SQLite traps
+    (coalesce(result,0) NULL->'0'; bare trim() strips space only). Conclusion unchanged.
+    -> DONE -> commit 0ce7726, pushed to bot.
 
 STATUS: COMPLETE (blocked/negative deliverable — both upstream inputs empty, 0 records)
+Remote: bot refs/heads/worker-admin/t_c2a72059 = 0ce7726 (verified via git ls-remote)
