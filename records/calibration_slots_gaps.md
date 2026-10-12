@@ -16,3 +16,18 @@ Additional downstream-only records noted (not slot edits):
   has ever been recorded, because the calibration session itself never ran
   (t_e1408991 blocked on operator bench action since 2026-09-11).
   Verbatim: raw/08-fork-results-md/RESULTS.md
+
+## Slot-vs-certificate distinction (rule compliance)
+
+- All CSV rows whose verbatim text mentions bench/RESULTS.md are SCHEDULING
+  events on the session cards (blocked reasons, decision comments, run
+  attempts) — the runbook text they quote instructs the operator to record
+  results there. None of them IS the certificate record.
+- The certificate/data record itself (the per-module cal table in
+  examples/passive_mapper/bench/RESULTS.md) is captured at
+  raw/08-fork-results-md/RESULTS.md and noted in the S8 NO AUDIT LOG CSV row
+  and here — per task rules it is out of scope for slot events. It is EMPTY
+  (header row only): no calibration has ever been recorded.
+- Comment cm-52 (Run 20 report) quotes a SIMULATED fit (k=0.04174, T0=21.92 C)
+  from the kit's dry-run self-test — that is test-harness output, not a
+  recorded calibration certificate.

@@ -3,27 +3,21 @@
 repo: meshcore-fork-fix
 branch: worker-heavy/t_afd23162
 workspace: /home/c03rad0r/repos/meshcore-fork-fix
+status: COMPLETE — all milestones pushed
 
 ## Log
-- finding: card t_afd23162 (triage, worker-heavy) = extract edit/audit timeline for
-  CALIBRATION SLOTS from every source the access map (parent index 0) flagged.
-  status: read from kanban DB read-only (t_afd23162 body, comments 7482/8112/8217).
-  files: analysis/t_afd23162/ (planned)
-- finding: access map = card t_ea0d0e46 (done, worker-admin). Its deliverable
-  ~/reports/audit-log-access-map-t_ea0d0e46-2026-10-01/ NO LONGER EXISTS on this host;
-  scratch workspace /home/c03rad0r/worktrees/t_e1408991 contains only
-  added-insertion-loss-analysis.md. Source list reconstructed from t_ea0d0e46 RESULT:
-  15 sources S1,S2,S2b,S3,S4,S5,S6,S7,S8,S9,S9b,S10,S11,S12 (S4/S5 both flashqueues,
-  3 negatives S6/S11/S12), raw/ 18 files, all cited paths re-checked this run.
-  status: confirmed (DB read + filesystem probes)
-  files: analysis/t_afd23162/kanban_dump.py
-- finding: S2b raw journal events-cobrador.jsonl is GONE from
-  /home/c03rad0r/.hermes/bot/peers/ (only dq05/hermes-nvme/t440/testserver2/x240/x280
-  remain). S7 clone ~/repos/meshcore is GONE. This host = cobrador worker node.
-  status: confirmed; recorded as access regressions in gaps note.
-  files: raw/*/ (planned)
+- finding: task card t_afd23162 (fleet offload worker) -> parent t_ea0d0e46 (audit-log access map, index 0) -> 15 sources S1..S12 + S2b + S9b. status: DONE (kanban DB read-only probes). files: analysis/t_afd23162/kanban_calibration_dump.py, kanban_session_events.py
+- finding: the access-map deliverable dir ~/reports/audit-log-access-map-t_ea0d0e46-* is GONE from disk; source list reconstructed verbatim from the parent card's result text in the kanban DB. status: DONE. files: analysis/t_afd23162/kanban_calibration_dump.py
+- finding: S9 kanban DB is the ONLY source with a calibration-slot audit log: card t_e1408991 (LR2021 thermal calibration session) + 4 decomposed children (t_a132b6cd, t_20f98f15, t_380a431f, t_bef90304) = 167 events (89 heartbeats excluded from rows), 49 comments, 16 runs, all exported verbatim with stable line ids (ev-<pk>/cm-<pk>/run-<pk>). status: DONE. files: raw/09-kanban-db/*
+- finding: two access regressions vs the map: ~/repos/meshcore GONE (63 unpushed bench commits lost) and ~/repos/balloon GONE (twin FLASH-QUEUE survives in balloon-fresh, identical SHAs); events-cobrador.jsonl MOVED to ~/.hermes/state/fleet-private/. status: DONE, each captured with METHOD notes. files: raw/04, raw/07, raw/02b
+- finding: S8 fork RESULTS.md recovered from the bot remote (blob d7ae93fa via fresh partial clone) — it is the CERTIFICATE record (empty row header only; no calibration ever recorded), noted separately per task rules. status: DONE. files: raw/08-fork-results-md/*
+- finding: 12 of 13 non-kanban sources have NO calibration-slot audit log; each gets an explicit NO AUDIT LOG CSV row with its reason + METHOD.md evidence. status: DONE. files: raw/*/METHOD.md, records/calibration_slots.csv
+- finding: gaps — 4 fleet-writeback comments claim 'status -> done' with NO owning 'completed' task_event (t_a132b6cd done-then-reverted, t_20f98f15, t_380a431f, t_bef90304). status: DONE. files: records/calibration_slots_gaps.md
+- finding: verification suite — 156 CSV rows (143 audit + 13 NO AUDIT LOG); every row cites raw/<source> ref; S9 verbatim byte-exact vs raw file; per-card counts reconcile with RECON lines (43/29/27/27/17); gaps note complete; slot-vs-certificate distinction documented. status: ALL PASS. files: analysis/t_afd23162/build_csv.py
+- push: 7e57acc -> 7b145bc -> b915ff8 -> d410665 -> 458736b -> (final) all verified via git ls-remote bot.
 
-## Remaining
-1. Probe all 15 sources for calibration-slot create/edit/reschedule/delete/approve events.
-2. Capture raw exports; write records/calibration_slots.csv + gaps.md.
-3. Verify reconciliation, commit + push.
+## Deliverables
+- records/calibration_slots.csv (156 rows)
+- records/calibration_slots_gaps.md
+- raw/01..12 + 02b + 09b (26 files, every source)
+- analysis/t_afd23162/*.py (reproducible read-only dump scripts)

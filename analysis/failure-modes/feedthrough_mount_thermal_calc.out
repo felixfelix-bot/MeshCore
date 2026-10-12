@@ -1,0 +1,113 @@
+FM-FT-MOUNT-01  feedthrough mechanical mount, cold-loosening arithmetic
+reference temperature  : +20 C
+torque coefficient K   : 0.20        [A]
+thread dia             : 6.35 mm     [A]
+body load area A_b     : 20.0 mm^2   [A]
+panel bearing area A_p : 45.0 mm^2   [A]
+
+S3  CTE constants as read from the source table  [S3]
+-----------------------------------------------------
+key               ppm/K  source row (as printed)
+ss_304             17.3  Steel Stainless Austenitic (304)
+ss_316             16.0  Steel Stainless Austenitic (316)
+ss_310             14.4  Steel Stainless Austenitic (310)
+ss_410              9.9  Steel Stainless Ferritic (410)
+brass_lo           18.0  Brass  18 - 19
+brass_hi           19.0  Brass  18 - 19
+al_pure            23.0  Aluminum  23
+al_alloy_lo        21.0  Aluminum alloys  21 - 24
+al_alloy_hi        24.0  Aluminum alloys  21 - 24
+ptfe_lo           112.0  Polytetrafluorethylene (PTFE)  112 - 135
+ptfe_hi           135.0  Polytetrafluorethylene (PTFE)  112 - 135
+alumina             8.1  Alumina (aluminium oxide, Al2O3)  8.1
+copper_lo          16.0  Copper  16 - 16.7
+copper_hi          16.7  Copper  16 - 16.7
+
+S2  jam-nut torque -> thread preload  (T = K d F)
+-------------------------------------------------
+body                     torque N*m      preload N
+SMA stainless body     1.36 -   1.69   1068 -   1334
+SMA brass body         0.90 -   1.13    712 -    890
+
+S3  differential CTE of the pairing  (alpha_panel - alpha_body, ppm/K)
+----------------------------------------------------------------------
+pairing                                 a_body a_panel    d_alpha
+SS body in Al-alloy panel (worst)         17.3    24.0       +6.7
+SS body in Al-alloy panel (typical)       17.3    23.0       +5.7
+SS body in Al-alloy panel (best)          17.3    21.0       +3.7
+Brass body in Al-alloy panel              19.0    23.0       +4.0
+SS body in SS panel (control)             17.3    17.3       +0.0
+Brass body in SS panel (control)          19.0    17.3       -1.7
+
+differential strain (alpha_panel - alpha_body) * dT, in ppm
+-----------------------------------------------------------
+d_alpha  5.7 ppm/K ->   228 ppm at -20 C (40 K),   342 ppm at -40 C (60 K)
+d_alpha  6.7 ppm/K ->   268 ppm at -20 C (40 K),   402 ppm at -40 C (60 K)
+d_alpha  3.7 ppm/K ->   148 ppm at -20 C (40 K),   222 ppm at -40 C (60 K)
+d_alpha  4.0 ppm/K ->   160 ppm at -20 C (40 K),   240 ppm at -40 C (60 K)
+
+free differential contraction over a clamped metal stack (um)
+-------------------------------------------------------------
+stack thickness 2.0 mm  [A]
+  dT (K)     -20 C case     -40 C case
+ 40 / 60          0.456          0.684   (d_alpha = 5.7 ppm/K)
+ 40 / 60          0.536          0.804   (d_alpha = 6.7 ppm/K)
+ 40 / 60          0.296          0.444   (d_alpha = 3.7 ppm/K)
+ 40 / 60          0.360          0.540   (d_alpha = 4.5 ppm/K)
+
+S4  squeeze budget: contraction vs nominal O-ring squeeze
+---------------------------------------------------------
+nominal squeeze          : 0.30 mm = 300 um  [S4, d2=1.50 mm at 20%]
+-20 C    axial contraction  :  0.456 um  =  0.152 % of nominal squeeze
+-40 C    axial contraction  :  0.684 um  =  0.228 % of nominal squeeze
+-20 C    radial (bore - OD) :  0.724 um  (bore closes on body: squeeze INCREASES)
+-40 C    radial (bore - OD) :  1.086 um  (bore closes on body: squeeze INCREASES)
+
+preload LOSS and residual margin  (fully metal load path)
+---------------------------------------------------------
+pairing                     dT K    dF N     MPa    F0 N  loss %F0 residual N
+SS body in Al panel          -20     392    19.6    1068       37%        675
+SS body in Al panel          -40     589    29.4    1068       55%        479
+                                                    1334       44%        746
+SS body in Al panel(hi)      -20     461    23.1    1068       43%        606
+SS body in Al panel(hi)      -40     692    34.6    1068       65%        376
+                                                    1334       52%        643
+SS body in Al panel(lo)      -20     255    12.7    1068       24%        813
+SS body in Al panel(lo)      -40     382    19.1    1068       36%        686
+                                                    1334       29%        952
+Brass body in Al panel       -20     195     9.7     712       27%        517
+Brass body in Al panel       -40     292    14.6     712       41%        420
+                                                     890       33%        598
+SS body in SS panel          -20       0     0.0    1068        0%       1068
+SS body in SS panel          -40       0     0.0    1068        0%       1068
+                                                    1334        0%       1334
+'MPa' = preload-loss stress on A_b;  'loss %F0' and 'residual' are
+computed against F0 from the 12-15 in-lb jam-nut torque (F0_lo above).
+
+PTFE in the axial load path (contrast case)
+-------------------------------------------
+-20 C    d_alpha  117.7 ppm/K -> free contraction over 2.0 mm:   9.416 um
+-40 C    d_alpha  117.7 ppm/K -> free contraction over 2.0 mm:  14.124 um
+
+transient body-vs-panel offset (fast ramp)
+------------------------------------------
+d_alpha  5.7 ppm/K -> loss   9.8 N per K of body-panel offset (5 K ->  49.0 N)
+d_alpha  6.7 ppm/K -> loss  11.5 N per K of body-panel offset (5 K ->  57.6 N)
+
+pressure load on the bore (separating force)
+--------------------------------------------
+bore area                : 31.67 mm^2  [A]
+sealed 1 atm vs 45000 ft   dP     85525 Pa (  12.4 psi) -> F      2.7 N   [S1 altitude rating]
+hermetic class 2500 psig   dP  17236893 Pa (2500.0 psi) -> F    545.9 N   [S5]
+hermetic class 3500 psig   dP  24131651 Pa (3500.0 psi) -> F    764.2 N   [S5]
+nominal UHV/vacuum-side note: UHV parts are rated for vacuum, not for
+positive internal pressure      [S6 Lesker: 'Vakuum-Anwendung UHV']
+
+temperature ratings of the parts in the path
+--------------------------------------------
+feedthrough adapter      : -55 C .. +165 C operation, -60 C .. +185 C storage  [S1]
+feedthrough (UHV, CF)    : cable connectors -65 C .. +165 C                      [S6]
+silicone O-ring (VMQ 70) : -55 C .. +230 C, 70 IRHD                              [S7]
+seal force data quoted   : +20 C only  [S4 'guideline values at +20 C']
+ => at -40 C every part is inside its rated range; the loss mechanism is
+    mechanical (contraction/preload), not a rating breach of the materials
