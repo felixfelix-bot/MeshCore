@@ -1,0 +1,23 @@
+# S9 task_runs on calibration-session cards — verbatim (read-only dump 2026-10-12)
+===== t_e1408991: 5 runs
+run-18|t_e1408991|profile=manager|status=timed_out|claim=None|started=1789097610(2026-09-11T03:33:30Z)|ended=1789099881(2026-09-11T04:11:21Z)|outcome=timed_out|summary=None
+run-19|t_e1408991|profile=manager|status=gave_up|claim=None|started=1789104927(2026-09-11T05:35:27Z)|ended=1789106061(2026-09-11T05:54:21Z)|outcome=gave_up|summary=None
+run-20|t_e1408991|profile=manager|status=blocked|claim=None|started=1789108357(2026-09-11T06:32:37Z)|ended=1789109308(2026-09-11T06:48:28Z)|outcome=blocked|summary=human-gate: run the LR2021 thermal bench sweep — no agent host has a NiceRF LR2021 module attached and a freezer hold is physical. Kit is landed+tested+pushed (feat/passive-mapper @ d7ae93fa); Felix runs soak/edgescan/fit/ramp+hyst per /home/c03rad0r/t_e1408991-bench-runbook.md, persists \`cal <k> <T0>\`, records the row in bench/RESULTS.md and pastes the fit+hyst output back on this card. Then the card can resume to verify and land the record.
+run-21|t_e1408991|profile=manager|status=reclaimed|claim=CobradorWave:3117758|started=1789110041(2026-09-11T07:00:41Z)|ended=1789110165(2026-09-11T07:02:45Z)|outcome=reclaimed|summary=None
+run-23|t_e1408991|profile=manager|status=blocked|claim=None|started=1789115625(2026-09-11T08:33:45Z)|ended=1789117230(2026-09-11T09:00:30Z)|outcome=blocked|summary=operator-action: run the LR2021 thermal bench sweep on the NiceRF module (soak -> edgescan -> fit -> ramp+hyst). No agent host has an LR2021 module attached and a freezer/temperature hold is physical. Kit is landed, tested and pushed (felixfelix-bot/MeshCore feat/passive-mapper @ d7ae93fa); copy-paste runbook at /home/c03rad0r/t_e1408991-bench-runbook.md. Then persist `cal <k> <T0>` on the module, add the per-module row to examples/passive_mapper/bench/RESULTS.md, and paste the `fit` + `hyst` output back on this card so it can resume to verify and land the record. (The auto-unblock flap is fixed: hermes-manager-scripts b55cfcb — provider-exhaustion-recovery no longer unblocks operator-gated cards, so the card will stay parked instead of burning a worker run per cycle.)
+===== t_a132b6cd: 4 runs
+run-25|t_a132b6cd|profile=esp32-balloon-integration-hardware-fligh|status=reclaimed|claim=None|started=1789119248(2026-09-11T09:34:08Z)|ended=1789119279(2026-09-11T09:34:39Z)|outcome=reclaimed|summary=None
+run-27|t_a132b6cd|profile=esp32-balloon-integration-hardware-fligh|status=blocked|claim=None|started=1789144868(2026-09-11T16:41:08Z)|ended=1789144868(2026-09-11T16:41:08Z)|outcome=blocked|summary=fleet-offload:dq05
+run-29|t_a132b6cd|profile=esp32-balloon-integration-hardware-fligh|status=blocked|claim=None|started=1789147660(2026-09-11T17:27:40Z)|ended=1789147660(2026-09-11T17:27:40Z)|outcome=blocked|summary=fleet-offload:dq05
+run-39|t_a132b6cd|profile=esp32-balloon-integration-hardware-fligh|status=blocked|claim=None|started=1789309671(2026-09-13T14:27:51Z)|ended=1789309671(2026-09-13T14:27:51Z)|outcome=blocked|summary=fleet-offload:dq05
+===== t_20f98f15: 3 runs
+run-32|t_20f98f15|profile=worker-base|status=blocked|claim=None|started=1789217555(2026-09-12T12:52:35Z)|ended=1789217555(2026-09-12T12:52:35Z)|outcome=blocked|summary=fleet-offload:dq05
+run-33|t_20f98f15|profile=worker-base|status=blocked|claim=None|started=1789230512(2026-09-12T16:28:32Z)|ended=1789230512(2026-09-12T16:28:32Z)|outcome=blocked|summary=fleet-offload:dq05
+run-85|t_20f98f15|profile=manager|status=blocked|claim=None|started=1789344755(2026-09-14T00:12:35Z)|ended=1789344755(2026-09-14T00:12:35Z)|outcome=blocked|summary=fleet-offload:dq05
+===== t_380a431f: 3 runs
+run-31|t_380a431f|profile=worker-base|status=blocked|claim=None|started=1789217096(2026-09-12T12:44:56Z)|ended=1789217096(2026-09-12T12:44:56Z)|outcome=blocked|summary=fleet-offload:dq05
+run-34|t_380a431f|profile=worker-base|status=blocked|claim=None|started=1789230513(2026-09-12T16:28:33Z)|ended=1789230513(2026-09-12T16:28:33Z)|outcome=blocked|summary=fleet-offload:dq05
+run-86|t_380a431f|profile=manager|status=blocked|claim=None|started=1789344756(2026-09-14T00:12:36Z)|ended=1789344756(2026-09-14T00:12:36Z)|outcome=blocked|summary=fleet-offload:dq05
+===== t_bef90304: 1 runs
+run-152|t_bef90304|profile=esp32-balloon-integration-hardware-fligh|status=blocked|claim=None|started=1789354997(2026-09-14T03:03:17Z)|ended=1789354997(2026-09-14T03:03:17Z)|outcome=blocked|summary=fleet-offload:dq05
+TOTAL runs: 16
