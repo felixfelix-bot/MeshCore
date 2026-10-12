@@ -24,5 +24,11 @@ Format: finding -> status -> files touched.
       against the pinned blob. Result: 25/25 OK, blob match, exit 0.
       Status: DONE. Files: check scripts in worktree (gen + check), run
       evidence in REPORT.md.
-- [ ] Commit + push (bot remote) of deliverable + evidence. Status: NEXT.
-- [ ] REPORT.md + final reply. Status: NEXT.
+- [x] Commit + push (bot remote) of deliverable + evidence: commit `c4499c1`
+      (inventory + contract copy + scripts + PROGRESS), commit `1000230`
+      (REPORT.md). Branch `worker-base/t_bb4bbf91` pushed to remote `bot`
+      (felixfelix-bot/MeshCore); remote tip verified == local HEAD via
+      `git ls-remote` after each push (observed). Status: DONE.
+- [x] REPORT.md written (deliverable path/format, inventory summary,
+      acceptance-criteria mapping, verification evidence, method/audit trail,
+      honesty notes). Status: DONE.
