@@ -1,0 +1,101 @@
+===== FILE: /home/c03rad0r/.hermes/peripheral_locks/THEFT-LOG =====
+{"timestamp": "2026-07-23T21:29:12.554172+00:00", "resource": "board-a", "victim_track": "test-track", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-23T21:29:37.700153+00:00", "resource": "tx", "victim_track": "speed-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+
+===== FILE: /home/c03rad0r/.hermes/peripheral_locks/balloon-tx.lock =====
+
+===== FILE: /home/c03rad0r/.hermes/peripheral_locks/board-lock-monitor.json =====
+{
+  "timestamp": "2026-07-24T16:52:30.115561+00:00",
+  "stale_threshold_min": 120,
+  "stale_detected": true,
+  "locked_count": 1,
+  "free_count": 4,
+  "stale_count": 1,
+  "locks": [
+    {
+      "resource": "tx",
+      "status": "locked",
+      "holder": "test-stale",
+      "purpose": "simulated stale lock",
+      "sentinel_pid": 999999,
+      "sentinel_alive": false,
+      "acquired_at": "2026-07-24T13:52:30.084734+00:00",
+      "age_minutes": 180.0,
+      "device_locked": false,
+      "device_path": null,
+      "stale": true,
+      "stale_reason": "orphaned_sentinel"
+    },
+    {
+      "resource": "rx",
+      "status": "free"
+    },
+    {
+      "resource": "board-a",
+      "status": "free"
+    },
+    {
+      "resource": "board-b",
+      "status": "free"
+    },
+    {
+      "resource": "board-c",
+      "status": "free"
+    }
+  ]
+}
+
+===== FILE: /home/c03rad0r/.hermes/peripheral_locks/board-lock-theft.log =====
+{"timestamp": "2026-07-23T21:29:46.144115+00:00", "resource": "tx", "victim_track": "speed-tests", "victim_purpose": "Multi-radio sweep final test with BoardSerial", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=3909103"}
+{"timestamp": "2026-07-23T21:30:45.549963+00:00", "resource": "tx", "victim_track": "test-track", "signal": "SIGTERM", "source": "pid=2071", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T00:33:16.128077+00:00", "resource": "rx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T00:33:16.127626+00:00", "resource": "tx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T07:50:49.961388+00:00", "resource": "rx", "victim_track": "coordinator", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T07:57:08.305690+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "GPS sweep smoke test", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=3103293"}
+{"timestamp": "2026-07-24T08:19:40.125728+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "GPS sweep smoke test", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=3344695"}
+{"timestamp": "2026-07-24T08:19:40.426436+00:00", "resource": "rx", "victim_track": "speed-tests", "victim_purpose": "LoRa RSSI fix + periodic time sync", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=3344695"}
+{"timestamp": "2026-07-24T08:30:33.552729+00:00", "resource": "rx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=2071", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T08:30:33.552674+00:00", "resource": "tx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=2071", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T12:22:10.727797+00:00", "resource": "tx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=2071", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T12:22:10.727910+00:00", "resource": "rx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=2071", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T12:32:50.681724+00:00", "resource": "tx", "victim_track": "balloon-hermes", "victim_purpose": "WALK TEST \u2014 RX capture running + TX in operator rucksack. DO NOT FLASH.", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=899320"}
+{"timestamp": "2026-07-24T12:32:50.982245+00:00", "resource": "rx", "victim_track": "balloon-hermes", "victim_purpose": "WALK TEST \u2014 RX capture running + TX in operator rucksack. DO NOT FLASH.", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=899320"}
+{"timestamp": "2026-07-24T12:37:01.962462+00:00", "resource": "tx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T12:37:01.962463+00:00", "resource": "rx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-24T16:04:03.517279+00:00", "resource": "tx", "victim_track": "test-lock", "victim_purpose": "testing hard lock", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1332974"}
+{"timestamp": "2026-07-25T10:56:57.012672+00:00", "resource": "tx", "victim_track": "balloon-hermes", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-25T21:45:15.683124+00:00", "resource": "tx", "victim_track": "balloon-hermes", "victim_purpose": "unspecified", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=2166264"}
+{"timestamp": "2026-07-29T08:09:13.488532+00:00", "resource": "rx", "victim_track": "tx", "victim_purpose": "unspecified", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=124872"}
+{"timestamp": "2026-07-29T08:09:55.407852+00:00", "resource": "tx", "victim_track": "range", "victim_purpose": "P1.4 RP2040 RX DIO9 check", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=125622"}
+{"timestamp": "2026-07-29T08:09:55.715392+00:00", "resource": "rx", "victim_track": "range", "victim_purpose": "P1.4 RP2040 RX DIO9 check", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=125622"}
+{"timestamp": "2026-07-30T00:36:32.134987+00:00", "resource": "c3-a", "victim_track": "balloon-fips", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-30T00:36:32.133682+00:00", "resource": "c3-b", "victim_track": "balloon-fips", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-30T09:25:51.623211+00:00", "resource": "tx", "victim_track": "balloon-mesh-wiring", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-07-30T09:25:51.626576+00:00", "resource": "rx", "victim_track": "balloon-mesh-wiring", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-08-20T09:04:39.555360+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "SWD flash E80 STM32F103 with harmonized firmware", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1355668"}
+{"timestamp": "2026-08-20T09:04:39.866892+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "SWD flash E80 STM32F103 with harmonized firmware", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1355668"}
+{"timestamp": "2026-08-20T09:07:24.836783+00:00", "resource": "tx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-08-20T09:07:24.838202+00:00", "resource": "rx", "victim_track": "range-tests", "signal": "SIGTERM", "source": "pid=1", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-08-20T09:07:25.904679+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "SWD flash E80 boards with harmonized firmware", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1363873"}
+{"timestamp": "2026-08-20T09:07:26.214421+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "SWD flash E80 boards with harmonized firmware", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1363873"}
+{"timestamp": "2026-08-20T10:40:34.121331+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS firmware flash + verification test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1584300"}
+{"timestamp": "2026-08-20T10:40:34.464170+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS firmware flash + verification test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1584300"}
+{"timestamp": "2026-08-20T10:41:53.257950+00:00", "resource": "tx", "victim_track": "balloon-range-tests", "victim_purpose": "N3+M2 fix flash", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1586525"}
+{"timestamp": "2026-08-20T10:41:53.588186+00:00", "resource": "rx", "victim_track": "balloon-range-tests", "victim_purpose": "N3+M2 fix flash", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1586525"}
+{"timestamp": "2026-08-20T10:42:11.750915+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS test - board reset + PRBS9 test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1587198"}
+{"timestamp": "2026-08-20T10:42:12.058664+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS test - board reset + PRBS9 test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1587198"}
+{"timestamp": "2026-08-20T10:43:24.768128+00:00", "resource": "tx", "victim_track": "balloon-range-tests", "victim_purpose": "E80-to-E80 harmonization measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1589508"}
+{"timestamp": "2026-08-20T10:43:25.076834+00:00", "resource": "rx", "victim_track": "balloon-range-tests", "victim_purpose": "E80-to-E80 harmonization measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1589508"}
+{"timestamp": "2026-08-20T10:44:15.309632+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS final test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1592565"}
+{"timestamp": "2026-08-20T10:44:15.623975+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "E80 PRBS final test", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1592565"}
+{"timestamp": "2026-08-20T12:11:04.196362+00:00", "resource": "tx", "victim_track": "balloon-range-tests", "victim_purpose": "full sweep measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1743846"}
+{"timestamp": "2026-08-20T12:11:04.607209+00:00", "resource": "rx", "victim_track": "balloon-range-tests", "victim_purpose": "full sweep measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=unknown pid=1743869"}
+{"timestamp": "2026-08-20T12:21:31.558054+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "E80 full sweep flash + measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1763077"}
+{"timestamp": "2026-08-20T12:21:31.867574+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "E80 full sweep flash + measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1763077"}
+{"timestamp": "2026-08-20T12:31:18.349901+00:00", "resource": "tx", "victim_track": "balloon-range-tests", "victim_purpose": "SWD reset TX board", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1781416"}
+{"timestamp": "2026-08-20T12:31:18.668755+00:00", "resource": "rx", "victim_track": "balloon-range-tests", "victim_purpose": "SWD reset TX board", "signal": "RELEASE_WITH_STEAL", "source": "track=range-tests pid=1781416"}
+{"timestamp": "2026-08-20T12:47:47.810523+00:00", "resource": "tx", "victim_track": "range-tests", "victim_purpose": "E80 sweep measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1808316"}
+{"timestamp": "2026-08-20T12:47:48.120179+00:00", "resource": "rx", "victim_track": "range-tests", "victim_purpose": "E80 sweep measurement", "signal": "RELEASE_WITH_STEAL", "source": "track=balloon-range-tests pid=1808316"}
+{"timestamp": "2026-08-22T17:01:30.082444+00:00", "resource": "tx", "victim_track": "e80-bench", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}
+{"timestamp": "2026-08-22T17:01:30.088181+00:00", "resource": "rx", "victim_track": "e80-bench", "signal": "SIGTERM", "source": "pid=6115", "note": "SIGTERM trapped and ignored by sentinel"}

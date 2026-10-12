@@ -1,0 +1,3 @@
+ffe8fe870f6fc048deeef116e67d03f811705044|2026-08-21T15:07:45+05:30|Felix|301398501+felixfelix-bot@users.noreply.github.com|BUF-T5a: e80_sweep.py — parse_pkt accepts 23/24 fields + binary BUF loader
+695ac3a3eac384a81c74af92d9325804b739ea3b|2026-08-20T15:16:27+05:30|Felix|301398501+felixfelix-bot@users.noreply.github.com|docs: add wave4 task cards + e2e playwright plan + update flash queue
+f40eafacdb096cffcadadeeee098c2494a4f344a|2026-07-24T21:27:05+05:30|Felix|301398501+felixfelix-bot@users.noreply.github.com|fix: FLRC byte alignment + app-layer CRC-16 + FIFO clear + sync search

@@ -1,0 +1,50 @@
+# stackstr board (S9b) full task dump — read-only 2026-10-12
+TASK|t_176c662a|status=done|assignee=None|created_at=1787833589|title=T3.2 hosting: VPS Caddy stackstr.orangesync.tech + nsyte bonus deploy
+TASK|t_1a86418c|status=done|assignee=None|created_at=1787833595|title=T5.2 PR gate enforcement: Playwright recording in PR comment BEFORE merge
+TASK|t_24b4fb30|status=done|assignee=None|created_at=1787833587|title=T1.3 publish mirror: se_publish.py → relay2 (kind 1 threads, original dates/scores)
+TASK|t_49731452|status=done|assignee=None|created_at=1787833591|title=T4.2 DEMO.md: 5-beat demo script with click paths + fallbacks
+TASK|t_5dbacf4a|status=done|assignee=None|created_at=1787833588|title=T3.1 stackstr web client: single-file index.html (nostr-tools via esm.sh)
+TASK|t_88fc970e|status=done|assignee=None|created_at=1787833590|title=T3.3 Amethyst interop: relay2 in Amethyst, thread renders, screenshot
+TASK|t_9d2d76ab|status=done|assignee=None|created_at=1787833588|title=T2.2 stackstrd daemon E2E live test: ask → Hermes answer ≤120s → readback
+TASK|t_c4bfd8ff|status=done|assignee=None|created_at=1787833594|title=T5.1 Playwright E2E suite (video ON, artifacts kept → feeds PR gate)
+TASK|t_d19fcb70|status=done|assignee=None|created_at=1787833592|title=T4.3 dual-push: GitHub mirror felixfelix-bot/stackstr + ngit (source of truth)
+TASK|t_df62c8a7|status=done|assignee=None|created_at=1787833590|title=T4.1 full demo rehearsal w/ screen recording (client + Amethyst ≤120s)
+# task_events count: 38
+EV|1|t_24b4fb30|created|1787833587|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|2|t_24b4fb30|blocked|1787833587|{"reason": "initial-status"}
+EV|3|t_9d2d76ab|created|1787833588|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|4|t_9d2d76ab|blocked|1787833588|{"reason": "initial-status"}
+EV|5|t_5dbacf4a|created|1787833588|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|6|t_5dbacf4a|blocked|1787833588|{"reason": "initial-status"}
+EV|7|t_176c662a|created|1787833589|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|8|t_176c662a|blocked|1787833589|{"reason": "initial-status"}
+EV|9|t_88fc970e|created|1787833590|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|10|t_88fc970e|blocked|1787833590|{"reason": "initial-status"}
+EV|11|t_df62c8a7|created|1787833590|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|12|t_df62c8a7|blocked|1787833590|{"reason": "initial-status"}
+EV|13|t_49731452|created|1787833591|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|14|t_49731452|blocked|1787833591|{"reason": "initial-status"}
+EV|15|t_d19fcb70|created|1787833592|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|16|t_d19fcb70|blocked|1787833592|{"reason": "initial-status"}
+EV|17|t_c4bfd8ff|created|1787833594|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|18|t_c4bfd8ff|blocked|1787833594|{"reason": "initial-status"}
+EV|19|t_1a86418c|created|1787833595|{"assignee": null, "status": "blocked", "parents": [], "tenant": null, "branch_name": null, "skills": null, "goal_mode": null}
+EV|20|t_1a86418c|blocked|1787833595|{"reason": "initial-status"}
+EV|21|t_9d2d76ab|linked|1787833595|{"parent": "t_24b4fb30", "child": "t_9d2d76ab"}
+EV|22|t_176c662a|linked|1787833596|{"parent": "t_5dbacf4a", "child": "t_176c662a"}
+EV|23|t_88fc970e|linked|1787833597|{"parent": "t_176c662a", "child": "t_88fc970e"}
+EV|24|t_df62c8a7|linked|1787833597|{"parent": "t_9d2d76ab", "child": "t_df62c8a7"}
+EV|25|t_df62c8a7|linked|1787833598|{"parent": "t_176c662a", "child": "t_df62c8a7"}
+EV|26|t_c4bfd8ff|linked|1787833599|{"parent": "t_176c662a", "child": "t_c4bfd8ff"}
+EV|27|t_c4bfd8ff|linked|1787833600|{"parent": "t_9d2d76ab", "child": "t_c4bfd8ff"}
+EV|28|t_1a86418c|linked|1787833600|{"parent": "t_c4bfd8ff", "child": "t_1a86418c"}
+EV|29|t_5dbacf4a|completed|1787835592|{"result_len": 0, "summary": null}
+EV|30|t_176c662a|completed|1787835593|{"result_len": 0, "summary": null}
+EV|31|t_24b4fb30|completed|1787836204|{"result_len": 0, "summary": null}
+EV|32|t_49731452|completed|1787837176|{"result_len": 0, "summary": null}
+EV|33|t_d19fcb70|completed|1787837177|{"result_len": 0, "summary": null}
+EV|34|t_9d2d76ab|completed|1787838760|{"result_len": 0, "summary": null}
+EV|35|t_88fc970e|completed|1787838761|{"result_len": 0, "summary": null}
+EV|36|t_c4bfd8ff|completed|1787839414|{"result_len": 0, "summary": null}
+EV|37|t_1a86418c|completed|1787839416|{"result_len": 0, "summary": null}
+EV|38|t_df62c8a7|completed|1787839418|{"result_len": 0, "summary": null}
