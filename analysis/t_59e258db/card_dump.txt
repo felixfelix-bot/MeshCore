@@ -1,0 +1,1102 @@
+====================================================================================================
+ID: t_c65abacb  STATUS: triage  assignee: default
+TITLE: Search install/commissioning report for chamber ramp-rate specs
+created_by: auto-decomposer  created_at: 1790343162  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL
+Find and inspect the thermal-chamber installation or commissioning report on file and determine whether it documents a heating rate and/or cooling rate.
+
+WHERE TO LOOK
+- Shared drive / project document folders (search: commissioning, install, SAT, FAT, IQ/OQ, chamber, thermal, ramp, rate)
+- Equipment binder (physical or scanned)
+- Vendor portal / OEM handover package for the chamber
+
+EXTRACT VERBATIM
+- Every heating rate and cooling rate value, quoted exactly as written (sentence or table row), with units as printed. Do not convert or normalize units.
+- Document title, revision or part number, issue date, and the page/section/table number of each quote.
+- Stated test conditions: load/ballast present, temperature band, single-stage vs cascade, dwell/soak requirement, ambient conditions.
+
+CONSTRAINTS
+- Do NOT operate or measure the chamber. Do NOT re-run any commissioning test. Read-only document work.
+- If a rate value is only implied (e.g. graph without numbers), say so and mark it as not a documented spec.
+
+REPORT BACK
+Post a comment on task t_59e258db with: full path/URL of each document found, what it does and does not contain, verbatim quotes with document+page citations, and a NOT FOUND list naming the specific record that would close any remaining gap. If no commissioning/install report exists at all, state that plainly as a negative finding.
+RESULT:
+(none)
+PARENTS: []
+CHILDREN: []
+COMMENTS: 3
+  -- comment 7477 by manager:
+     urgency-triage: soon — Commissioning report spec search; routine investigation (deepseek-v4-pro)
+  -- comment 7629 by manager:
+     BLOCKED: fleet-offload:cobrador
+  -- comment 8193 by manager:
+     BLOCKED: fleet-offload:cobrador
+====================================================================================================
+ID: t_f00a0085  STATUS: ready  assignee: worker-base
+TITLE: Extract verbatim ramp rates from operator / installation manual
+created_by: auto-decomposer  created_at: 1790343081  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL
+Extract the documented HEATING and COOLING ramp rates from the operator / installation manual identified by the preceding inventory task.
+
+SOURCES
+- The operator/installation manual PDF at the path(s) listed in the parent task's report (use the latest revision).
+
+APPROACH
+1. Go to BOTH the specification table and the performance-notes / limitations section — rate figures sometimes appear only in the notes, or differ between the table and the notes. Report both if they differ.
+2. For HEATING separately and for COOLING separately, capture the EXACT quoted sentence or the EXACT table row, character-for-character including units.
+3. For each quote record: document title, revision or part number, page number or section number, document date.
+4. Capture any nearby qualifying text verbatim: temperature band the rate applies to; empty-chamber vs loaded/ballasted assumption; slew/soak or minimum-dwell-at-setpoint requirement; single-stage vs cascade (both compressor stages) caveat; compressor capacity loss near low temperature; heater authority near high temperature.
+
+DO NOT
+- Do not operate, measure, or instrument the chamber.
+- Do not reconcile against controller logs.
+- Do not invent, convert, or round numbers.
+
+REPORT BACK (comment)
+For heating and cooling: the verbatim quote (table and notes versions separately if they differ), then citation (title, rev, page/section, date), then any verbatim qualifying text. Include a NOT FOUND line if the manual has no rate spec — say so explicitly rather than paraphrasing.
+
+ACCEPTANCE
+Every number carries a verbatim quote plus document + page/section citation. No number appears without a quote. Zero chamber operation.
+RESULT:
+(none)
+PARENTS: []
+CHILDREN: []
+COMMENTS: 2
+  -- comment 7476 by manager:
+     urgency-triage: soon — Manual ramp-rate extraction; normal no-deadline work (deepseek-v4-pro)
+  -- comment 8183 by manager:
+     BLOCKED: fleet-offload:cobrador
+====================================================================================================
+ID: t_f39c2c17  STATUS: ready  assignee: default
+TITLE: Quote literal setpoint-write and temperature-read commands
+created_by: auto-decomposer  created_at: 1790343747  completed_at: 1790829962
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+Prerequisite: this task must consume the outputs of the attachment-proof task (task 0) and the inventory task (task 1). If task 0 reported CHAMBER NOT PHYSICALLY ATTACHED, do NOT run anything on hardware — instead emit the explicit failure statement and stop.
+
+Goal: capture the exact, copy-pasteable command set for the chamber.
+
+Steps:
+1. Determine the exact transport in use and record it verbatim: serial device path (e.g. /dev/serial/by-id/...), SCPI/LXI/VISA address, Modbus host:port plus unit-id, GUI app name + version, or HTTP API base URL.
+2. Quote the LITERAL setpoint-write command exactly as issued, with terminators made visible (escape \r and \n). Include the setpoint argument placeholder and units (e.g. *C).
+3. Quote the LITERAL temperature-read command exactly as issued, with terminators made visible.
+4. Record the exact line settings used: baud rate, data bits, parity, stop bits, flow control.
+5. State which physical sensor the read command returns (chamber air / product-return / evaporator) and its location, per the inventory task; if unknown, repeat that explicitly.
+6. Where possible, show one live transaction per command (command sent + raw reply) proving the command is accepted.
+
+Acceptance criteria: a reader can paste each command string into a terminal unchanged and reproduce the documented behaviour; every terminator, baud and parity value is explicit, and unknowns are labelled as unknown rather than assumed.
+RESULT:
+(none)
+PARENTS: []
+CHILDREN: []
+COMMENTS: 1
+  -- comment 7479 by manager:
+     urgency-triage: soon — Capture literal chamber commands; standard prerequisite task (deepseek-v4-pro)
+====================================================================================================
+ID: t_0e98e408  STATUS: blocked  assignee: manager
+TITLE: Run chamber 10-min holds at +25/0/-20/-40 C and capture logs
+created_by: auto-decomposer  created_at: 1789350713  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Physically command and HOLD the chamber at each of +25, 0, -20 and -40 C and capture raw evidence. Do NOT simulate, interpolate, or extrapolate.
+
+FOR EACH setpoint in turn (+25, then 0, then -20, then -40):
+1. Command the chamber to the setpoint; record whether the command is accepted and the displayed setpoint.
+2. Once the controller reports at-setpoint/settled, log the chamber air temperature from the chamber's OWN sensor for AT LEAST 10 continuous minutes; record start and end timestamps.
+3. Note time to first reach setpoint from ambient, any overshoot, and any alarms/faults.
+4. If a setpoint cannot be reached or held, that is a FAIL and must be stated as such.
+
+RULES: If you did not physically run the chamber, do NOT report PASS — mark each unrun setpoint UNVERIFIED and state exactly what evidence you have. Never report a value you did not observe. Attach the raw log/export.
+
+ACCEPTANCE: For every setpoint, either raw timestamped >=10-min data or an explicit UNVERIFIED with a statement of what evidence exists.
+RESULT:
+(none)
+PARENTS: ['t_42dadf86', 't_80950496', 't_59e80a86']
+CHILDREN: ['t_5f6eb893', 't_845a1561']
+COMMENTS: 9
+  -- comment 3370 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3500 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 3511 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3560 by gate-tick:
+     gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  -- comment 3612 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3645 by auto-decomposer:
+     Decomposed into t_42dadf86, t_80950496, t_59e80a86. Root will wake when all children complete.
+  -- comment 7731 by worker-base:
+     RESULT — t_0e98e408 "Run chamber 10-min holds at +25/0/-20/-40 C"
+     
+     VERDICT: NO CHAMBER RUN — CHAMBER NOT PHYSICALLY ATTACHED. All four setpoints UNVERIFIED.
+     Nothing simulated/interpolated/extrapolated; no temperature value is reported (none observed).
+     
+     Per-setpoint (all four identical): +25 C / 0 C / -20 C / -40 C
+       command accepted? UNVERIFIED (no controller present to receive it)
+       displayed setpoint? UNVERIFIED (no controller readback exists)
+       >=10 min own-sensor log? UNVERIFIED (no own-sensor telemetry channel)
+       time-to-setpoint / overshoot / alarms? UNVERIFIED (no run occurred)
+     
+     Basis (live, this host CobradorWave, 2026-10-09 16:36-16:41Z):
+       - /dev/serial/by-id/* = ONLY Sierra Wireless EM7455 WWAN modem -> ttyUSB0/1/2; its own ATI reply
+         confirms "Sierra Wireless EM7455"; no *IDN? (SCPI) reply on any port; /dev/ttyACM* absent.
+       - lsusb: no FTDI/Prolific/CP210x/CH340/RS-232/485 bridge, no instrument.
+       - nmap -Pn -p 502,111,102,5000 over 192.168.2.0/24 + 10.177.21.0/24 -> 512 hosts up, ZERO open
+         ports (no Modbus/SCPI/S7 controller reachable on local networks).
+       - no chamber-control software on host; pymodbus/minimalmodbus/pyvisa all ABSENT.
+     Corroborated by prior done cards: t_8d1cf920 (attachment proof), t_135fbd0e (inventory = all UNKNOWN),
+     t_23e2f894 (nameplate NOT FOUND / no camera), t_ed6c996b ("chamber never located on any record").
+     
+     Full report + raw evidence: worktree ~/worktrees/t_0e98e408/
+       REPORT.md, PROGRESS.md, raw/00..60 (raw captures), scripts/attach_probe.sh (reproducible).
+     Commit c958a8d (base c8eb3c8), branch worker-base/t_0e98e408, head b023164.
+     PUSH: origin c03rad0r/MeshCore = HTTP 403 (only credential is felixfelix-bot, no write to c03rad0r).
+     Pushed to the bot-owned fork felixfelix-bot/MeshCore (branch worker-base/t_0e98e408, VERIFIED in ls-remote).
+     Durable local mirror: ~/reports/chamber-holds-t_0e98e408-2026-10-09/
+     
+     Anomaly: comment c3500 by fleet-writeback on this same card claims
+     "fleet-done rc=0 verified=True (offloaded); status -> done" (2026-09-14) — NOT corroborated: card is
+     todo, result=<none>, no chamber log ever attached, and it was re-BLOCKED then decomposed. Do not treat
+     that writeback as evidence of a chamber run.
+     
+     UNBLOCK (human/bench work): a chamber with a real command path (front panel, serial/SCPI/VISA, Modbus,
+     or vendor GUI) attached to, or reachable from, the bench host; plus documented literal setpoint-write
+     and temperature-read commands and the sensor-channel identity. Then rerun and log >=10 min per setpoint.
+  -- comment 7732 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 7733 by gate-tick:
+     gate-tick: BLOCKED (completion-pending) — missing gate(s): tests_green, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean, no_live_drift. tier=code author_family=tier/manager. Resolve the evidence and re-run to pass.
+====================================================================================================
+ID: t_23e2f894  STATUS: done  assignee: worker-admin
+TITLE: Find and transcribe existing thermal chamber nameplate photo
+created_by: auto-decomposer  created_at: 1790343058  completed_at: 1790810169
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+Goal: Locate any existing photograph of the physical nameplate/sticker on the thermal chamber and transcribe it VERBATIM. Do not power on, operate, instrument, or measure the chamber. Do not analyze controller logs.
+
+Search in this order: shared drive, equipment asset folder, equipment binder, phone-photo dumps, project photo libraries, and any installation/commissioning records. For each location, record the full path or binder section and whether it existed.
+
+If a photo is found, transcribe verbatim in quotes: manufacturer, model, serial number, electrical ratings, and every piece of text resembling a rate spec (degC/min, heating/cooling, ramp, slew, pull-down, heat-up). Include exact source (photo filename/full path) and any visible date on the document or photo metadata if available.
+
+If no photo exists, explicitly state that a fresh photo or physical read is required.
+
+Report back: every location searched with path/binder section and existence status; verbatim found text with source references; explicit NOT FOUND entries for missing fields; nameplate model and serial exactly as printed, or NOT FOUND.
+
+Acceptance: no claim without a path/photo reference or an explicit NOT FOUND label; zero chamber operation.
+RESULT:
+tags: no-code, docs
+
+Deliverable: search + transcription report for task t_23e2f894
+("Find and transcribe existing thermal chamber nameplate photo").
+
+Artifact (durable, non-git, ~/reports):
+- /home/c03rad0r/reports/thermal-chamber-nameplate-photo-search-t_23e2f894-2026-10-01.md (11822 bytes)
+  (also copied into the shared scratch workspace $HERMES_KANBAN_WORKSPACE)
+
+VERDICT: NO PHOTO EXISTS - NOT FOUND at every location. No verbatim text could be transcribed
+because there is no source image. A fresh photo or a physical on-site read is required.
+
+Locations searched, in the card's prescribed order, each with path/section + existence status:
+1. Shared drive - no network share mounted (no cifs/nfs/smb/sshfs). Local offload volumes searched:
+   /mnt/cw-offload, /mnt/cobrador-offload, /mnt/archive, /mnt/quarantine, /mnt/fleet-store; plus a
+   full /mnt image sweep. STATUS EXISTS (volumes) but NAME PLATE PHOTO: NOT FOUND.
+2. Equipment asset folder - NOT EXISTS (find for *asset*/*equip*/*inventory* returns only web-asset
+   dirs; no fleet asset/inventory state file). NOT FOUND.
+3. Equipment binder - NOT EXISTS (keyword document scan of *.pdf/.docx/.doc/.xlsx/.xls/.odt/.ods/.pptx
+   across /home/c03rad0r + /mnt returned 0 candidate documents). NOT FOUND.
+4. Phone-photo dumps - NOT EXISTS (no DCIM/camera-import/phone-sync dir; ~/Pictures, ~/Documents,
+   ~/Downloads, ~/Desktop all EMPTY on host). NOT FOUND.
+5. Project photo libraries - EXISTS (repo image assets) but only brand/UI logos, RF-characterization
+   plots, CI frames, balloon renders. meshcore git history across all branches contains exactly one
+   image (assets/images/favicon.png). NOT FOUND.
+6. Installation/commissioning records - NOT EXISTS (grep 'commissioning' = 0 hits; only software
+   installers on host). NOT FOUND.
+7. Corroborating: programmatic scan of task_attachments across EVERY board DB found 0 image
+   attachments (meshcore board = 0 rows total), so no nameplate photo was ever attached to a card.
+   No camera device on host (/dev/video*, /sys/class/video4linux absent; no UVC in lsusb) so a fresh
+   photo cannot be taken from this host either.
+
+Verbatim nameplate fields (acceptance rule: path/photo ref or explicit NOT FOUND):
+- manufacturer: NOT FOUND
+- model (incl. suffix/option codes): NOT FOUND
+- serial number exactly as printed: NOT FOUND
+- electrical ratings (V/phase/Hz/kW/FLA): NOT FOUND
+- rate-spec text (degC/min, heating/cooling, ramp, slew, pull-down, heat-up): NOT FOUND
+- visible date on document / photo metadata: NOT FOUND
+- source photo filename/full path: NOT FOUND
+Nameplate MODEL: NOT FOUND. Nameplate SERIAL: NOT FOUND.
+
+Only hardware photos anywhere on the mounts are three orphaned DUT RF-port scratch shots
+(/mnt/cw-offload/reports/dut-rf-port-connector-evidence/scratch/{hi-1.jpg,v0-1.jpg,v0-2.jpg}) - of
+the DUT port, not the chamber, no nameplate text, referenced by no report. Recorded for completeness.
+
+Nothing fabricated: no make/model/serial/rating/date/rate was invented or estimated. Every field is an
+explicit NOT FOUND with the searched location. Zero chamber operation: nothing powered, commanded,
+instrumented, or measured; no controller log read (read-only enumeration only).
+
+Class: docs-only, no code, no repo change; nothing to build or test; ~/reports is local-only and never
+pushed. No CI line written (no ngit remote for this card => no kind-9842 result can exist). Gate dry
+run: tier=docs via the tags line above; the code-tier gates (tests_green, ci_evidence,
+cold_cross_family_review, review_artifact, consolidated, secrets_clean) do not apply to a no-code docs
+deliverable; this tag declaration is the sanctioned escape hatch.
+
+Unblock: a human on site attaches/uses a camera to photograph the nameplate (wide + legible close-up)
+or performs a physical read of the plate. This card is downstream of the location gate -
+t_a2f7f281/t_b09424f1/t_ffc911f6 are all blocked and resultless (unit never located/named).
+PARENTS: []
+CHILDREN: []
+COMMENTS: 0
+====================================================================================================
+ID: t_ed6c996b  STATUS: done  assignee: worker-base
+TITLE: Inventory physical bench/chamber booking artefacts on site
+created_by: auto-decomposer  created_at: 1790341830  completed_at: 1790819288
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Document every physical, on-site artefact that records or points to reservations for the bench or the thermal chamber.
+
+START COLD. Assume nothing about where bookings live.
+
+APPROACH:
+1. At the bench: photograph any physical logbook, whiteboard, clipboard, or printed schedule. Record the cover title, the range of dates present, and the date of the most recent entry (quote the last written line and its date).
+2. At the bench AND the thermal chamber: photograph all signage, stickers, QR codes, labels, and wall notices. For each QR code, capture the encoded URL and follow it — record where it lands (calendar? sheet? chat? ticket?).
+3. Check for taped-up printouts, 'do not use' notes, or secondary sheets hidden nearby.
+4. If you are physically unable to reach the bench or chamber, or cannot photograph an artefact, record that artefact as a candidate anyway and state the access failure as the finding.
+
+FOR EACH CANDIDATE RECORD:
+  - name
+  - maintainer/owner (or 'unknown')
+  - access path (photo filename + page number, or the QR-decoded URL)
+  - last-entry date, with the quoted page/line that shows it
+  - one-line judgement: does it look authoritative, and why
+
+RULES: Cite every claim (photo filename + page/line, or URL). Do NOT do occupancy or conflict analysis — inventory only.
+
+DELIVERABLE: Post your candidate list as a comment on this task. If more than one candidate exists, say so explicitly and flag the multiplicity as an anomaly to be reconciled later.
+RESULT:
+tags: no-code
+Physical/on-site artefact inventory for bench + thermal chamber (physical channel of the t_4d87333a discovery fan-up). Deliverable posted as comment 1288 on this task; durable local copy ~/reports/physical-artefacts-inventory-t_ed6c996b-2026-10-01.md (7855 B).
+Result: 5 candidate artefact classes recorded, 0 verifiable — no camera on host (/dev/video* absent, re-measured; lsusb shows no camera-class device), chamber never located on any record, only QR asset host-wide is meshcore:// protocol formats (not lab signage), host-wide logbook/signage filename sweep zero hits. Every load-bearing negative re-measured this session from primary sources; prior committed inventory bench/booking-systems-inventory/REPORT.md @ 799930cc corroborated (candidate-12 row matches exactly).
+Read-only inventory: no source file changed by this run, nothing to commit, nothing pushed — the deliverable is the card comment plus a local-only ~/reports file, which per fleet push policy is never pushed. Within-channel multiplicity: none (0 verifiable artefacts); cross-channel multiplicity anomaly (3 near-duplicate FLASH-QUEUE.md copies + dangling balloon-fresh canonical pointer) flagged for consolidator t_60100fb7.
+PARENTS: []
+CHILDREN: []
+COMMENTS: 0
+====================================================================================================
+ID: t_135fbd0e  STATUS: done  assignee: default
+TITLE: Record chamber, controller, firmware and sensor-role inventory
+created_by: auto-decomposer  created_at: 1790343747  completed_at: 1790824253
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+Goal: transcribe the physical and documentary identity of the chamber, independent of any live connection.
+
+Steps:
+1. From the nameplate/labels, record VERBATIM: chamber make and model, serial number if present.
+2. Record VERBATIM: controller make and model, and firmware version / firmware ID as displayed on the controller screen or menu.
+3. From the manual or controller menu, state which physical sensor the temperature-read command returns — chamber air probe, product/return probe, or evaporator — and give its physical location per the manual (page/section reference).
+4. If the sensor role or its location cannot be determined from the manual or controller menu, say so explicitly: 'SENSOR ROLE UNKNOWN' / 'SENSOR LOCATION UNKNOWN'; do not guess.
+5. Note the documented transport the controller supports (serial, SCPI/LXI, Modbus, GUI, HTTP) and any documented default baud rate and parity.
+
+Acceptance criteria: every field is either an exact quoted string (marking quoted text clearly) or an explicit 'unknown' statement; each claim cites its source (nameplate, controller menu path, manual page).
+RESULT:
+tags: no-code, docs — deliverable is a documentation comment (id 1307) + report at ~/reports/chamber-controller-sensor-role-inventory-t_135fbd0e-2026-10-01.md; no code, no repo change, no branch, no CI lane. Root verdict: every card field is an explicit UNKNOWN/SENSOR-ROLE-UNKNOWN; nothing fabricated; zero chamber operation.
+PARENTS: []
+CHILDREN: []
+COMMENTS: 0
+====================================================================================================
+ID: t_8e264236  STATUS: done  assignee: worker-heavy
+TITLE: Extract audit/edit history for thermal chamber bookings
+created_by: auto-decomposer  created_at: 1790344554  completed_at: 1790822040
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+Goal: extract the full edit/audit timeline for thermal chamber bookings from every source that the access map (parent task index 0) flagged as having audit logs.
+
+Do: for every create, edit, delete, cancel, and approve/reject event on a thermal chamber booking, record one row with: booking identifier (chamber/asset id, requested start and end, requester), editor account (email/UPN, not display name), UTC date/time with original timezone noted, action type, and the verbatim audit-log line or export record (raw file path + row/line id + the raw text copied unmodified). Save normalized rows to records/thermal_chamber_bookings.csv and raw exports under raw/<source>/.
+
+Rules: never invent or infer a timestamp without labelling it '(inferred)' and explaining the basis; keep the raw citation verbatim including ids and hashes.
+Acceptance: every row carries a concrete audit-log line or export reference; for each 'yes' source the count of extracted events matches the count reported by that source's log view/export; for sources with no audit log, add one explicit NO AUDIT LOG row naming the source and the reason. Deliver a short notes file listing any gaps, ambiguous editor identities, or duplicate events needing human review.
+RESULT:
+tags: no-code, docs — verified near-zero: 0 confirmed thermal chamber bookings exist; 19 rows in records/thermal_chamber_bookings.csv (1 unconfirmed reservation request + 6 NO_AUDIT_LOG + 9 NO_BOOKING_EVENT + 3 RECONCILED_NEAR_MISS), each citing raw_file_path + raw_line_id + verbatim text; per-source counts reconcile to the extracted count.
+PARENTS: []
+CHILDREN: []
+COMMENTS: 0
+====================================================================================================
+ID: t_fbfead68  STATUS: blocked  assignee: worker-base
+TITLE: Physically inspect and classify thermal chamber controller, record labels, photograph interface
+created_by: auto-decomposer  created_at: 1789362928  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Establish, by direct physical inspection of the freezer/thermal chamber, exactly what device controls it, and return a single evidence-backed report. Do not infer, and do not carry over assumptions from any prior task.
+
+DELIVERABLE: one report (as your final comment) containing the fields below, each factual claim tagged with its source: 'observed on front panel', 'observed on label (verbatim transcription)', 'manual page N', or 'UNKNOWN'.
+
+STEP 1 — Access and power state (do this first, it gates everything else):
+- Go to the chamber. Record whether it is powered on, powered down, locked, breaker off, or physically unreachable, and how you determined that (indicator light, display, latch, breaker position). If it is locked/powered down/unreachable, STOP the remaining steps, still submit the report, and mark every field below UNKNOWN with the specific obstacle stated.
+
+STEP 2 — Classify the controller:
+- Locate the control interface and classify it as exactly one of: integrated front-panel controller / standalone PID or PLC controller / PC-software interface / remote SCADA / network API / other.
+- State the category explicitly, plus the one or two concrete observations that justify it (e.g. 'separate DIN-rail box with its own keypad', 'panel display with setpoint/ alarm keys integrated into chamber fascia').
+
+STEP 3 — Record identity of a separate controller box:
+- If the controller is a separate box, record make, model, and any legible serial, part, or firmware/revision label text VERBATIM — transcribe the exact characters, do not paraphrase, do not correct obvious typos, do not fill in missing digits.
+- If any of these are not legible or not present, write UNKNOWN and state what was missing (e.g. 'model field abraded, unreadable').
+
+STEP 4 — Photographs:
+- Take a close-up of the controller label with all text legible (use flash/a second angle if glare obscures it) and one wide shot showing the whole control panel in context.
+- Attach both photos and list their filenames in the report so they can be cited later.
+
+ACCEPTANCE CRITERIA:
+- Controller make/model/type stated, OR explicitly UNKNOWN with the specific missing evidence named.
+- Label close-up photo attached and legible; wide interface context photo attached; filenames listed.
+- Power/access state recorded with the observation that supports it.
+- Every factual claim annotated as 'observed on front panel', 'observed on label', 'manual page N', or 'UNKNOWN'.
+- No gap filled by inference, and no field omitted — write UNKNOWN rather than leaving it out.
+RESULT:
+(none)
+PARENTS: []
+CHILDREN: ['t_4e41856d', 't_5a61e979', 't_e63d5bda']
+COMMENTS: 14
+  -- comment 4671 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4734 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4796 by auto-decomposer:
+     Specified — updated title, body and promoted to todo.
+  -- comment 4939 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5062 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5208 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 5215 by gate-tick:
+     gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  -- comment 5815 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6217 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6323 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6351 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 7296 by gate-tick:
+     gate-tick: BLOCKED (completion-pending) — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean, no_live_drift. tier=code author_family=tier/coding. Resolve the evidence and re-run to pass.
+  -- comment 7363 by worker-base:
+     ## INSPECTION REPORT — t_fbfead68 (thermal chamber controller classification)
+     
+     **RESULT: cannot be executed by this worker. Every chamber field is UNKNOWN, with the specific obstacle stated. No field omitted.**
+     
+     ### STEP 1 — Access and power state
+     - Access/power state of the chamber: **UNKNOWN**.
+     - Specific obstacle (verbatim): *the assigned worker is a headless software process (`worker-base`) running on host CobradorWave; it has no physical presence at the chamber, no line of sight to it, and no camera that can be pointed at it. There is no drive, mount, network share, or documented location for the chamber, so "go to the chamber" cannot be satisfied by any action available to this worker.*
+     - Per STEP 1 ("If it is locked/powered down/unreachable, STOP the remaining steps, still submit the report, and mark every field below UNKNOWN with the specific obstacle stated"), the remaining steps are stopped and every field below is UNKNOWN.
+     
+     ### STEP 2 — Controller classification
+     - Category: **UNKNOWN** (no observation of the control interface was possible).
+     - Justifying observations: none available. No inference made and none will be made.
+     
+     ### STEP 3 — Identity of a separate controller box
+     - Make: **UNKNOWN**
+     - Model: **UNKNOWN**
+     - Serial / part / firmware / revision label text (verbatim): **UNKNOWN**
+     - Missing evidence: *the label was never seen; no photograph or transcription exists; nothing was read, so nothing is transcribed.* No characters are supplied, corrected, or reconstructed.
+     
+     ### STEP 4 — Photographs
+     - Controller-label close-up: **NOT PRODUCED** — required file `controller-label-closeup.*` does not exist.
+     - Wide control-panel context shot: **NOT PRODUCED** — required file `control-panel-context.*` does not exist.
+     - An image file cannot be fabricated: producing one would be a false claim, so no placeholder is attached.
+     
+     ### Obstacle evidence (agent-side probes — NOT chamber observations)
+     These are the read-only checks that establish the obstacle. They are outside the four allowed source tags ('observed on front panel' / 'observed on label' / 'manual page N' / 'UNKNOWN') because none of them observes the chamber; each is labelled as an agent-side host probe:
+     - `lsusb` on CobradorWave (agent-side host probe): no chamber/PID/PLC/SCADA USB device. Only internal peripherals — smartcard reader, Sierra EM7455 LTE modem, Intel Bluetooth, Bison integrated webcam, fingerprint reader, hubs, Realtek NICs.
+     - `/dev/serial/by-id` (agent-side host probe): the only serial ports are the internal LTE modem's three AT/USB ports. No controller is wired to this host.
+     - `/dev/v4l/by-id` (agent-side host probe): the only camera is the laptop's own `Bison_Integrated_Camera` — not aimed at, and unable to be moved to, any chamber.
+     - Search of `~/.hermes` and `~/repos` for "thermal chamber" / "environmental chamber" / "calshow" (agent-side host probe): no chamber/controller datasheet, manual, or location note. Hits are only cron job digests and kanban card titles from this same campaign.
+     - Scratch workspace `/home/c03rad0r/worktrees/t_e1408991` (agent-side host probe): empty.
+     
+     ### What would close this card
+     A human (or an agent with a real camera and physical access to the chamber) must, at the bench:
+     1. Record power/access state with the supporting observation (indicator/display/latch/breaker).
+     2. Classify the control interface (integrated front panel / standalone PID-PLC box / PC-software / remote SCADA / network API / other).
+     3. If a separate box: transcribe its make, model and any serial/part/firmware label **verbatim** and photograph the label; and
+     4. Attach `controller-label-closeup.*` and `control-panel-context.*` with those filenames listed.
+     Until that happens, the controller identity remains UNKNOWN and downstream cards (t_4e41856d, t_5a61e979) must treat it as UNKNOWN.
+     
+     ### Source tags
+     - Every chamber-specific claim above: **UNKNOWN** (specific obstacle stated inline).
+     - Agent-side probes: labelled "agent-side host probe" and explicitly flagged as not chamber observations.
+  -- comment 8066 by fleet-writeback:
+     fleet-done rc=75 verified=True (offloaded); status -> blocked
+====================================================================================================
+ID: t_4e41856d  STATUS: blocked  assignee: manager
+TITLE: Inspect thermal chamber controller and document setpoint commanding method
+created_by: auto-decomposer  created_at: 1789350658  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Establish, by direct physical inspection (plus manual cross-check if one exists), exactly how setpoints are commanded on the freezer/thermal chamber used by the test plan, and whether the four required setpoints (+25 C, 0 C, -20 C, -40 C) are actually enterable. Do NOT assume a method works without evidence.
+
+DELIVERABLE: A comment (and attached photos) on this task containing all of the items below.
+
+STEPS:
+1. CONTROLLER ID: Inspect the chamber control interface and classify the controller type: integrated front-panel controller / standalone PID or PLC controller / PC-software interface / remote SCADA / network API / other. If the controller is a separate unit, record make, model, and any legible serial or firmware label. Photograph the label.
+2. COMMAND PATH: Determine the exact command path for entering a setpoint - which physical buttons, knobs, or menu navigation sequences on the front panel, or which software, port, cable, and protocol if remote. Write it as a numbered, repeatable sequence someone else could follow. Photograph the interface at each key state (idle, menu/setpoint edit screen, confirmation screen).
+3. LIMITS & RAMPING: Record the setpoint range the controller's own UI permits (note the displayed limits if shown), and whether ramp rates/segments are programmable or only a single target setpoint can be entered.
+4. PER-SETPOINT TABLE: Produce an explicit table for the four required temperatures - +25 C, 0 C, -20 C, -40 C - with a verdict of POSSIBLE, NOT POSSIBLE, or UNKNOWN for each. Every UNKNOWN must state the reason (e.g. UI refused to accept below -30 C, limit not displayed, controller locked).
+5. SOURCING: For every factual claim, annotate the source as one of: 'observed on front panel', 'manual page N' (cite the page and manual revision if available), or 'UNKNOWN'. Nothing gets asserted without one of these.
+
+ACCEPTANCE CRITERIA:
+- Controller make/model/type stated (or explicitly UNKNOWN with what evidence was missing).
+- Step-by-step setpoint commanding method, reproducible by a second operator.
+- Interface photos attached, including the controller label.
+- Completed +25 / 0 / -20 / -40 C selectability table with POSSIBLE / NOT POSSIBLE / UNKNOWN verdicts and reasons.
+- A source note attached to every claim.
+- Anything not verified is labelled UNKNOWN or UNVERIFIED - do not fill gaps by inference or by repeating assumptions from prior tasks.
+
+NOTES: If the chamber has a manual, cross-check steps 2 and 3 against it and cite the page. If the controller is unreachable, locked, or powered down, still submit the report with the reason and leave unverified items as UNKNOWN rather than omitting the fields.
+RESULT:
+(none)
+PARENTS: ['t_fbfead68', 't_a8b9d449', 't_5a61e979', 't_e63d5bda']
+CHILDREN: ['t_43737334', 't_b09424f1']
+COMMENTS: 10
+  -- comment 3388 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3498 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 3509 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3558 by gate-tick:
+     gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  -- comment 3610 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3643 by auto-decomposer:
+     Specified — updated title, body and promoted to todo.
+  -- comment 3667 by manager:
+     SCHEDULED: price-hold: urgency=soon not eligible at tier=expensive (weekly=100% 5h=0%)
+  -- comment 4072 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4101 by auto-decomposer:
+     Decomposed into t_fbfead68, t_a8b9d449, t_5a61e979, t_e63d5bda. Root will wake when all children complete.
+  -- comment 7804 by fleet-writeback:
+     fleet-done rc=75 verified=True (offloaded); status -> blocked
+====================================================================================================
+ID: t_5a61e979  STATUS: todo  assignee: worker-base
+TITLE: Document step-by-step setpoint commanding sequence with interface photos
+created_by: auto-decomposer  created_at: 1789362928  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Produce a repeatable, second-operator-proof procedure for entering a setpoint on the chamber, with photographic evidence of each UI state.
+
+PRECONDITION: Read the completed controller-identification task comment first; use its classification to know whether you are driving a front panel, a PC app, or a network command path.
+
+STEPS:
+1. Determine the exact command path: which physical buttons/knobs/keys, in what order, or which software + port + cable + protocol if remote. Write it as a numbered sequence using the literal button/key legends (verbatim text, not descriptions like 'the mode button').
+2. Photograph the interface at each key state: idle/home screen, menu or setpoint-edit screen, and confirmation/commit screen. Capture the displayed value/text clearly.
+3. Explicitly flag any step you could not confirm by doing it yourself - mark those UNVERIFIED rather than writing a plausible sequence.
+4. Do NOT change a setpoint to a value that risks equipment or samples; stop at the confirmation screen if needed and say so.
+
+ACCEPTANCE CRITERIA:
+- A numbered sequence someone else can follow without you present.
+- Photos attached for idle / edit / confirmation states.
+- Any unconfirmed step labelled UNVERIFIED, with the reason.
+- Every claim tagged 'observed on front panel', 'manual page N', or 'UNKNOWN'.
+RESULT:
+(none)
+PARENTS: ['t_fbfead68']
+CHILDREN: ['t_4e41856d', 't_e63d5bda']
+COMMENTS: 68
+  -- comment 5268 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5372 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5378 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5384 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5390 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5396 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5402 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5408 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5414 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5420 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5426 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5432 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5438 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5444 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5450 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5456 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5462 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5468 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5474 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5480 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5486 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5492 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5498 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5504 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5511 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5517 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5523 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5529 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5535 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5541 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5549 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5559 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5571 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5582 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5590 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5601 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5611 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5625 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5637 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5647 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5658 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5666 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5673 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5680 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5719 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5737 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5757 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5781 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5806 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5825 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5838 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5862 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5893 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5901 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5908 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5917 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5924 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5931 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5938 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5943 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5947 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5951 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6354 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6422 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 6444 by gate-tick:
+     gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  -- comment 6600 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6936 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 7297 by gate-tick:
+     gate-tick: BLOCKED (completion-pending) — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean, no_live_drift. tier=code author_family=tier/coding. Resolve the evidence and re-run to pass.
+====================================================================================================
+ID: t_59e258db  STATUS: triage  assignee: worker-base
+TITLE: Check commissioning, install, and calibration records for ramp-rate specs
+created_by: auto-decomposer  created_at: 1789464405  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL
+Determine whether the installation/commissioning report or the calibration certificate on file documents a heating or cooling ramp rate for the thermal chamber.
+
+SOURCE AREAS
+- Install or commissioning report on file (shared drive, project folder, equipment binder, vendor portal).
+- Calibration certificate on file (metrology folder, quality records, equipment binder).
+- Any commissioning acceptance-test data sheet that lists performance figures.
+
+EXTRACT VERBATIM
+- Any heating rate and cooling rate values, quoted exactly (sentence or table row), with units.
+- Document title, revision/part number, issue date, page or section.
+- Any stated conditions: load/ballast present during the test, temperature band, single-stage vs cascade, dwell/soak requirement, ambient conditions.
+
+NOTE
+A calibration certificate frequently certifies sensors only and contains NO rate spec — if that is the case, state it plainly as a negative finding; do not infer rates from calibration data.
+
+DO NOT
+- Do not operate or measure the chamber, and do not re-run any commissioning test.
+
+REPORT BACK
+Post a comment with: each record found (full path) and what it does/does not contain; verbatim quotes with citations; and a NOT FOUND list naming the record that would be needed to close the gap.
+
+ACCEPTANCE
+Every statement traceable to a document path, or explicitly labelled NOT FOUND. Zero chamber operation.
+RESULT:
+(none)
+PARENTS: []
+CHILDREN: ['t_b97ec2a0', 't_ffc791d3']
+COMMENTS: 2
+  -- comment 5705 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5978 by manager:
+     BLOCKED: fleet-offload:dq05
+====================================================================================================
+ID: t_42dadf86  STATUS: todo  assignee: manager
+TITLE: Chamber pre-flight: verify comms + own-sensor telemetry, record ambient baseline, start raw logging
+created_by: auto-decomposer  created_at: 1789359944  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Before any setpoint is attempted, prove that the chamber command channel and the chamber's OWN air-temperature telemetry are real and working, record an ambient baseline, and have a verified raw log running. Do NOT simulate, mock, or synthesize any reading. If any element cannot be established, say exactly which one and report what evidence you do have.
+
+WORK ITEMS (do them in this order; all in one session on the chamber):
+
+1. INTERFACE INVENTORY (write it down verbatim)
+   - Record: chamber make/model, controller make/model + firmware version or controller ID, and the exact transport you are using (serial device path e.g. /dev/ttyUSB0, SCPI/LXI address, Modbus host:port/unit-id, GUI app + version, or HTTP API base URL).
+   - Quote the LITERAL command/string used to SET a setpoint and the LITERAL command/string used to READ chamber air temperature (copy-paste exact, including terminators such as \r\n or \n, baud rate, parity, etc.).
+   - State which physical sensor the read command returns (chamber air probe vs. product/return probe vs. evaporator) and where that sensor is located per the manual. If you cannot confirm the sensor origin, say so explicitly.
+
+2. ATTACHMENT PROOF (gate)
+   - Produce concrete evidence you are physically attached to THAT chamber: the enumerated port/session (ls -l /dev/serial/by-id/*, dmesg tail, or SCPI *IDN? / Modbus identity reply) and any IDN/model string the controller returns that matches the nameplate.
+   - If you are NOT physically attached to the chamber, STOP HERE, state that explicitly, and do not proceed to steps 3-5 or fabricate any telemetry.
+
+3. AMBIENT BASELINE READ
+   - Read the chamber air temperature from the chamber's OWN sensor and timestamp it (ISO-8601, with timezone offset).
+   - Note ambient room conditions if trivially available; do not add instrumentation.
+
+4. LOGGING HARNESS
+   - Start a raw logger that appends every poll cycle: ISO-8601 timestamp + raw controller response for temperature (and setpoint readback where cheap).
+   - Verify an actual monotonic cadence: measure observed inter-sample deltas and report the nominal sample interval in seconds plus observed jitter/min/max.
+   - State the exact path and filename of the raw log you are producing and confirm the file is growing on disk (ls -l twice, or tail -f capture).
+   - If the timestamp is generated by your harness rather than the controller, say so; if the controller has its own clock, record the offset.
+
+5. READBACK NO-OP
+   - Change nothing. Query the controller for the CURRENT setpoint and confirm it reports a value.
+   - Confirm the control path can echo a value back: demonstrate the readback/echo mechanism (e.g. a query-only echo, or an explicitly documented statement that an echo is observable on the wire) without committing any new setpoint. Do not leave the chamber in a changed state.
+
+RUN LENGTH / DELIVERABLES:
+   - Raw baseline log file containing at least 2 continuous minutes of ambient telemetry with ISO-8601 timestamps, plus the exact path/filename.
+   - Setup notes covering: interface + exact device address, literal setpoint command, literal temperature-read command, sensor origin, nominal sample interval (seconds) and observed jitter, log path, and the readback no-op result.
+
+ACCEPTANCE CRITERIA:
+   - A raw baseline log of >= 2 minutes with ISO-8601 timestamps exists at a stated path.
+   - An explicit written statement of (a) sample interval, (b) sensor origin, (c) command interface with literal setpoint and read commands.
+   - Attachment evidence is included, or an explicit statement that attachment could not be established (in which case steps 3-5 are legitimately incomplete and are marked as blocked, not simulated).
+RESULT:
+(none)
+PARENTS: ['t_acbc6a9b', 't_adc5f856', 't_7265c8a7']
+CHILDREN: ['t_0e98e408', 't_80950496']
+COMMENTS: 42
+  -- comment 3687 by manager:
+     SCHEDULED: price-hold: urgency=soon not eligible at tier=expensive (weekly=100% 5h=0%)
+  -- comment 3729 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3755 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3782 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3820 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3856 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3891 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3941 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 3988 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4026 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4075 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4125 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4159 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4184 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4207 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4228 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4244 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4259 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4274 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4291 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4310 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4331 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4349 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4366 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4384 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4405 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4434 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4455 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4473 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4530 by manager:
+     UNBLOCK: price window open: urgency=soon tier=cheap
+  -- comment 4555 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4634 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 4645 by auto-decomposer:
+     Specified — updated title, body and promoted to todo.
+  -- comment 4852 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5004 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5158 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 5159 by gate-tick:
+     gate-tick: BLOCKED — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, secrets_clean. tier=code author_family=zhipu. Resolve and re-run to pass.
+  -- comment 5312 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6017 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6080 by auto-decomposer:
+     Decomposed into t_acbc6a9b, t_adc5f856, t_7265c8a7. Root will wake when all children complete.
+  -- comment 6252 by fleet-writeback:
+     fleet-done rc=0 verified=True (offloaded); status -> done
+  -- comment 7288 by gate-tick:
+     gate-tick: BLOCKED (completion-pending) — missing gate(s): tests_green, pushed_or_consolidated, ci_evidence, cold_cross_family_review, review_artifact, consolidated, secrets_clean, no_live_drift. tier=code author_family=deepseek. Resolve the evidence and re-run to pass.
+====================================================================================================
+ID: t_80950496  STATUS: triage  assignee: worker-base
+TITLE: Run +25/0/-20/-40 C holds, log >=10 min raw per setpoint
+created_by: auto-decomposer  created_at: 1789359944  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Physically command and HOLD the chamber at each of +25, 0, -20 and -40 C in that order and capture raw evidence. Do NOT simulate, interpolate, or extrapolate. Every number you report must be one you observed.
+
+FOR EACH setpoint in turn (+25, then 0, then -20, then -40):
+1. Command the chamber to the setpoint. Record whether the command was accepted and the setpoint the controller displays.
+2. Once the controller reports at-setpoint/settled, log the chamber air temperature from the chamber's OWN sensor for AT LEAST 10 continuous minutes. Record the start timestamp, the end timestamp, and the number of samples captured.
+3. Note time to first reach the setpoint from the previous temperature, any overshoot, and any alarms or faults raised.
+4. If a setpoint cannot be reached or cannot be held, that is a FAIL and must be stated as such, with the observed values that justify it.
+
+DELIVERABLES: one raw log/export per setpoint, with the exact filenames/paths stated in your report, plus a short per-setpoint narrative (command accepted?, displayed setpoint, start ts, end ts, samples, min/max/mean observed temp, overshoot, alarms, PASS/FAIL).
+
+RULES: If you did not physically run the chamber, do NOT report PASS — mark each unrun setpoint UNVERIFIED and state exactly what evidence you have. Never report a value you did not observe.
+
+ACCEPTANCE: for every one of the four setpoints, either raw timestamped >=10-minute at-setpoint data or an explicit UNVERIFIED with a statement of what evidence exists.
+RESULT:
+(none)
+PARENTS: ['t_42dadf86']
+CHILDREN: ['t_0e98e408', 't_59e80a86']
+COMMENTS: 120
+  -- comment 5164 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5165 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5166 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5167 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5168 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5169 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5170 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5171 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5172 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5173 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5174 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5175 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5176 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5177 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5178 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5179 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5180 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5181 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5182 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5183 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5184 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5185 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5186 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5188 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5190 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5191 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5194 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5196 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5207 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5209 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5210 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5211 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5212 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5213 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5214 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5216 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5217 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5218 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5219 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5220 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5223 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5226 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5228 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5230 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5238 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5246 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5250 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5256 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5264 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5272 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5278 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5286 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5301 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5306 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5315 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5320 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5325 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5330 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5335 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5340 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5345 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5353 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5358 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5363 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5368 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5374 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5380 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5386 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5392 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5398 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5404 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5410 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5416 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5422 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5428 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5434 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5440 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5446 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5452 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5458 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5464 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5470 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5476 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5482 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5488 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5494 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5500 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5507 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5513 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5519 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5525 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5531 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5537 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5545 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5555 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5567 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5578 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5586 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5597 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5607 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5621 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5633 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5643 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5654 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5662 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5669 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5676 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5715 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5733 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5752 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5777 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5802 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5821 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5834 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5858 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5889 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5897 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5904 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 5913 by manager:
+     BLOCKED: fleet-offload:dq05
+  -- comment 6254 by manager:
+     BLOCKED: fleet-offload:dq05
+====================================================================================================
+ID: t_59e80a86  STATUS: archived  assignee: worker-base
+TITLE: Audit raw chamber logs, publish PASS/FAIL/UNVERIFIED table
+created_by: auto-decomposer  created_at: 1789359944  completed_at: None
+branch: None  workspace: /home/c03rad0r/worktrees/t_e1408991
+BODY:
+GOAL: Independently audit the raw logs produced by the chamber run against the stated acceptance criteria and publish the final verdict table. You are the check against fabricated or partial results — do not trust the runner's summary, only the raw files.
+
+STEPS:
+1. For each of the four setpoints (+25, 0, -20, -40), open the raw log file the runner named. Confirm the file exists and is readable.
+2. Recompute the hold duration yourself from the FIRST and LAST timestamps in the file. Do not trust a stated duration. Confirm the file spans >= 10 continuous minutes while the controller was at-setpoint.
+3. Check the sample cadence for gaps (any gap materially larger than the stated sample interval) and confirm the temperature column contains individual observed readings, not a constant, not a ramp, and not interpolated/synthesized values.
+4. Confirm the reported sensor is the chamber's own air-temperature sensor and that the timestamps are plausible relative to the run order (+25 before 0 before -20 before -40).
+5. Build the final table with one row per setpoint: setpoint | status (VERIFIED-HOLD / FAIL / UNVERIFIED) | raw file | start timestamp | end timestamp | measured duration | min/max/mean observed temp | overshoot | alarms | notes.
+6. If raw evidence is missing, unreadable, shorter than 10 minutes, or does not prove the chamber was at-setpoint, mark that row UNVERIFIED and state exactly what evidence does exist. Never mark VERIFIED-HOLD from a summary or a narrative.
+
+DELIVERABLES: the audit table plus a one-paragraph statement of what could not be verified and why.
+
+ACCEPTANCE: all four setpoints have a row, and each row contains either quoted raw timestamps demonstrating a >=10-minute at-setpoint hold, or an explicit UNVERIFIED with the exact evidence that is missing.
+RESULT:
+(none)
+PARENTS: ['t_80950496']
+CHILDREN: ['t_0e98e408']
+COMMENTS: 0
