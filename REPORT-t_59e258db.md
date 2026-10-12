@@ -38,6 +38,7 @@ inferred from calibration data.
 | 5 | Commissioning acceptance-test data sheet | repo tree content grep for `commissioning\|SAT\|FAT\|IQ/OQ\|ramp.?rate` → **0 hits** | **NOT EXISTS** | **NONE** |
 | 6 | Card attachments (any board DB) | programmatic scan of `task_attachments` across **every** board DB; meshcore board attachments dir on disk | meshcore = **0** doc attachments | **NONE** |
 | 7 | Kanban card corpus (the project's own record) | read-only dump of all chamber/commissioning cards + comments in `meshcore/kanban.db` | EXISTS | see §4 — records describe *absence*, not specs |
+| 8 | Every PDF under `~` and `/mnt` (text layer) | `pdftotext` on **all 4,059 PDFs** found; grep `commissioning\|ramp rate\|heating rate\|cooling rate\|thermal chamber\|degC/min\|°C/min` | 4,059 PDFs EXIST | **0 hits** — no PDF documents a chamber rate |
 
 **One "rate-spec" phrase was found, and it is itself a NOT-FOUND:**
 the prior nameplate search (`t_23e2f894`, 2026-10-01) logged the literal line
@@ -163,7 +164,8 @@ analysis/t_59e258db/kanban_comments_search.py  every comment fleet-board for doc
 analysis/t_59e258db/kanban_card_dump.py        full body/result/comments of the key cards
 analysis/t_59e258db/card_dump.txt              captured output (verifiable)
 analysis/t_59e258db/gate_and_attachments.py    upstream identity cards + fleet-wide attachments
-/tmp/pdf_sweep.sh                              pdftotext sweep of every PDF under ~ and /mnt
+pdf sweep (§2 row 8): every PDF under /home/c03rad0r + /mnt, text layer via pdftotext
+  (first-page bounded pass, 5s/PDF, 8-way parallel; 4,059 PDFs, 0 hits)
 ```
 DB read read-only via `sqlite3 file:…?mode=ro`. No source file was modified.
 
