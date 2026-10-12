@@ -20,4 +20,10 @@ Format: finding -> status -> files touched
    own deliverables, not the physical-logbook-review or the Slack/Matrix-history-search output -> DONE -> (none)
 5. Wrote the deliverable (blocked/negative report + raw findings list) -> DONE -> analysis/t_c2a72059/raw-findings-logbook-and-chat.md, analysis/t_c2a72059/verify_upstream_empty.py
 6. Ran in-repo verification script (asserts upstream emptiness + no on-disk artifacts) -> DONE -> analysis/t_c2a72059/verify_upstream_empty.out
-7. Committed + pushed -> see REPORT.md §push for observed remote ref
+7. Committed + pushed milestone 1 -> DONE -> commit 46dcca4; git ls-remote bot confirms
+   refs/heads/worker-admin/t_c2a72059 = 46dcca4 (= local HEAD). origin push refused 403 (no
+   write access for bot account); bot is the canonical remote for this repo.
+8. Wrote full REPORT.md + validated deliverable JSON (parseable, counts match header) -> DONE -> REPORT.md
+9. Committed + pushed milestone 2 (REPORT.md + PROGRESS.md update) -> see REPORT.md §8
+
+STATUS: COMPLETE (blocked/negative deliverable — both upstream inputs empty, 0 records)
