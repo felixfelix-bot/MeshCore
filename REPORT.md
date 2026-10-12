@@ -155,16 +155,26 @@ Read-only external inputs (not modified): `~/.hermes/kanban/boards/meshcore/kanb
 
 ---
 
-## 8. GIT — OBSERVED COMMIT AND PUSH
+## 8. GIT — OBSERVED COMMITS AND PUSHES
 
-- Commit: `46dcca4 analysis(t_c2a72059): blocked report - both upstream inputs (logbook review, chat search) empty`
-- Push: `git push -u bot worker-admin/t_c2a72059` → **succeeded**, `* [new branch]`, exit 0.
-- **Verified** by `git ls-remote bot refs/heads/worker-admin/t_c2a72059` →
-  `46dcca41635d488e21034b3e72409edb6804dd9c` = local `HEAD`. Pushed and confirmed.
-- Remote convention: `bot` (`github.com/felixfelix-bot/MeshCore`) is the canonical push remote for
-  this repo — all 10 peer `worker-*` branches live there. `origin`
-  (`github.com/c03rad0r/MeshCore`) rejected the push with **403** (the bot account has no write
-  access to that repo); this is expected and does not affect the deliverable.
+All work is on branch `worker-admin/t_c2a72059`, base `abfa52d`, pushed to `bot`
+(`github.com/felixfelix-bot/MeshCore`) — the canonical push remote for this repo (all peer
+`worker-*` branches live there).
+
+| # | Commit | Purpose |
+|---|---|---|
+| 1 | `46dcca4` | blocked report — both upstream inputs (logbook review, chat search) empty |
+| 2 | `f7d57f8` | full REPORT + PROGRESS completion for the blocked negative deliverable |
+| 3 | `0ce7726` | fix whitespace/NULL handling in the emptiness proof + ad-hoc verification |
+| 4 | `a6e6be9` | record ad-hoc verification milestone in PROGRESS |
+| 5 | `ca651f8` | durable regression test for the emptiness proof (8/8 PASS) |
+
+- Each push was verified with `git ls-remote bot refs/heads/worker-admin/t_c2a72059`.
+- **Final verified state:** remote ref = `ca651f875779b6a2737ebe70910eff1d116e0700` = local `HEAD`.
+- Working tree clean; no `__pycache__` tracked.
+- `origin` (`github.com/c03rad0r/MeshCore`) rejected the push with **403** (the bot account has no
+  write access to that repo); this is expected and does not affect the deliverable. Only the `bot`
+  push is claimed.
 
 ---
 

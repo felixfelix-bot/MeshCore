@@ -34,7 +34,7 @@ Format: finding -> status -> files touched
     and committed test_verify_upstream_empty.py (canonical command, 8/8 PASS, no network/deps).
     Re-derived both traps against the LIVE board via hermes-verify- harness: old
     coalesce(result,0) => 11 false NON-EMPTY, fixed => 0; bare trim(newline)=1, WS-trim=0.
-    -> DONE -> commit <see REPORT.md §8>
+    -> DONE -> commit ca651f8, pushed to bot.
 
 STATUS: COMPLETE (blocked/negative deliverable — both upstream inputs empty, 0 records)
-Remote: bot refs/heads/worker-admin/t_c2a72059 (verified via git ls-remote after each push)
+Remote: bot refs/heads/worker-admin/t_c2a72059 = ca651f8 (verified via git ls-remote)
