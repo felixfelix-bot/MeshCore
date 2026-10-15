@@ -1,410 +1,6 @@
 ================================================================================================
-esp32-tollgate | rev=master | docs/ARCHITECTURE-CAR-TOLLGATE.md:122 | date=2026-07-06 02:38:00 +0530
-rule=gate = approval/gating mechanism wording | terms=gate
-LINE: - `test_go_authorizes_mac` — GL-E750 opens gate for paying client
-    119|**Test cases:**
-    120|- `test_go_portal_serves_portal_html` — GL-E750 serves captive portal
-    121|- `test_go_accepts_cashu_payment` — GL-E750 processes Cashu token
-    122|- `test_go_authorizes_mac` — GL-E750 opens gate for paying client
-    123|- `test_esp32_client_buys_from_gl` — ESP32 connects as TollGate client
-    124|- `test_esp32_client_resells` — ESP32 creates its own AP and resells
-    125|- `test_bitaxe_buys_via_esp32` — BitAxe pays ESP32's portal
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:19 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: The concept is called **E-Hash**: customers pay Ecash (via the existing TollGate
-    16|bridge**, providing internet uplink for ground-based ASIC miners (Bitaxe, NerdMiner)
-    17|in areas where the miners have no direct internet connection.
-    18|
-    19|The concept is called **E-Hash**: customers pay Ecash (via the existing TollGate
-    20|Cashu payment system) for the bandwidth required to relay block templates
-    21|(downlink) and nonce submissions (uplink) over LoRa. The balloon is NOT a hash
-    22|engine — it never computes SHA256. It is a thin relay + payment gateway.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:22 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: engine — it never computes SHA256. It is a thin relay + payment gateway.
-    19|The concept is called **E-Hash**: customers pay Ecash (via the existing TollGate
-    20|Cashu payment system) for the bandwidth required to relay block templates
-    21|(downlink) and nonce submissions (uplink) over LoRa. The balloon is NOT a hash
-    22|engine — it never computes SHA256. It is a thin relay + payment gateway.
-    23|
-    24|### Existing Code Reuse
-    25|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:26 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: The TollGate firmware already provides:
-    23|
-    24|### Existing Code Reuse
-    25|
-    26|The TollGate firmware already provides:
-    27|- WiFi AP+STA, Cashu wallet, captive portal, HTTP API (`main/tollgate_api.c`)
-    28|- Nostr identity, session management, firewall
-    29|- The Phase 1 mining extraction (`mining-standalone/`) provides `stratum_client`
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:27 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - WiFi AP+STA, Cashu wallet, captive portal, HTTP API (`main/tollgate_api.c`)
-    24|### Existing Code Reuse
-    25|
-    26|The TollGate firmware already provides:
-    27|- WiFi AP+STA, Cashu wallet, captive portal, HTTP API (`main/tollgate_api.c`)
-    28|- Nostr identity, session management, firewall
-    29|- The Phase 1 mining extraction (`mining-standalone/`) provides `stratum_client`
-    30|  and `stratum_proxy` modules that build clean on ESP32-S3 (846KB, 0 warnings)
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:40 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE:     │  - Cashu payment gateway (metered access)
-    37|    ┌────────────────┐
-    38|    │   BALLOON      │  (ESP32-S3, in sky)
-    39|    │  - stratum_client (upstream to pool)
-    40|    │  - Cashu payment gateway (metered access)
-    41|    │  - LoRa template broadcaster (downlink)
-    42|    │  - LoRa nonce collector (uplink)
-    43|    └───────┬────────┘
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:105 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: ### 3. Cashu Payment Gateway (E-Hash)
-    102|- **MSG_PAYMENT** (uplink, unicast): Cashu token for bandwidth payment.
-    103|  Ground station submits Ecash token to unlock template access.
-    104|
-    105|### 3. Cashu Payment Gateway (E-Hash)
-    106|
-    107|Reuse the existing TollGate Cashu wallet + payment API. Payment model:
-    108|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:107 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: Reuse the existing TollGate Cashu wallet + payment API. Payment model:
-    104|
-    105|### 3. Cashu Payment Gateway (E-Hash)
-    106|
-    107|Reuse the existing TollGate Cashu wallet + payment API. Payment model:
-    108|
-    109|- **Per-block access**: Customer pays Ecash for N blocks of template delivery.
-    110|  Each block = ~10 min window. Balloon tracks per-station credit balance.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:148 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE:   exist in TollGate firmware. Stratum client extracted in Phase 1. Only new
-    145|### Positive
-    146|
-    147|- **Massive code reuse**: Cashu wallet, WiFi, identity, session management all
-    148|  exist in TollGate firmware. Stratum client extracted in Phase 1. Only new
-    149|  code is LoRa message encoding + ground base station stratum server.
-    150|- **Bitaxe compatibility**: Stock firmware, zero modification. Any stratum-compatible
-    151|  ASIC works (Bitaxe, NerdMiner, braiins OS miners).
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:234 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: - Phase C: Balloon stratum relay module (stratum_client → LoRa TX + Cashu gate)
-    231|
-    232|- Phase A: LoRa message protocol spec (template encoding, nonce format, payment)
-    233|- Phase B: Ground base station prototype (RP2040: LoRa RX → local stratum server)
-    234|- Phase C: Balloon stratum relay module (stratum_client → LoRa TX + Cashu gate)
-    235|- Phase D: Integration test (balloon + base station + Bitaxe, end-to-end)
-    236|
-    237|## Notes
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:243 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - The existing TollGate session manager (`main/session.c`) does time-based access
-    240|  The `stratum_client` module is the balloon's upstream connection.
-    241|  The `sw_miner`/`asic_miner` modules are reference for ground-side understanding
-    242|  but are NOT deployed — Bitaxe runs its own firmware.
-    243|- The existing TollGate session manager (`main/session.c`) does time-based access
-    244|  control per MAC. Extending to LoRa station identity is a small addition.
-    245|- LoRa radio hardware details (modulation, SF, bandwidth) are tracked in the
-    246|  balloon-fresh repo's firmware track, not here. This ADR is protocol-level.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/ADR-XXX-balloon-stratum-relay.md:249 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE:   and pay for uplink. This is the TollGate model applied to mining relay instead
-    246|  balloon-fresh repo's firmware track, not here. This ADR is protocol-level.
-    247|- Felix's vision: E-Hash = Ecash + hashpower. The balloon provides infrastructure
-    248|  (internet relay) as a metered Ecash service. Ground miners provide hashpower
-    249|  and pay for uplink. This is the TollGate model applied to mining relay instead
-    250|  of WiFi hotspot access.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/adr-balloon-stratum-relay-DECISIONS.md:6 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: Balloon never computes SHA256. Pure stratum relay + Ecash payment gateway.
-    3|## RESOLVED DECISIONS (locked)
-    4|
-    5|### D1. Balloon role = relay only, no hashing
-    6|Balloon never computes SHA256. Pure stratum relay + Ecash payment gateway.
-    7|(Felix, 2026-07-29)
-    8|
-    9|### D2. Ground hardware = balloon base station + Bitaxe
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-pow-e-hash | docs/adr/adr-balloon-stratum-relay-DECISIONS.md:21 | date=2026-07-29 20:29:09 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: Reuses existing TollGate Cashu wallet + session system.
-    18|
-    19|### D4. E-Hash payment model
-    20|Customer pays Ecash for bandwidth (template delivery + nonce uplink relay).
-    21|Reuses existing TollGate Cashu wallet + session system.
-    22|(Felix, 2026-07-29)
-    23|
-    24|## STILL OPEN (awaiting decision)
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:1 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: # ADR-001: TollGate Balloon Uses LR2021 Radio as Data Link
-    1|# ADR-001: TollGate Balloon Uses LR2021 Radio as Data Link
-    2|
-    3|**Date:** 2026-07-29
-    4|**Status:** Proposed
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:6 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: **Supersedes:** Implicit assumption that balloon TollGate uses WiFi captive portal
-    3|**Date:** 2026-07-29
-    4|**Status:** Proposed
-    5|**Decision Maker:** Felix (operator)
-    6|**Supersedes:** Implicit assumption that balloon TollGate uses WiFi captive portal
-    7|
-    8|## Context
-    9|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:10 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: The original ESP32 TollGate firmware (tollgate-esp32 repo) is a WiFi captive portal hotspot. Clients connect via WiFi, get DNS-hijacked to a captive portal HTML page, pay with Cashu e-cash tokens, and receive internet access via NAPT.
-    7|
-    8|## Context
-    9|
-    10|The original ESP32 TollGate firmware (tollgate-esp32 repo) is a WiFi captive portal hotspot. Clients connect via WiFi, get DNS-hijacked to a captive portal HTML page, pay with Cashu e-cash tokens, and receive internet access via NAPT.
-    11|
-    12|The balloon project uses LR2021 LoRa radios for long-range communication between the balloon payload and ground stations. WiFi is not the data link — LR2021 is.
-    13|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:16 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: **The balloon TollGate variant will use LR2021 radio as its data link, NOT WiFi.**
-    13|
-    14|## Decision
-    15|
-    16|**The balloon TollGate variant will use LR2021 radio as its data link, NOT WiFi.**
-    17|
-    18|The original ESP32 TollGate keeps its WiFi + BitChat + captive portal stack for other contexts (ground-based, car tollgate, etc.). The balloon variant extracts only the **business logic layer** and adapts it for LR2021 transport.
-    19|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:18 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: The original ESP32 TollGate keeps its WiFi + BitChat + captive portal stack for other contexts (ground-based, car tollgate, etc.). The balloon variant extracts only the **business logic layer** and adapts it for LR2021 transport.
-    15|
-    16|**The balloon TollGate variant will use LR2021 radio as its data link, NOT WiFi.**
-    17|
-    18|The original ESP32 TollGate keeps its WiFi + BitChat + captive portal stack for other contexts (ground-based, car tollgate, etc.). The balloon variant extracts only the **business logic layer** and adapts it for LR2021 transport.
-    19|
-    20|### What This Means
-    21|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:22 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | Layer | Original TollGate | Balloon TollGate |
-    19|
-    20|### What This Means
-    21|
-    22|| Layer | Original TollGate | Balloon TollGate |
-    23||-------|-------------------|-----------------|
-    24|| Data link | WiFi AP+STA | LR2021 LoRa radio |
-    25|| Client connection | WiFi AP join + DHCP | Radio message exchange |
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:53 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - display.c, font.c, touch.c, keyboard.c (no display on balloon)
-    50|
-    51|### What's Dropped Entirely (Not Needed)
-    52|
-    53|- display.c, font.c, touch.c, keyboard.c (no display on balloon)
-    54|- All mining components
-    55|- All marketplace/CVM/MCP components
-    56|- wifistr (balloon IS the service)
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:66 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: 3. **"Internet access" concept changes.** Over WiFi, NAPT shares the STA uplink. Over radio, the balloon might relay messages to/from ground — payment gates radio relay time or bandwidth.
-    63|
-    64|2. **Payment protocol needs design.** Over WiFi, clients paste Cashu tokens into an HTML form. Over LR2021, we need a lightweight message protocol: client sends token → ESP32 validates/swaps → grants access (to what? the balloon's radio relay? local Nostr relay?).
-    65|
-    66|3. **"Internet access" concept changes.** Over WiFi, NAPT shares the STA uplink. Over radio, the balloon might relay messages to/from ground — payment gates radio relay time or bandwidth.
-    67|
-    68|4. **Local Nostr relay still valuable.** Clients within radio range can publish/read events via the balloon's local relay, even without internet. Payment gates access to this relay.
-    69|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:68 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: 4. **Local Nostr relay still valuable.** Clients within radio range can publish/read events via the balloon's local relay, even without internet. Payment gates access to this relay.
-    65|
-    66|3. **"Internet access" concept changes.** Over WiFi, NAPT shares the STA uplink. Over radio, the balloon might relay messages to/from ground — payment gates radio relay time or bandwidth.
-    67|
-    68|4. **Local Nostr relay still valuable.** Clients within radio range can publish/read events via the balloon's local relay, even without internet. Payment gates access to this relay.
-    69|
-    70|5. **Cashu model unchanged.** Online = swap tokens against real mint. Offline = roadmap items R1/R2/R3 from BALLOON-SCOPE-DECISIONS.md.
-    71|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:74 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - The captive_portal.c and dns_server.c files we kept are NOT needed for balloon. They remain useful for the original WiFi TollGate but should not be ported to the balloon radio variant.
-    71|
-    72|## Consequences
-    73|
-    74|- The captive_portal.c and dns_server.c files we kept are NOT needed for balloon. They remain useful for the original WiFi TollGate but should not be ported to the balloon radio variant.
-    75|- A new **radio payment protocol** needs to be designed (ADR-002 candidate).
-    76|- The C3 build is still useful — it validates the business logic layer compiles and the nucula wallet works on C3 hardware.
-    77|- Cross-track coordination needed: balloon-range-tests / balloon-firmware tracks own LR2021 driver. TollGate track consumes their radio API.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:77 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - Cross-track coordination needed: balloon-range-tests / balloon-firmware tracks own LR2021 driver. TollGate track consumes their radio API.
-    74|- The captive_portal.c and dns_server.c files we kept are NOT needed for balloon. They remain useful for the original WiFi TollGate but should not be ported to the balloon radio variant.
-    75|- A new **radio payment protocol** needs to be designed (ADR-002 candidate).
-    76|- The C3 build is still useful — it validates the business logic layer compiles and the nucula wallet works on C3 hardware.
-    77|- Cross-track coordination needed: balloon-range-tests / balloon-firmware tracks own LR2021 driver. TollGate track consumes their radio API.
-    78|
-    79|## Open Questions
-    80|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:83 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: 3. How does a client "discover" the balloon TollGate over LR2021? Beacon?
-    80|
-    81|1. What exactly does payment grant over radio? Relay time? Message quota? Bandwidth?
-    82|2. Is there a session concept, or per-message payment?
-    83|3. How does a client "discover" the balloon TollGate over LR2021? Beacon?
-    84|4. Does the balloon relay Nostr events to ground, or is it purely local?
-    85|
-    86|## Related
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/ADR-001-tollgate-over-lr2021.md:91 | date=2026-07-29 20:15:06 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - balloon-firmware track: RP2040/ESP32 FLRC board firmware
-    88|- BALLOON-SCOPE-DECISIONS.md (component keep/drop)
-    89|- ADR-017 (from balloon-fresh repo — LR2021 throughput)
-    90|- balloon-range-tests track: LR2021 driver
-    91|- balloon-firmware track: RP2040/ESP32 FLRC board firmware
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:1 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: # Balloon TollGate — Scope Decisions (2026-07-29)
-    1|# Balloon TollGate — Scope Decisions (2026-07-29)
-    2|
-    3|## Directive from Felix (operator)
-    4|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:6 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: relevant to balloon use case. Original tollgate repo retains everything.
-    3|## Directive from Felix (operator)
-    4|
-    5|Strip display + all balloon-irrelevant components. Extract ONLY business logic
-    6|relevant to balloon use case. Original tollgate repo retains everything.
-    7|
-    8|## What Stays (11 source files)
-    9|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:12 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | tollgate_main.c | Boot + init sequence | Core |
-    9|
-    10|| File | Purpose | Why balloon-relevant |
-    11||------|---------|---------------------|
-    12|| tollgate_main.c | Boot + init sequence | Core |
-    13|| config.c | config.json, nsec loading | Core |
-    14|| captive_portal.c | WiFi AP + Cashu payment portal HTML | Core — this IS the product |
-    15|| dns_server.c | DNS hijack for captive portal redirect | Core — captive portal needs it |
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:16 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | tollgate_api.c | HTTP endpoints (payment, wallet, mints, usage) | Core — payment API |
-    13|| config.c | config.json, nsec loading | Core |
-    14|| captive_portal.c | WiFi AP + Cashu payment portal HTML | Core — this IS the product |
-    15|| dns_server.c | DNS hijack for captive portal redirect | Core — captive portal needs it |
-    16|| tollgate_api.c | HTTP endpoints (payment, wallet, mints, usage) | Core — payment API |
-    17|| identity.c | nsec → MAC/SSID/IP derivation | Core — board identity |
-    18|| nostr_event.c | Nostr event signing | Core — relay identity |
-    19|| geohash.c | Location encoding | Balloon position tracking |
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:17 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: | identity.c | nsec → MAC/SSID/IP derivation | Core — board identity |
-    14|| captive_portal.c | WiFi AP + Cashu payment portal HTML | Core — this IS the product |
-    15|| dns_server.c | DNS hijack for captive portal redirect | Core — captive portal needs it |
-    16|| tollgate_api.c | HTTP endpoints (payment, wallet, mints, usage) | Core — payment API |
-    17|| identity.c | nsec → MAC/SSID/IP derivation | Core — board identity |
-    18|| nostr_event.c | Nostr event signing | Core — relay identity |
-    19|| geohash.c | Location encoding | Balloon position tracking |
-    20|| mint_health.c | Mint status checking | Dependency of tollgate_api (/mints endpoint) |
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:20 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | mint_health.c | Mint status checking | Dependency of tollgate_api (/mints endpoint) |
-    17|| identity.c | nsec → MAC/SSID/IP derivation | Core — board identity |
-    18|| nostr_event.c | Nostr event signing | Core — relay identity |
-    19|| geohash.c | Location encoding | Balloon position tracking |
-    20|| mint_health.c | Mint status checking | Dependency of tollgate_api (/mints endpoint) |
-    21|| local_relay.c | Local Nostr relay (wisp-esp32) | Operator decision: keep if space allows |
-    22|
-    23|## What's Dropped (23 source files, preserved in repo)
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:25 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: **Display/UI**: display.c, font.c, touch.c, keyboard.c
-    22|
-    23|## What's Dropped (23 source files, preserved in repo)
-    24|
-    25|**Display/UI**: display.c, font.c, touch.c, keyboard.c
-    26|**Mining**: asic_miner.c, sw_miner.c, stratum_client.c, stratum_proxy.c, remote_miner.c, faucet_client.c
-    27|**Marketplace**: market.c, beacon_price.c
-    28|**CVM/MCP**: cvm_server.c, mcp_handler.c
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:29 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: **Client mode**: tollgate_client.c (balloon is standalone AP)
-    26|**Mining**: asic_miner.c, sw_miner.c, stratum_client.c, stratum_proxy.c, remote_miner.c, faucet_client.c
-    27|**Marketplace**: market.c, beacon_price.c
-    28|**CVM/MCP**: cvm_server.c, mcp_handler.c
-    29|**Client mode**: tollgate_client.c (balloon is standalone AP)
-    30|**Service discovery**: wifistr.c (balloon IS the service)
-    31|**Heavy sync**: negentropy_adapter.c, relay_selector.c, sync_manager.c
-    32|**Lightning**: lightning_payout.c, lnurl_pay.c
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:59 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - Status: investigate feasibility after C3 build succeeds.
-    56|- If flash/PSRAM sufficient, run lightweight Cashu mint on ESP32.
-    57|- Clients mint tokens directly from ESP32.
-    58|- Fully offline payment loop.
-    59|- Status: investigate feasibility after C3 build succeeds.
-    60|
-    61|## Preserved State
-    62|
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:63 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - Tag `v-balloon-pre-strip` at commit 5b1518f — full tollgate before balloon strip.
-    60|
-    61|## Preserved State
-    62|
-    63|- Tag `v-balloon-pre-strip` at commit 5b1518f — full tollgate before balloon strip.
-    64|- All dropped files remain in the repo, just not compiled into balloon build.
-    65|- Original tollgate (separate from balloon worktree) is untouched.
-================================================================================================
-esp32-tollgate | rev=remotes/origin/balloon-tollgate-c3-port | docs/BALLOON-SCOPE-DECISIONS.md:65 | date=2026-07-29 20:01:27 +0530
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - Original tollgate (separate from balloon worktree) is untouched.
-    62|
-    63|- Tag `v-balloon-pre-strip` at commit 5b1518f — full tollgate before balloon strip.
-    64|- All dropped files remain in the repo, just not compiled into balloon build.
-    65|- Original tollgate (separate from balloon worktree) is untouched.
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/tracker/ground-station/antenna-tracker/ts/.agents/skills/concepts/SKILL.md:45 | date=
-rule=gate = approval/gating mechanism wording | terms=gate
-LINE: - No central directory or gatekeeper
+[CONTEXT] recreated | esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/tracker/ground-station/antenna-tracker/ts/.agents/skills/concepts/SKILL.md:45 | date=NO-GIT-HISTORY (non-git worktree, current tree) | rev_used=WORKTREE-ASIS
+why=matched required regex term with approval/gating-mechanism sense
     42|Client ⇄ Nostr Relay(s) ⇄ Server
     43|```
     44|
@@ -413,42 +9,81 @@ LINE: - No central directory or gatekeeper
     47|- Servers can connect to multiple relays for redundancy
     48|- Services can go offline and come back online without breaking references
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/005-sky66112-fem.md:37 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: 1. **PA + LNA + Switch in einem IC**: Spart Gewicht und Board-Flaeche
-    34|
-    35|## Begruendung
-    36|
-    37|1. **PA + LNA + Switch in einem IC**: Spart Gewicht und Board-Flaeche
-    38|2. **+22 dBm TX**: Boostet LR2021's +12 dBm auf +22 dBm = +10 dB mehr Link-Budget
-    39|3. **+14 dB LNA**: Verbessert RX-Sensitivity drastisch fuer Bodenstations-Kommandos
-    40|4. **Extrem leicht**: 0.1g, QFN 3x3mm Package
+[CONTEXT] ambiguous | esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/IMPLEMENTATION-PLAN.md:346 | date=NO-GIT-HISTORY (non-git worktree, current tree) | rev_used=WORKTREE-ASIS
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate
+    343|- [ ] Study TollGate protocol (https://github.com/OpenTollGate/tollgate)
+    344|- [ ] Study esp32-tollgate (https://gitworkshop.dev/.../esp32-tollgate)
+    345|- [ ] Implement Cashu WiFi captive portal on ground station
+    346|- [ ] Payment-gated internet access via balloon mesh
+    347|- [ ] Token verification over LoRa (mint quote → proof → access)
+    348|
+    349|### D.2 Multi-Balloon Mesh
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/011-first-flight-strategy.md:48 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: | DIY v0.1 | ~15g | Yes (dev board) | Heavy but easy to assemble |
-    45|
-    46|| Variant | Weight | BMP280 | Notes |
-    47||---------|--------|--------|--------|
-    48|| DIY v0.1 | ~15g | Yes (dev board) | Heavy but easy to assemble |
-    49|| Minimal | ~8-9g | No | Lightest, max free lift margin |
-    50|| Mittel | ~12-13g | Yes | Balanced |
-    51|
+[CONTEXT] ambiguous | esp32-tollgate | PLAN.md:34 | date=2026-05-18 23:39:04 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate
+    31|
+    32|### Phase 1: Captive Portal + Firewall (No Payments) — COMPLETE
+    33|
+    34|**Goal:** WiFi repeater with captive portal that gates internet access. Validates DNS hijack, NAT, DHCP, firewall.
+    35|
+    36|**Endpoints:**
+    37|- `GET /whoami` — returns client MAC
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/011-first-flight-strategy.md:109 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - Build: Minimal variant tracker on protoboard with ESP32-C3_Mini_V1 + LoRa2021
-    106|
-    107|### Immediate
-    108|- Order: Yokohama 32" 10-pack (€96.95) + ALbee Fly He (TBD) + heat sealer (~€15) + Kapton tape (~€5)
-    109|- Build: Minimal variant tracker on protoboard with ESP32-C3_Mini_V1 + LoRa2021
-    110|- Test: Range test on ground first, then DecoGlee short flight, then Yokohama flight
-    111|
-    112|### Deferred
+[CONTEXT] ambiguous | esp32-tollgate | PLAN_MINING_INTERNET.md:537 | date=2026-06-10 12:04:26 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate
+    534|| hashpool | `/home/c03rad0r/ehash-setup/hashpool/` | SRI fork with CDK Cashu mint, issues ehash for shares |
+    535|| axepool | `/home/c03rad0r/axepool/` | SV1 proxy + mint client (stub), simpler V1 variant |
+    536|| tollgate-infrastructure-kit | `/home/c03rad0r/tollgate-infrastructure-kit/` | Ansible deployment of CDK mints, Nostr relay, services |
+    537|| mint-orchestrator | (inside infra-kit) | Nostr-gated mint quote approval via gRPC to CDK mintd |
+    538|| money-printer/cashu-brrr | `/home/c03rad0r/money-printer/cashu-brrr/` | Operator web UI for issuing ecash tokens |
+    539|
+    540|---
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/001-esp32-c3-as-mcu.md:10 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: Wir verwenden den **ESP32-C3** (konkret: ESP-C3-12F Bare Module fuer Flight-Board, XIAO ESP32C3 fuer Prototyping).
+[CONTEXT] ambiguous | esp32-tollgate | docs/ADR-001-tollgate-over-lr2021.md:66 | date=2026-07-29 20:15:06 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate | docs/ADR-001-tollgate-over-lr2021.md:68 | date=2026-07-29 20:15:06 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate | docs/adr/ADR-XXX-balloon-stratum-relay.md:105 | date=2026-07-29 20:29:09 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate | docs/adr/ADR-XXX-balloon-stratum-relay.md:22 | date=2026-07-29 20:29:09 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate | docs/adr/ADR-XXX-balloon-stratum-relay.md:40 | date=2026-07-29 20:29:09 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate | docs/adr/adr-balloon-stratum-relay-DECISIONS.md:6 | date=2026-07-29 20:29:09 +0530 | rev_used=master
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate; file kept by step 4 filename rule
+
+================================================================================================
+[CONTEXT] ambiguous | esp32-tollgate-relay | /home/c03rad0r/esp32-tollgate-relay/PLAN.md:34 | date=NO-GIT-HISTORY (non-git worktree, current tree) | rev_used=WORKTREE-ASIS
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate
+    31|
+    32|### Phase 1: Captive Portal + Firewall (No Payments) — COMPLETE
+    33|
+    34|**Goal:** WiFi repeater with captive portal that gates internet access. Validates DNS hijack, NAT, DHCP, firewall.
+    35|
+    36|**Endpoints:**
+    37|- `GET /whoami` — returns client MAC
+================================================================================================
+[CONTEXT] ambiguous | wisp-esp32 | docs/STATUS-balloon-nostr.md:27 | date=2026-07-30 16:47:28 +0530 | rev_used=main
+why=names a gating MECHANISM (payment/access gating or machine-approval gate) but it is not a human/shadow-card/board gate
+
+================================================================================================
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/001-esp32-c3-as-mcu.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=39
+    1|# ADR 001: ESP32-C3 als Mikrocontroller
+    2|
+    3|## Status
+    4|Akzeptiert
+    5|
+    6|## Kontext
     7|Der Pico-Ballon-Tracker braucht einen stromsparenden Mikrocontroller mit genug Leistung fuer SPI-Kommunikation mit dem LoRa-Transceiver, I2C-Sensorabfrage und Deep-Sleep-Power-Management. Gewicht muss unter 1g (Bare Module) bleiben.
     8|
     9|## Entscheidung
@@ -456,27 +91,82 @@ LINE: Wir verwenden den **ESP32-C3** (konkret: ESP-C3-12F Bare Module fuer Fligh
     11|
     12|## Alternativen
     13|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/001-esp32-c3-as-mcu.md:38 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - 1x XIAO ESP32C3 (Seeed Studio) - fuer Dev-Board Prototyping
+    14|| Option | Strom Deep Sleep | Gewicht | LoRa-Treiber | Preis |
+    15||--------|-----------------|---------|--------------|-------|
+    16|| ESP32-C3 | ~10-15 uA | 1.0g (bare) | ESP-IDF SPI | ~2 EUR |
+    17|| ESP32-S2 | ~20 uA | 1.5g | ESP-IDF SPI | ~3 EUR |
+    18|| ESP32-S3 | ~10 uA | 2.0g | ESP-IDF SPI | ~4 EUR |
+    19|| nRF52840 | ~1.5 uA | ~1g | Zephyr SPI | ~5 EUR |
+    20|| STM32L4 | ~0.5 uA | ~0.5g | HAL SPI | ~3 EUR |
+    21|| ATmega328P | ~1 uA | ~2g | Arduino SPI | ~1 EUR |
+    22|
+    23|## Begruendung
+    24|
+    25|1. **Deep Sleep**: ~10-15 uA ist ausreichend fuer Solar+Supercap-Betrieb
+    26|2. **Gewicht**: ESP-C3-12F Bare Module wiegt nur 1.0g
+    27|3. **ESP-IDF v5.4.1**: Bereits auf dem System installiert, reife Toolchain
+    28|4. **RISC-V Single-Core**: Einfacher, stromsparender als XTENSA-Dual-Core
+    29|5. **WiFi/BLE deaktiviert**: Spart massiv Strom wenn abgeschaltet
+    30|6. **Verfuegbarkeit**: XIAO ESP32C3 bereits vorhanden (Prototyping)
+    31|7. **Community**: Grosse Community, viele LoRa-Bibliotheken verfuegbar
+    32|
+    33|## Nachteile
+    34|- Deep Sleep nicht ganz so niedrig wie STM32L4 oder nRF52 (~10uA vs ~1uA)
     35|- Single-Core限制了 parallele Verarbeitung (aber fuer diesen Anwendungsfall irrelevant)
     36|
     37|## Vorhandene Hardware
     38|- 1x XIAO ESP32C3 (Seeed Studio) - fuer Dev-Board Prototyping
     39|- 1x ESP32-C5 Board - fuer Bodenstation (WiFi 6)
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/001-esp32-c3-as-mcu.md:39 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - 1x ESP32-C5 Board - fuer Bodenstation (WiFi 6)
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=40
+    1|# ADR 003: Dual-Track Hardware-Design (Dev + Flight)
+    2|
+    3|## Status
+    4|Akzeptiert
+    5|
+    6|## Kontext
+    7|Wir brauchen eine Plattform zum Entwickeln und Testen der Firmware UND ein minimales Flug-Board unter 15g. Die Anforderungen an Prototyping (einfaches Flashen, Debug, USB) und Flug (minimalgewicht, keine Stecker) widersprechen sich.
+    8|
+    9|## Entscheidung
+    10|Zwei separate Hardware-Varianten:
+    11|
+    12|### Track A: Entwickler-Board (XIAO Carrier)
+    13|- XIAO ESP32C3 als steckbares MCU-Modul
+    14|- 78x39mm Solarzellen (einfacher zu handhaben)
+    15|- Vollstaendige Debug-Ausstattung (USB, UART-Header, LEDs)
+    16|- LoRa-Modul-Slot (LR2021 oder LR1121)
+    17|- Supercap-Bank mit groesserer Kapazitaet
+    18|- Kein Gewichts-Limit
+    19|- Zweck: Firmware-Entwicklung, Funk-Tests am Boden
+    20|
+    21|### Track B: Flug-Board (Bare-Chip, 3D-Struktur)
+    22|- ESP-C3-12F Bare Module direkt auf PCB
+    23|- 52x19mm Solarzellen auf Wing-Boards
+    24|- Keine Stecker/Header (Programmierung ueber Pads)
+    25|- Hub-Board + 4 Wing-Boards als 3D-Struktur
+    26|- Zielgewicht: <15g (Komfort-Modus)
+    27|- Zweck: Tatsaechlicher Flug
+    28|
+    29|## Begruendung
+    30|
+    31|1. **XIAO bereits vorhanden**: Perfekt fuer schnelles Prototyping
+    32|2. **Gleiche Pin-Belegung**: Beide Boards nutzen identische GPIO-Zuordnung
+    33|3. **Gleiche Firmware**: ESP-IDF Code laeuft auf beiden Varianten
+    34|4. **Risikominimierung**: Fehler auf dem Dev-Board kosten keine Flug-Hardware
+    35|5. **78x39mm Zellen vorhanden**: Leichter zu handhaben fuer erste Tests
     36|
-    37|## Vorhandene Hardware
-    38|- 1x XIAO ESP32C3 (Seeed Studio) - fuer Dev-Board Prototyping
-    39|- 1x ESP32-C5 Board - fuer Bodenstation (WiFi 6)
+    37|## Konsequenzen
+    38|- Pin-Belegung muss auf beiden Boards identisch sein (fuer gleiche Firmware)
+    39|- Dev-Board dient als Referenz fuer elektrische Tests vor dem Flug-Board-Loeten
+    40|- Flug-Board wird erst gebaut wenn Firmware auf Dev-Board validiert ist
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:10 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: **4 identische Wing-Boards** mit je einer PCB-Yagi-Antenne, die orthogonal in verschiedene Raumrichtungen zeigen. Verbunden durch ein zentrales Hub-Board ueber Loetstellen. SP4T RF-Switch fuer "Leuchtturm-Modus" (Round-Robin TX).
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=52
+    1|# ADR 004: 3D Yagi-Antennen-Struktur (4 Wings + Hub)
+    2|
+    3|## Status
+    4|Akzeptiert
+    5|
+    6|## Kontext
     7|Der Ballon muss in mehrere Raumrichtungen funken koennen, da er sich dreht, pendelt und die Bodenstation an verschiedenen Positionen stehen kann. Eine einzelne omnidirektionale Antenne hat keinen Gewinn. Eine Patch-Antenne wurde evaluiert aber verworfen.
     8|
     9|## Entscheidung
@@ -484,10 +174,15 @@ LINE: **4 identische Wing-Boards** mit je einer PCB-Yagi-Antenne, die orthogonal
     11|
     12|## Alternativen
     13|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:26 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: 3. **Dual-Purpose PCBs**: Wing-Boards tragen gleichzeitig Solarzellen
+    14|| Option | Gewinn | Gewicht | Polarisation | Komplexitaet |
+    15||--------|--------|---------|-------------|-------------|
+    16|| **4x Yagi 3D** | ~6-9 dBi pro Antenne | ~3.2g (PCBs) | Linear | Mittel (SP4T) |
+    17|| Circular Patch | ~6-9 dBi | 0g (geaetzt) | Zirkular | Niedrig |
+    18|| Cloverleaf | ~2 dBi | ~1.5g | Zirkular | Niedrig |
+    19|| Dipol/Monopol | ~2 dBi | ~0.5g | Linear | Sehr niedrig |
+    20|| 4x Yagi flach | ~6-9 dBi | ~3g | Linear | Mittel |
+    21|
+    22|## Begruendung fuer 4x Yagi 3D
     23|
     24|1. **Maximaler Gewinn**: ~6-9 dBi pro Yagi vs ~2 dBi bei omnidirektionalen Antennen
     25|2. **3D-Abdeckung**: Durch orthogonale Anordnung zeigen die Yagis in verschiedene Raumebenen, nicht nur in eine flache Ebene
@@ -495,21 +190,9 @@ LINE: 3. **Dual-Purpose PCBs**: Wing-Boards tragen gleichzeitig Solarzellen
     27|4. **3D-Solarernte**: 4 Wings in 4 Winkeln = fast immer mindestens 1-2 Wings in direktem Sonnenlicht
     28|5. **Identische Boards**: 4x das gleiche Wing-Board = einfachere Fertigung
     29|6. **Mechanische Stabilitaet**: Kreuzfoermige 3D-Struktur ist selbsttragend
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:28 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: 5. **Identische Boards**: 4x das gleiche Wing-Board = einfachere Fertigung
-    25|2. **3D-Abdeckung**: Durch orthogonale Anordnung zeigen die Yagis in verschiedene Raumebenen, nicht nur in eine flache Ebene
-    26|3. **Dual-Purpose PCBs**: Wing-Boards tragen gleichzeitig Solarzellen
-    27|4. **3D-Solarernte**: 4 Wings in 4 Winkeln = fast immer mindestens 1-2 Wings in direktem Sonnenlicht
-    28|5. **Identische Boards**: 4x das gleiche Wing-Board = einfachere Fertigung
-    29|6. **Mechanische Stabilitaet**: Kreuzfoermige 3D-Struktur ist selbsttragend
     30|7. **Experimentell**: Leuchtturm-Modus mit SP4T ist ein spannendes RF-Experiment
     31|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:36 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Die Kombination aus Antennen und Solar auf denselben Boards
+    32|## Warum nicht Patch-Antenne
     33|Obwohl eine zirkular polarisierte Patch-Antenne einfacher waere (kein Switch, immun gegen Drehung), wurde sich der Benutzer bewusst fuer das 4x Yagi 3D-Design entschieden wegen:
     34|- Hoeherer moeglicher Gewinn bei jeder einzelnen Richtung
     35|- Das 3D-Antennen-Array als Lern- und Experimentierplattform
@@ -517,10 +200,12 @@ LINE: - Die Kombination aus Antennen und Solar auf denselben Boards
     37|
     38|## Leuchtturm-Modus (Round-Robin)
     39|```
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:49 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - 4 Wing-Boards stecken durch Slots im zentralen Hub-Board
+    40|Sendezyklus:
+    41|1. SP4T → Wing 1 (Nord) → TX Paket (enthilt Antennen-ID)
+    42|2. SP4T → Wing 2 (Sued) → TX Paket
+    43|3. SP4T → Wing 3 (Ost)  → TX Paket
+    44|4. SP4T → Wing 4 (West) → TX Paket
+    45|Bodenstation waehlt staerkstes Signal
     46|```
     47|
     48|## 3D-Assembly
@@ -529,186 +214,72 @@ LINE: - 4 Wing-Boards stecken durch Slots im zentralen Hub-Board
     51|- RF, Power und Ground laufen ueber die Loetverbindungen
     52|- Hub-Board sitzt oben (nahe am Ballon), Wings breiten sich nach unten/ausen aus
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md:52 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Hub-Board sitzt oben (nahe am Ballon), Wings breiten sich nach unten/ausen aus
-    49|- 4 Wing-Boards stecken durch Slots im zentralen Hub-Board
-    50|- Verbindungen werden verloetet (mechanisch + elektrisch)
-    51|- RF, Power und Ground laufen ueber die Loetverbindungen
-    52|- Hub-Board sitzt oben (nahe am Ballon), Wings breiten sich nach unten/ausen aus
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:21 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: 22 kbps at 300 km with just a wire dipole and ground station gain. With 4x MultiWAN bonding: ~88 kbps aggregate. **Directional antennas on the balloon buy 2-3x throughput, but omni already works.**
-    18|| +22 dBm (FEM) | Omnidirectional (2 dBi) | -109.6 dBm | SF9/1625 | 22 kbps |
-    19|| +22 dBm (FEM) | Yagi (7 dBi) | -102.6 dBm | SF8/1625 | 38 kbps |
-    20|
-    21|22 kbps at 300 km with just a wire dipole and ground station gain. With 4x MultiWAN bonding: ~88 kbps aggregate. **Directional antennas on the balloon buy 2-3x throughput, but omni already works.**
-    22|
-    23|### Product Research Findings
-    24|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:47 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - No SP4T switch, no antenna switching firmware, no wing board antenna design
-    44|- 868 MHz: wire dipole, ~16.4 cm, ~2 dBi, omnidirectional, rotation immune
-    45|- 2.4 GHz: wire dipole, ~6 cm, ~2 dBi, omnidirectional, rotation immune
-    46|- Ground station: 868 MHz linear Yagi (~12 dBi) + 2.4 GHz CP helical (~14 dBi RHCP)
-    47|- No SP4T switch, no antenna switching firmware, no wing board antenna design
-    48|- Throughput: ~22 kbps at 300 km (single link), ~88 kbps with 4x MultiWAN bonding
-    49|
-    50|**V2 (upgrade path): Directional antennas when higher throughput needed.**
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:51 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - PCB Yagis on wing boards (current design in tracker/hardware/docs/hardware-design.md)
-    48|- Throughput: ~22 kbps at 300 km (single link), ~88 kbps with 4x MultiWAN bonding
-    49|
-    50|**V2 (upgrade path): Directional antennas when higher throughput needed.**
-    51|- PCB Yagis on wing boards (current design in tracker/hardware/docs/hardware-design.md)
-    52|- Or custom CP PCB patches if VNA access available
-    53|- SP4T switch + antenna diversity firmware
-    54|- Throughput: ~38-87 kbps at 300 km (single link)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:55 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - PCB designed to accommodate SP4T footprint and wing board connectors
-    52|- Or custom CP PCB patches if VNA access available
-    53|- SP4T switch + antenna diversity firmware
-    54|- Throughput: ~38-87 kbps at 300 km (single link)
-    55|- PCB designed to accommodate SP4T footprint and wing board connectors
-    56|
-    57|### Night-Off Default
-    58|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:86 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - V1 hardware is simpler: no SP4T, no wing board antenna design, no switching firmware
-    83|
-    84|## Consequences
-    85|
-    86|- V1 hardware is simpler: no SP4T, no wing board antenna design, no switching firmware
-    87|- V1 fits within Mittel weight budget (~14g with night-off)
-    88|- V2 upgrade path preserved in PCB layout (SP4T footprint, wing board connectors)
-    89|- Ground stations need two antennas (868 MHz Yagi + 2.4 GHz helical)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md:88 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - V2 upgrade path preserved in PCB layout (SP4T footprint, wing board connectors)
-    85|
-    86|- V1 hardware is simpler: no SP4T, no wing board antenna design, no switching firmware
-    87|- V1 fits within Mittel weight budget (~14g with night-off)
-    88|- V2 upgrade path preserved in PCB layout (SP4T footprint, wing board connectors)
-    89|- Ground stations need two antennas (868 MHz Yagi + 2.4 GHz helical)
-    90|- Balloon rotation is handled at ground station (CP helical), not on balloon
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:7 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: Wir brauchen eine Plattform zum Entwickeln und Testen der Firmware UND ein minimales Flug-Board unter 15g. Die Anforderungen an Prototyping (einfaches Flashen, Debug, USB) und Flug (minimalgewicht, keine Stecker) widersprechen sich.
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/005-sky66112-fem.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=47
+    1|# ADR 005: SKY66112-11 als Front-End-Module (PA + LNA)
+    2|
+    3|## Status
     4|Akzeptiert
     5|
     6|## Kontext
-    7|Wir brauchen eine Plattform zum Entwickeln und Testen der Firmware UND ein minimales Flug-Board unter 15g. Die Anforderungen an Prototyping (einfaches Flashen, Debug, USB) und Flug (minimalgewicht, keine Stecker) widersprechen sich.
+    7|Der LR2021 liefert intern maximal +12 dBm bei 2.4 GHz. Fuer Reichweiten von 100+ km zur Bodenstation ist ein externer Leistungsverstaerker (PA) fuer TX und ein Vorverstaerker (LNA) fuer RX sinnvoll.
     8|
     9|## Entscheidung
-    10|Zwei separate Hardware-Varianten:
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:12 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: ### Track A: Entwickler-Board (XIAO Carrier)
-    9|## Entscheidung
-    10|Zwei separate Hardware-Varianten:
+    10|**Skyworks SKY66112-11** als 2.4 GHz Front-End-Module (FEM) mit integriertem PA, LNA und SPDT Antennen-Schalter.
     11|
-    12|### Track A: Entwickler-Board (XIAO Carrier)
-    13|- XIAO ESP32C3 als steckbares MCU-Modul
-    14|- 78x39mm Solarzellen (einfacher zu handhaben)
-    15|- Vollstaendige Debug-Ausstattung (USB, UART-Header, LEDs)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:21 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: ### Track B: Flug-Board (Bare-Chip, 3D-Struktur)
-    18|- Kein Gewichts-Limit
-    19|- Zweck: Firmware-Entwicklung, Funk-Tests am Boden
-    20|
-    21|### Track B: Flug-Board (Bare-Chip, 3D-Struktur)
-    22|- ESP-C3-12F Bare Module direkt auf PCB
-    23|- 52x19mm Solarzellen auf Wing-Boards
-    24|- Keine Stecker/Header (Programmierung ueber Pads)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:23 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - 52x19mm Solarzellen auf Wing-Boards
-    20|
-    21|### Track B: Flug-Board (Bare-Chip, 3D-Struktur)
-    22|- ESP-C3-12F Bare Module direkt auf PCB
-    23|- 52x19mm Solarzellen auf Wing-Boards
-    24|- Keine Stecker/Header (Programmierung ueber Pads)
-    25|- Hub-Board + 4 Wing-Boards als 3D-Struktur
-    26|- Zielgewicht: <15g (Komfort-Modus)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:25 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Hub-Board + 4 Wing-Boards als 3D-Struktur
-    22|- ESP-C3-12F Bare Module direkt auf PCB
-    23|- 52x19mm Solarzellen auf Wing-Boards
-    24|- Keine Stecker/Header (Programmierung ueber Pads)
-    25|- Hub-Board + 4 Wing-Boards als 3D-Struktur
-    26|- Zielgewicht: <15g (Komfort-Modus)
-    27|- Zweck: Tatsaechlicher Flug
-    28|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:32 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: 2. **Gleiche Pin-Belegung**: Beide Boards nutzen identische GPIO-Zuordnung
-    29|## Begruendung
-    30|
-    31|1. **XIAO bereits vorhanden**: Perfekt fuer schnelles Prototyping
-    32|2. **Gleiche Pin-Belegung**: Beide Boards nutzen identische GPIO-Zuordnung
-    33|3. **Gleiche Firmware**: ESP-IDF Code laeuft auf beiden Varianten
-    34|4. **Risikominimierung**: Fehler auf dem Dev-Board kosten keine Flug-Hardware
-    35|5. **78x39mm Zellen vorhanden**: Leichter zu handhaben fuer erste Tests
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:34 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: 4. **Risikominimierung**: Fehler auf dem Dev-Board kosten keine Flug-Hardware
-    31|1. **XIAO bereits vorhanden**: Perfekt fuer schnelles Prototyping
-    32|2. **Gleiche Pin-Belegung**: Beide Boards nutzen identische GPIO-Zuordnung
-    33|3. **Gleiche Firmware**: ESP-IDF Code laeuft auf beiden Varianten
-    34|4. **Risikominimierung**: Fehler auf dem Dev-Board kosten keine Flug-Hardware
-    35|5. **78x39mm Zellen vorhanden**: Leichter zu handhaben fuer erste Tests
+    12|## Spezifikationen
+    13|
+    14|| Parameter | Wert |
+    15||-----------|------|
+    16|| Frequenz | 2.4 GHz ISM |
+    17|| PA Ausgangsleistung | **+22 dBm** (158 mW) |
+    18|| PA Strom (@ +22 dBm) | ~90 mA |
+    19|| LNA Gewinn | **+14 dB** |
+    20|| LNA Noise Figure | **1.8 dB** |
+    21|| SPDT Insertion Loss | ~0.5 dB |
+    22|| Package | 16-pin QFN, 3x3 mm |
+    23|| Gewicht | ~0.1g |
+    24|| TX/RX Umschaltung | GPIO-gesteuert (CPS, CTX Pins) |
+    25|
+    26|## Alternativen
+    27|
+    28|| Option | TX Power | LNA Gain | Gewicht | Bemerkung |
+    29||--------|----------|----------|---------|-----------|
+    30|| **SKY66112-11** | +22 dBm | +14 dB | 0.1g | Best Choice |
+    31|| Qorvo RFFM4227 | +20 dBm | +13 dB | ~0.2g | Alternative |
+    32|| NiceRF LoRa1280F27 | +27 dBm | integriert | ~5g (Modul) | Nur SX1280 |
+    33|| Kein FEM | +12 dBm | - | 0g | Minimal-Reichweite |
+    34|
+    35|## Begruendung
     36|
-    37|## Konsequenzen
+    37|1. **PA + LNA + Switch in einem IC**: Spart Gewicht und Board-Flaeche
+    38|2. **+22 dBm TX**: Boostet LR2021's +12 dBm auf +22 dBm = +10 dB mehr Link-Budget
+    39|3. **+14 dB LNA**: Verbessert RX-Sensitivity drastisch fuer Bodenstations-Kommandos
+    40|4. **Extrem leicht**: 0.1g, QFN 3x3mm Package
+    41|5. **2.4 GHz optimiert**: Speziell fuer LoRa/BLE/Zigbee im ISM-Band
+    42|6. **GPIO-steuerbar**: Einfache TX/RX Umschaltung durch ESP32-C3
+    43|
+    44|## Power-Budget Auswirkung
+    45|- TX Burst bei +22 dBm: ~90 mA fuer ~0.5s (LoRa SF10) = 45 mAs
+    46|- Mit 1.65F Supercap-Bank: Spannungsabfall = I*t/C = 0.09*0.5/1.65 = 0.027V
+    47|- Akzeptabel - Supercaps halten problemlos durch
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:38 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Pin-Belegung muss auf beiden Boards identisch sein (fuer gleiche Firmware)
-    35|5. **78x39mm Zellen vorhanden**: Leichter zu handhaben fuer erste Tests
-    36|
-    37|## Konsequenzen
-    38|- Pin-Belegung muss auf beiden Boards identisch sein (fuer gleiche Firmware)
-    39|- Dev-Board dient als Referenz fuer elektrische Tests vor dem Flug-Board-Loeten
-    40|- Flug-Board wird erst gebaut wenn Firmware auf Dev-Board validiert ist
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:39 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Dev-Board dient als Referenz fuer elektrische Tests vor dem Flug-Board-Loeten
-    36|
-    37|## Konsequenzen
-    38|- Pin-Belegung muss auf beiden Boards identisch sein (fuer gleiche Firmware)
-    39|- Dev-Board dient als Referenz fuer elektrische Tests vor dem Flug-Board-Loeten
-    40|- Flug-Board wird erst gebaut wenn Firmware auf Dev-Board validiert ist
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md:40 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=board
-LINE: - Flug-Board wird erst gebaut wenn Firmware auf Dev-Board validiert ist
-    37|## Konsequenzen
-    38|- Pin-Belegung muss auf beiden Boards identisch sein (fuer gleiche Firmware)
-    39|- Dev-Board dient als Referenz fuer elektrische Tests vor dem Flug-Board-Loeten
-    40|- Flug-Board wird erst gebaut wenn Firmware auf Dev-Board validiert ist
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/007-adaptive-protocol.md:20 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: | **LoRaWAN** | Sub-GHz | SF7-SF12 (ADR) | Variabel | Variabel | 120 mA | TTN Gateway |
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/007-adaptive-protocol.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=54
+    1|# ADR 007: Adaptive Protokoll-Strategie (LoRa/FLRC/Sub-GHz)
+    2|
+    3|## Status
+    4|Akzeptiert
+    5|
+    6|## Kontext
+    7|Der Ballon muss in verschiedenen Entfernungen zur Bodenstation kommunizieren koennen. Von direkt ueber Kopf (1-5 km) bis weit am Horizont (100-300+ km). Verschiedene LoRa-Modulationen bieten unterschiedliche Kompromisse zwischen Reichweite, Airtime und Stromverbrauch.
+    8|
+    9|## Entscheidung
+    10|Die Firmware waehlt automatisch die optimale Modulation und Band basierend auf den aktuellen Bedingungen:
+    11|
+    12|## Modi
+    13|
+    14|| Modus | Frequenz | Modulation | Reichweite | Airtime (24B) | TX-Strom | Einsatz |
+    15||-------|----------|-----------|-----------|---------------|---------|---------|
+    16|| **FLRC Schnell** | 2.4 GHz | FLRC 1.3 Mbps | <30 km | ~1 ms | 31 mA | Direkt ueber Kopf |
     17|| **LoRa Nah** | 2.4 GHz | LoRa SF7 | ~50 km | ~50 ms | 31 mA | Sichtlinie nah |
     18|| **LoRa Mittel** | 2.4 GHz | LoRa SF10 | ~100 km | ~400 ms | 31 mA | Horizont naeher |
     19|| **LoRa Fern** | Sub-GHz | LoRa SF12 | ~300+ km | ~2 s | 120 mA | Maximale Reichweite |
@@ -716,10 +287,31 @@ LINE: | **LoRaWAN** | Sub-GHz | SF7-SF12 (ADR) | Variabel | Variabel | 120 mA | 
     21|
     22|## Adaptive Moduswahl
     23|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/007-adaptive-protocol.md:52 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: - Ermglicht Positionierung ueber TDoA (Time Difference of Arrival) durch TTN-Gateways
+    24|```
+    25|Moduswahl-Logik (vereinfacht):
+    26|
+    27|if (supercap_voltage < 3.5V) {
+    28|    // Niedrige Energie → sparsamer Modus
+    29|    mode = LORA_24GHZ_SF10;  // 2.4 GHz, mittlere Airtime, niedriger Strom
+    30|} else if (last_known_distance < 30km) {
+    31|    mode = FLRC_FAST;         // Blitzschnell, minimaler Strom
+    32|} else if (last_known_distance < 100km) {
+    33|    mode = LORA_24GHZ_SF10;   // Gute Balance
+    34|} else {
+    35|    mode = LORA_SUBGHZ_SF12;  // Maximale Reichweite, hoher Strom
+    36|}
+    37|
+    38|// Fallback: Wenn keine Distanz bekannt → starte mit LoRa Mittel
+    39|// Bodestation kann Modus-Wechsel-Kommando senden
+    40|```
+    41|
+    42|## Begruendung
+    43|
+    44|1. **FLRC fuer naehe Distanzen**: Extrem kurze Airtime = minimaler Stromverbrauch
+    45|2. **2.4 GHz LoRa fuer mittlere Distanzen**: 31 mA TX-Strom, weltweit lizenzfrei
+    46|3. **Sub-GHz LoRa fuer ferne Distanzen**: Maximale Sensitivity (-141.5 dBm), +22 dBm PA
+    47|4. **Energie-basierte Entscheidung**: Wenn Supercaps fast leer → kein stromhungriger Sub-GHz Modus
+    48|5. **LR2021 unterstuetzt alle Modi**: Kein Chip-Wechsel noetig
     49|
     50|## LoRaWAN Integration
     51|- Zusaetzlich zur P2P-Kommunikation wird LoRaWAN (OTAA/ABP) unterstuetzt
@@ -727,38 +319,252 @@ LINE: - Ermglicht Positionierung ueber TDoA (Time Difference of Arrival) durch T
     53|- Der Ballon kennt seine Position nicht selbst → Position wird serverseitig berechnet
     54|- Nutzt The Things Network (TTN) als Backbone
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/013-cluster-aware-stratorelay.md:33 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=gate
-LINE: 2. **Cluster head election**: For each detected cluster, elect one node as the communication gateway based on SNR quality, advert recency, and stability.
-    30|
-    31|1. **Passive cluster discovery**: Listen to ground node adverts and flood paths. Build clusters using union-find on observed forwarding relationships (if node A forwards node B's advert, they're in the same RF cluster).
-    32|
-    33|2. **Cluster head election**: For each detected cluster, elect one node as the communication gateway based on SNR quality, advert recency, and stability.
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=90
+    1|# ADR 009: V1 Omnidirectional Antennas with V2 Directional Upgrade Path
+    2|
+    3|## Status
+    4|Accepted
+    5|
+    6|## Context
+    7|
+    8|The balloon needs 2.4 GHz antennas for the mesh internet transport link. The original design (ADR-004) specified 4x PCB Yagis with SP4T switching. However, the mesh vision changes the optimization target: **balloon-to-ground** is the primary link (not balloon-to-balloon), and the ground station has unlimited size/weight/power for antenna gain.
+    9|
+    10|A thorough product search and link budget analysis was conducted to determine whether directional antennas are needed on the balloon at all.
+    11|
+    12|### Link Budget Finding
+    13|
+    14|With an 18 dBi ground station Yagi (reasonable: ~1.5m, ~EUR 30-50):
+    15|
+    16|| TX Power | Balloon Antenna | Received @300 km | Best Modulation | Air Rate |
+    17||----------|----------------|------------------|-----------------|----------|
+    18|| +22 dBm (FEM) | Omnidirectional (2 dBi) | -109.6 dBm | SF9/1625 | 22 kbps |
+    19|| +22 dBm (FEM) | Yagi (7 dBi) | -102.6 dBm | SF8/1625 | 38 kbps |
+    20|
+    21|22 kbps at 300 km with just a wire dipole and ground station gain. With 4x MultiWAN bonding: ~88 kbps aggregate. **Directional antennas on the balloon buy 2-3x throughput, but omni already works.**
+    22|
+    23|### Product Research Findings
+    24|
+    25|A comprehensive search for off-the-shelf 2.4 GHz CP patch antennas suitable for pico balloons found:
+    26|
+    27|| Product | Frequency | Polarization | Gain | Weight | Suitable? |
+    28||---------|-----------|-------------|------|--------|-----------|
+    29|| AliExpress FPC strips | 2.4 GHz | Linear (not CP) | ~1-2 dBi (despite "5 dBi" claim) | ~0.2g | Omnidirectional, no directional gain |
+    30|| Foxeer Lollipop 2.4G | 2.4 GHz | RHCP | 2.6 dBi | ~3g each (x4 = 12g) | CP but omnidirectional, too heavy |
+    31|| iFlight 2.4G CP panel | 2.4 GHz | RHCP/LHCP | ~5-8 dBi | ~15-25g | Too heavy for balloon |
+    32|| Custom CP PCB patch | 2.4 GHz | RHCP | ~5-7 dBi | ~0.5g | Requires EM simulation + VNA tuning |
+    33|| PCB Yagi (our design) | 2.4 GHz | Linear | ~6-9 dBi | ~0g (etched) | Already designed, works |
     34|
-    35|3. **Cluster-aware filtering**: Only accept and re-bridge flood packets from cluster heads. Drop packets from non-head nodes (they're already handled by local ground flood).
+    35|**No commercially available lightweight 2.4 GHz CP directional patch antenna exists.** The market is dominated by 5.8 GHz (FPV drones) and GPS L1 (1.575 GHz). 2.4 GHz antennas are almost exclusively linear WiFi/BT antennas.
     36|
+    37|### Balloon-to-Balloon Range
+    38|
+    39|At 12 km altitude, two balloons have a geometric line-of-sight of ~780 km. However, practical 2.4 GHz LoRa range at this distance requires directional antennas at both ends and is limited to SF12 (~0.25 kbps). The primary mesh links are balloon-to-ground (~300 km), not balloon-to-balloon.
+    40|
+    41|## Decision
+    42|
+    43|**V1 (build first): Omnidirectional wire dipoles for both bands.**
+    44|- 868 MHz: wire dipole, ~16.4 cm, ~2 dBi, omnidirectional, rotation immune
+    45|- 2.4 GHz: wire dipole, ~6 cm, ~2 dBi, omnidirectional, rotation immune
+    46|- Ground station: 868 MHz linear Yagi (~12 dBi) + 2.4 GHz CP helical (~14 dBi RHCP)
+    47|- No SP4T switch, no antenna switching firmware, no wing board antenna design
+    48|- Throughput: ~22 kbps at 300 km (single link), ~88 kbps with 4x MultiWAN bonding
+    49|
+    50|**V2 (upgrade path): Directional antennas when higher throughput needed.**
+    51|- PCB Yagis on wing boards (current design in tracker/hardware/docs/hardware-design.md)
+    52|- Or custom CP PCB patches if VNA access available
+    53|- SP4T switch + antenna diversity firmware
+    54|- Throughput: ~38-87 kbps at 300 km (single link)
+    55|- PCB designed to accommodate SP4T footprint and wing board connectors
+    56|
+    57|### Night-Off Default
+    58|
+    59|The balloon enters deep sleep at night (no solar). This is the default configuration:
+    60|- Saves ~3.5g (smaller supercaps: 0.47F vs 3.3F, fewer solar cells: 6-8 vs 12)
+    61|- Ground stations estimate night position from wind data
+    62|- Multiple balloons at different longitudes provide 24h coverage
+    63|- Configurable night-active mode: populate larger caps and more solar cells for special missions
+    64|
+    65|### Ground Station Antennas
+    66|
+    67|| Band | Antenna | Polarization | Gain | Cost | Purpose |
+    68||------|---------|-------------|------|------|---------|
+    69|| 868 MHz | Linear Yagi | Linear | ~12 dBi | ~EUR 15 | Sub-GHz telemetry + fallback |
+    70|| 2.4 GHz | CP Helical (5-turn) | RHCP | ~14 dBi | ~EUR 15 (DIY) | High-rate 2.4 GHz link, rotation immune |
+    71|
+    72|The 2.4 GHz CP helical converts the balloon's linear dipole signal with a fixed 3 dB polarization loss (predictable, manageable). An 18 dBi linear Yagi is an alternative for maximum range but has the rotation vulnerability (0-30 dB loss).
+    73|
+    74|## Alternatives Considered
+    75|
+    76|| Option | Rejected Because |
+    77||--------|-----------------|
+    78|| CP patches on balloon | No off-the-shelf products exist at 2.4 GHz in lightweight form |
+    79|| Foxeer Lollipop 2.4G | CP but omnidirectional (2.6 dBi), 3g each x4 = 12g total |
+    80|| FPC sticker antennas | Linear, omnidirectional — same rotation issue as Yagis but no directional gain |
+    81|| 868 MHz only | Lower FSPL but max ~1.7 kbps — insufficient for internet transport |
+    82|| Always-on Yagis (ADR-004) | Adds complexity; ground station gain makes directional balloons unnecessary for V1 |
+    83|
+    84|## Consequences
+    85|
+    86|- V1 hardware is simpler: no SP4T, no wing board antenna design, no switching firmware
+    87|- V1 fits within Mittel weight budget (~14g with night-off)
+    88|- V2 upgrade path preserved in PCB layout (SP4T footprint, wing board connectors)
+    89|- Ground stations need two antennas (868 MHz Yagi + 2.4 GHz helical)
+    90|- Balloon rotation is handled at ground station (CP helical), not on balloon
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/013-cluster-aware-stratorelay.md:117 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - ADR-012: Mesh networking strategy (FIPS + MeshCore + TollGate + Nostr)
-    114|
-    115|## Related Decisions
-    116|
-    117|- ADR-012: Mesh networking strategy (FIPS + MeshCore + TollGate + Nostr)
-    118|- ADR-009: V1 omnidirectional / V2 directional antenna strategy
-    119|- ADR-010: Adaptive TX power per TDMA slot
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/011-first-flight-strategy.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=138
+    1|# ADR 011: First Flight Strategy — Single Balloon, Helium, Minimal Variant
+    2|
+    3|## Status
+    4|
+    5|Accepted
+    6|
+    7|## Context
+    8|
+    9|We are ready to transition from design/documentation to hands-on hardware assembly and first flight. Several interrelated decisions need to be made simultaneously:
+    10|
+    11|### Balloon Configuration
+    12|
+    13|The pico ballooning community has 80+ documented flights from 6+ practitioners. All successful long-duration flights (30+ days) used a **single Yokohama balloon** filled with hydrogen or ultra-pure helium.
+    14|
+    15|Multi-balloon + cut-down configurations offer theoretical redundancy but have **zero successful long-duration precedent** in the community. Jetstream winds at 40,000 ft (150+ km/h) cause tandem balloons to rub and abrade.
+    16|
+    17|### Gas Choice
+    18|
+    19|Ruthroff's data from 37 flights with Yokohama balloons:
+    20|
+    21|| Gas | Purity | Flights | Circumnavigations | Rate |
+    22||-----|--------|---------|-------------------|------|
+    23|| Party-store He | ~80% | 9 | 0 | **0%** |
+    24|| Ultra-pure He | 99.999% | 3 | 2 | **67%** |
+    25|| Hydrogen | ~99% | ~9 | 5 | **55%** |
+    26|
+    27|Source: https://www.theastroimager.com/picoballoning/pico-ballooning/
+    28|
+    29|Hydrogen provides ~8% more lift (1.10 g/L vs 1.02 g/L) and is cheaper, but:
+    30|- Cannot be handled indoors (explosive)
+    31|- Requires outdoor-only filling with anti-static precautions
+    32|- Requires left-hand thread regulator
+    33|- Transport restrictions (ADR hazardous goods)
+    34|- Static spark ignition risk
+    35|
+    36|Industrial helium (grade 4.6 = 99.996% purity) from Linde/Air Liquide/Messer:
+    37|- Completely inert, zero explosion risk
+    38|- Can be handled indoors
+    39|- Standard right-hand thread regulator
+    40|- Higher circumnavigation rate in limited data (67% vs 55%)
+    41|- ~7% less lift than H2 (negligible with 32" Yokohama's 250g+ gross lift)
+    42|- More expensive per fill (~EUR 5-10 vs ~EUR 3)
+    43|
+    44|### Payload Variant
+    45|
+    46|| Variant | Weight | BMP280 | Notes |
+    47||---------|--------|--------|--------|
+    48|| DIY v0.1 | ~15g | Yes (dev board) | Heavy but easy to assemble |
+    49|| Minimal | ~8-9g | No | Lightest, max free lift margin |
+    50|| Mittel | ~12-13g | Yes | Balanced |
+    51|
+    52|The first flight's primary goal is **range and throughput characterization** across frequencies, not maximum altitude or duration. Horizontal position + temperature data from the radio module itself would already be valuable.
+    53|
+    54|### First Flight Goals
+    55|
+    56|1. Verify LoRa range at 868 MHz (ground test → short flight)
+    57|2. Characterize which modulation modes work at what distances
+    58|3. Validate power chain (solar → supercaps → LDO → radio)
+    59|4. Learn balloon preparation (stretching, sealing, free lift measurement)
+    60|5. Practice launch procedure
+    61|
+    62|## Decision
+    63|
+    64|### 1. Single Yokohama 32" Balloon (Valveless)
+    65|
+    66|Use one Yokohama 32" Sphere Balloon per flight. **Order valveless version** (no self-sealing valve). No multi-balloon, no cut-down mechanism.
+    67|
+    68|**Rationale:** Proven across 528-day flights. Multi-balloon adds complexity with no community precedent for success. Our 9-14g payload is well within the single-balloon capacity.
+    69|
+    70|**Valveless choice:** Self-sealing valves are unreliable at altitude (Ruthroff: "The self-sealing nozzle may not self-seal" after deflation/refill cycle). Yokohama sells "no nozzle" versions specifically for pico-balloonists. We heat-seal the neck with an impulse sealer + Kapton tape instead — proven across all 37 Ruthroff flights.
+    71|
+    72|**Multi-balloon research is deferred to mesh-stack Phase 5.** See `mesh-stack/ROADMAP.md`.
+    73|
+    74|### 2. Industrial Helium 4.6 (Not Hydrogen)
+    75|
+    76|Use industrial-grade helium (≥99.996% purity) from Air Liquide ALbee Fly system.
+    77|
+    78|**Rationale:** Safety and convenience outweigh the 8% lift advantage of H2 for initial flights. He 4.6 has a higher circumnavigation rate (67%) than H2 (55%) in Ruthroff's data. Indoor filling allows careful free-lift measurement. The ALbee Fly system integrates the pressure reducer, avoiding separate regulator purchase.
+    79|
+    80|**Gas procurement sequence:**
+    81|1. Use remaining Amazon He for DecoGlee shakedown tests (short flights)
+    82|2. Order ALbee Fly helium from Air Liquide for Yokohama flights
+    83|3. Consider switching to H2 in future if cost or flight duration demands it (requires ADR update)
+    84|
+    85|**German sources for He 4.6:**
+    86|- Air Liquide ALbee Fly: https://www.airliquide.com/ (integrated regulator)
+    87|- Linde Gas Ballongas: https://www.linde-gas.de/
+    88|- Messer Group: https://www.messergroup.com/
+    89|- Hornbach/Bauhaus exchange cylinders (Messer/Linde, ≥98%)
+    90|
+    91|### 3. Minimal Variant (~9g) for First Flight
+    92|
+    93|Start with the Minimal variant (no BMP280, no FEM, wire dipole only).
+    94|
+    95|**Rationale:** The first flight goal is range/throughput characterization, not altitude logging. The 9g weight maximizes free lift margin for learning. Horizontal position from WSPR/LoRa reception + radio temperature is sufficient for range estimation. BMP280 can be added in Mittel variant for subsequent flights.
+    96|
+    97|### 4. Yokohama 32" Sphere Balloon 10-Pack (Valveless, Crystal Clear)
+    98|
+    99|Order the 10-pack Crystal Clear variant from https://www.yokohamaballoon.com/ (€105.95).
+    100|
+    101|**Rationale:** €10.60/flight is the cheapest component. 10-pack allows iterative learning across multiple launches. Crystal Clear absorbs less solar IR than colored variants, helping maintain stable internal pressure. Valveless version avoids unreliable self-sealing valves.
+    102|
+    103|**Material note:** Yokohama balloons are Nylon/PE laminate (NOT metalized foil/Mylar). Despite foil having better theoretical gas barrier properties, nylon/PE vastly outperforms in practice due to stretchability, thermal cycling tolerance, and superior seam construction. See `docs/balloon-options-analysis.md` for material comparison.
+    104|
+    105|## Consequences
+    106|
+    107|### Immediate
+    108|- Order: Yokohama 32" 10-pack (€96.95) + ALbee Fly He (TBD) + heat sealer (~€15) + Kapton tape (~€5)
+    109|- Build: Minimal variant tracker on protoboard with ESP32-C3_Mini_V1 + LoRa2021
+    110|- Test: Range test on ground first, then DecoGlee short flight, then Yokohama flight
+    111|
+    112|### Deferred
+    113|- Multi-balloon research → mesh-stack Phase 5 (see `mesh-stack/ROADMAP.md`)
+    114|- Hydrogen consideration → future ADR if needed
+    115|- BMP280 altitude logging → Mittel variant for second flight
+    116|- FEM + directional antennas → V2 upgrade path
+    117|
+    118|### Cost Summary
+    119|
+    120|| Item | Cost |
+    121||------|------|
+    122|| Yokohama 32" Crystal Clear 10-pack (valveless) | €105.95 |
+    123|| ALbee Fly helium | ~€30-50 |
+    124|| Heat sealer (impulse) | ~€15 |
+    125|| Kapton tape | ~€5 |
+    126|| BMP280 + supercaps + passives + wire | ~€12 |
+    127|| **Total to first flight** | **~€175-195** |
+    128|
+    129|## Key References
+    130|
+    131|- Ruthroff (37 flights): https://www.theastroimager.com/picoballoning/pico-ballooning/
+    132|- KI4MCW (31 flights): https://sites.google.com/site/ki4mcw/Home/pico-balloonery
+    133|- K9YO beginner guide: https://sites.google.com/view/picoballoonsbyk9yo/beginners-guide
+    134|- Yokohama Balloon shop: https://www.yokohamaballoon.com/
+    135|- Air Liquide ALbee: https://www.airliquide.com/
+    136|- Balloon flight lessons: `docs/balloon-flight-lessons.md`
+    137|- Balloon options analysis: `docs/balloon-options-analysis.md`
+    138|- Balloon test results (DecoGlee): `docs/balloon-test-results.md`
 ================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:1 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: # ADR 012: Mesh Networking Strategy — FIPS + MeshCore + TollGate + Nostr
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=156
     1|# ADR 012: Mesh Networking Strategy — FIPS + MeshCore + TollGate + Nostr
     2|
     3|## Status
     4|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:17 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: TollGate provides a Cashu-based payment protocol for selling network access. It runs at ground stations with WiFi captive portals. The esp32-tollgate implementation also includes a Nostr relay, enabling async messaging.
+    5|Accepted
+    6|
+    7|## Context
+    8|
+    9|The mesh stack needs networking, community engagement, a business model, and async messaging for balloon-based internet transport. The original ROADMAP.md Phase 4 proposed custom mesh routing, but FIPS (Free Internetworking Peering System) already provides self-organizing mesh routing, Nostr-native identity, Noise encryption, and transport-agnostic framing — making a custom routing protocol unnecessary.
+    10|
+    11|The NiceRF LoRa2021 module has two independent antenna ports: Sub-GHz (868 MHz, Pin 9) and 2.4 GHz (Pin 10). This allows dual-band operation on a single radio module, which is ideal for running two protocols simultaneously via time-division.
+    12|
+    13|We have proven components from prior work: sx1280-serial provides TDMA coordinator election, fragmentation/reassembly (SLIP + CRC-32, 128-byte fragments), and secp256k1 crypto identity binding in Rust. The gap is erasure coding (Wirehair fountain codes), which has not yet been integrated with the fragmentation layer.
     14|
     15|MeshCore (2.9k GitHub stars, active European community in UK/DE/Benelux) provides an established Sub-GHz LoRa mesh with geographic routing, repeater firmware, and coverage mapping tools (mapme.sh). Running MeshCore on the balloon's Sub-GHz band provides immediate community value: stratospheric coverage mapping and long-range message relay.
     16|
@@ -766,10 +572,9 @@ LINE: TollGate provides a Cashu-based payment protocol for selling network acces
     18|
     19|Nostr (NIP-01) events are small JSON documents with secp256k1 signatures. They fit naturally over LoRa links when kept short (~500 bytes for kind 0/1/7 events). A store-and-forward relay on the balloon allows disconnected ground stations to exchange messages through the balloon's flash buffer.
     20|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:27 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | L7 | TollGate + Nostr | Payment gating + async messaging | Ground station + balloon (store-and-forward) |
+    21|## Decision
+    22|
+    23|Adopt a layered architecture using existing open-source components at each layer:
     24|
     25|| Layer | Protocol | Role | Runs On |
     26||-------|----------|------|---------|
@@ -777,10 +582,12 @@ LINE: | L7 | TollGate + Nostr | Payment gating + async messaging | Ground statio
     28|| L6 | FIPS Noise XK | End-to-end encrypted sessions | Balloon + ground station |
     29|| L5 | FIPS mesh routing | Spanning-tree + bloom-filter discovery | Balloon + ground station |
     30|| L4 | UDP/IP tunnel | Transport over FIPS mesh | Ground station (balloon is relay) |
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:40 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | 2.4 GHz | 2.4 GHz | FIPS (LoRa/FLRC adaptive) | Pin 10 | Wire dipole (3.1 cm legs) | Mesh networking + Nostr transport + TollGate relay |
+    31|| L3 | Erasure-coded fragmentation | Wirehair fountain codes + sx1280-serial fragmentation | Balloon + ground station |
+    32|| L2 | TDMA dual-band scheduler | Time-shares LR2021 between Sub-GHz and 2.4 GHz | Balloon |
+    33|| L1 | LR2021 radio | LoRa/FLRC dual-band | Balloon + ground station |
+    34|
+    35|### Dual-Band Allocation
+    36|
     37|| Band | Frequency | Protocol | Pin | Antenna | Role |
     38||------|-----------|----------|-----|---------|------|
     39|| Sub-GHz | 868 MHz | MeshCore (EU preset: SF8, BW62.5, CR8) | Pin 9 | Wire dipole (8.6 cm legs) | Community mesh repeater + coverage mapping |
@@ -788,10 +595,11 @@ LINE: | 2.4 GHz | 2.4 GHz | FIPS (LoRa/FLRC adaptive) | Pin 10 | Wire dipole (3.
     41|
     42|MeshCore on Sub-GHz is integrated from day one, sharing the TDMA scheduler with the 2.4 GHz FIPS transport.
     43|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:52 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - **Later**: Nostr over TollGate over FIPS over LoRa (adds payment gating)
+    44|### Nostr Strategy
+    45|
+    46|- **Phase 2**: Nostr over FIPS over LoRa (simple path)
+    47|  - Short text events only (kind 0 metadata, kind 1 short text, kind 7 reactions)
+    48|  - Max ~500 bytes per event → fits in 4-8 LoRa fragments after erasure coding
     49|  - Balloon stores events in SPIFFS/LittleFS FIFO buffer (~500 events = ~250 KB)
     50|  - Ground station runs full Nostr relay with internet bridge
     51|- **Phase 3+**: Expand to DMs, long-form content, zap receipts
@@ -799,21 +607,6 @@ LINE: - **Later**: Nostr over TollGate over FIPS over LoRa (adds payment gating)
     53|
     54|### Ground Station Options
     55|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:58 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | Minimal | ESP32-C3 + LR2021 | FIPS leaf node + Nostr buffer, no TollGate | Remote deployments, low cost |
-    55|
-    56|| Option | Hardware | Capabilities | Use Case |
-    57||--------|----------|-------------|----------|
-    58|| Minimal | ESP32-C3 + LR2021 | FIPS leaf node + Nostr buffer, no TollGate | Remote deployments, low cost |
-    59|| Full | Raspberry Pi / SBC + LR2021 | Full FIPS daemon + strfry relay + tollgate-module-basic-go on OpenWRT + WiFi AP | Permanent installations with internet |
-    60|
-    61|### Firmware Language
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:59 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | Full | Raspberry Pi / SBC + LR2021 | Full FIPS daemon + strfry relay + tollgate-module-basic-go on OpenWRT + WiFi AP | Permanent installations with internet |
     56|| Option | Hardware | Capabilities | Use Case |
     57||--------|----------|-------------|----------|
     58|| Minimal | ESP32-C3 + LR2021 | FIPS leaf node + Nostr buffer, no TollGate | Remote deployments, low cost |
@@ -821,10 +614,20 @@ LINE: | Full | Raspberry Pi / SBC + LR2021 | Full FIPS daemon + strfry relay + t
     60|
     61|### Firmware Language
     62|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:80 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | TollGate protocol | `OpenTollGate/tollgate` | TIP-01/02, HTTP-01, NOSTR-01, WIFI-01 specs |
+    63|Deferred. Two paths documented:
+    64|
+    65|- **C++ / ESP-IDF**: Consistent with tracker firmware (`tracker/firmware/`). RadioLib already integrated. Would need C++ FIPS leaf node implementation.
+    66|- **Rust / esp-rs**: Consistent with microfips, sx1280-serial, FIPS ecosystem. microfips already runs on ESP32-D0WD and ESP32-S3. Would need RISC-V (ESP32-C3) target support.
+    67|- **Hybrid**: Tracker in C++, mesh firmware in Rust. Shared telemetry component via C ABI.
+    68|
+    69|Decision to be made during Phase 2 implementation based on microfips ESP32-C3 porting effort vs C++ FIPS leaf node effort.
+    70|
+    71|## Existing Proven Components
+    72|
+    73|| Component | Source | What It Provides |
+    74||-----------|--------|-----------------|
+    75|| TDMA + coordinator election | `sx1280-serial` (Rust) | Proven: slot scheduling, peer warmup, crypto identity |
+    76|| Fragmentation + reassembly | `sx1280-serial` (Rust) | Proven: SLIP + CRC-32, 128-byte frags |
     77|| FIPS mesh networking | `jmcorgan/fips` (Rust) | v0.3.0: spanning-tree routing, Noise IK/XK, Nostr identity |
     78|| FIPS embedded leaf node | `Amperstrand/microfips` (Rust) | Runs on STM32 + ESP32 (D0WD, S3), no_std |
     79|| MeshCore mesh protocol | `meshcore-dev/MeshCore` (C++) | 2.9k stars, repeater firmware, geographic routing, EU community |
@@ -832,32 +635,26 @@ LINE: | TollGate protocol | `OpenTollGate/tollgate` | TIP-01/02, HTTP-01, NOSTR-
     81|| TollGate OpenWRT impl | `OpenTollGate/tollgate-module-basic-go` (Go) | Cashu payments, Nostr relay, WiFi captive portal |
     82|| ESP32 TollGate + Nostr | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | ESP32 TollGate + integrated Nostr relay (our implementation) |
     83|| LR2021 radio driver | RadioLib v7.6.0 (C++) | LoRa, FLRC, GFSK, RTToF ranging on LR2021 |
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:81 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | TollGate OpenWRT impl | `OpenTollGate/tollgate-module-basic-go` (Go) | Cashu payments, Nostr relay, WiFi captive portal |
-    78|| FIPS embedded leaf node | `Amperstrand/microfips` (Rust) | Runs on STM32 + ESP32 (D0WD, S3), no_std |
-    79|| MeshCore mesh protocol | `meshcore-dev/MeshCore` (C++) | 2.9k stars, repeater firmware, geographic routing, EU community |
-    80|| TollGate protocol | `OpenTollGate/tollgate` | TIP-01/02, HTTP-01, NOSTR-01, WIFI-01 specs |
-    81|| TollGate OpenWRT impl | `OpenTollGate/tollgate-module-basic-go` (Go) | Cashu payments, Nostr relay, WiFi captive portal |
-    82|| ESP32 TollGate + Nostr | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | ESP32 TollGate + integrated Nostr relay (our implementation) |
-    83|| LR2021 radio driver | RadioLib v7.6.0 (C++) | LoRa, FLRC, GFSK, RTToF ranging on LR2021 |
-    84|| Range test data | `sx1280-correlation-test` (nostr git) | 35k records, 30-37% delivery ratio at range |
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:82 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | ESP32 TollGate + Nostr | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | ESP32 TollGate + integrated Nostr relay (our implementation) |
-    79|| MeshCore mesh protocol | `meshcore-dev/MeshCore` (C++) | 2.9k stars, repeater firmware, geographic routing, EU community |
-    80|| TollGate protocol | `OpenTollGate/tollgate` | TIP-01/02, HTTP-01, NOSTR-01, WIFI-01 specs |
-    81|| TollGate OpenWRT impl | `OpenTollGate/tollgate-module-basic-go` (Go) | Cashu payments, Nostr relay, WiFi captive portal |
-    82|| ESP32 TollGate + Nostr | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | ESP32 TollGate + integrated Nostr relay (our implementation) |
-    83|| LR2021 radio driver | RadioLib v7.6.0 (C++) | LoRa, FLRC, GFSK, RTToF ranging on LR2021 |
     84|| Range test data | `sx1280-correlation-test` (nostr git) | 35k records, 30-37% delivery ratio at range |
     85|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:107 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | **Phase 3** | Nostr store-and-forward on balloon + TollGate at ground station | Not started |
+    86|## The Gap: Erasure Coding
+    87|
+    88|Wirehair fountain codes are the missing piece. Without erasure coding:
+    89|- Every lost fragment requires ACK + retransmission (expensive at 300 km, 1 ms propagation)
+    90|- With 30-37% packet loss (measured), retransmission storms degrade throughput
+    91|
+    92|With Wirehair:
+    93|- Transmitter generates infinite encoded fragments from k originals
+    94|- Receiver needs any k encoded fragments to decode (no specific fragment required)
+    95|- No ACK round-trip needed — balloon blasts encoded fragments in TDMA slot, goes back to sleep
+    96|- Transmit ~1.5x fragments for 35% loss (k=4 → send 6 encoded blocks)
+    97|
+    98|Integration point: between sx1280-serial's fragmentation layer and the LoRa PHY. Fragment format becomes:
+    99|`[block_id (4B)] [seed/fragment_index (1B)] [k (1B)] [Wirehair-encoded payload]`
+    100|
+    101|## Phased Approach
+    102|
+    103|| Phase | Focus | Status |
     104||-------|-------|--------|
     105|| **Phase 1** | Balloon tracker (single balloon, 28-byte telemetry, GPS) | **Done** — firmware v0.2, 17/17 tests pass |
     106|| **Phase 2** | FIPS over LoRa + MeshCore repeater (bench + first dual-band flight) | Research |
@@ -865,10 +662,12 @@ LINE: | **Phase 3** | Nostr store-and-forward on balloon + TollGate at ground st
     108|| **Phase 4** | Multi-balloon mesh + full internet transport + MultiWAN | Not started |
     109|| **Phase 5** | Multi-balloon reliability research | Not started (requires 3 successful Phase 2 flights) |
     110|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:120 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - **Business model**: TollGate at ground stations provides Cashu-based pay-per-use internet access
+    111|Phase 2 is the critical integration phase: port MeshCore to LR2021 Sub-GHz, implement FIPS Transport trait over LoRa with erasure coding, validate dual-band TDMA scheduler on the bench, then fly.
+    112|
+    113|## Consequences
+    114|
+    115|### Positive
+    116|
     117|- **No custom mesh routing**: FIPS provides production-quality spanning-tree routing with bloom-filter discovery
     118|- **Community engagement from day one**: MeshCore's European user base gets stratospheric repeater coverage immediately
     119|- **Async messaging**: Nostr store-and-forward enables disconnected ground stations to communicate through the balloon
@@ -876,32 +675,9 @@ LINE: - **Business model**: TollGate at ground stations provides Cashu-based pay
     121|- **Layered and testable**: Each layer can be validated independently (LoRa link → TDMA → FIPS transport → Nostr events)
     122|- **Transport-agnostic FIPS**: Same mesh networking code works over LoRa, WiFi, BLE, serial — future-proof
     123|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:126 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - **Complexity**: 7-layer stack with 4+ protocols (MeshCore, FIPS, Nostr, TollGate) is ambitious
-    123|
     124|### Negative
     125|
     126|- **Complexity**: 7-layer stack with 4+ protocols (MeshCore, FIPS, Nostr, TollGate) is ambitious
-    127|- **Build system mismatch**: MeshCore is PlatformIO, tracker is ESP-IDF, FIPS is Cargo (Rust), TollGate is Go
-    128|- **RAM constraints**: ESP32-C3 has 400 KB RAM. FIPS Noise handshakes + Wirehair encode/decode + MeshCore routing + Nostr buffer is tight
-    129|- **MeshCore moving parts**: Porting MeshCore to LR2021 requires radio abstraction work (SX1262 → LR2021 via RadioLib)
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:127 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - **Build system mismatch**: MeshCore is PlatformIO, tracker is ESP-IDF, FIPS is Cargo (Rust), TollGate is Go
-    124|### Negative
-    125|
-    126|- **Complexity**: 7-layer stack with 4+ protocols (MeshCore, FIPS, Nostr, TollGate) is ambitious
-    127|- **Build system mismatch**: MeshCore is PlatformIO, tracker is ESP-IDF, FIPS is Cargo (Rust), TollGate is Go
-    128|- **RAM constraints**: ESP32-C3 has 400 KB RAM. FIPS Noise handshakes + Wirehair encode/decode + MeshCore routing + Nostr buffer is tight
-    129|- **MeshCore moving parts**: Porting MeshCore to LR2021 requires radio abstraction work (SX1262 → LR2021 via RadioLib)
-    130|- **No prior art**: Nobody has run FIPS over LoRa, or MeshCore from the stratosphere, or TollGate over a balloon relay
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:130 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: - **No prior art**: Nobody has run FIPS over LoRa, or MeshCore from the stratosphere, or TollGate over a balloon relay
     127|- **Build system mismatch**: MeshCore is PlatformIO, tracker is ESP-IDF, FIPS is Cargo (Rust), TollGate is Go
     128|- **RAM constraints**: ESP32-C3 has 400 KB RAM. FIPS Noise handshakes + Wirehair encode/decode + MeshCore routing + Nostr buffer is tight
     129|- **MeshCore moving parts**: Porting MeshCore to LR2021 requires radio abstraction work (SX1262 → LR2021 via RadioLib)
@@ -909,10 +685,18 @@ LINE: - **No prior art**: Nobody has run FIPS over LoRa, or MeshCore from the st
     131|
     132|### Risks and Mitigations
     133|
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:149 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | TollGate protocol | `https://github.com/OpenTollGate/tollgate` | L7 | Spec |
+    134|| Risk | Mitigation |
+    135||------|-----------|
+    136|| ESP32-C3 RAM insufficient for FIPS + Wirehair + MeshCore | Profile memory on bench first. Fallback: MeshCore on separate MCU, or use ESP32-S3 (more RAM) |
+    137|| MeshCore PlatformIO incompatible with our ESP-IDF build | Document both paths. Fallback: build MeshCore as separate PlatformIO firmware, flash alongside |
+    138|| Dual-band TDMA scheduler reduces per-band throughput | Accept reduced throughput. 2.4 GHz FIPS is primary link, Sub-GHz MeshCore is secondary/community |
+    139|| Wirehair too heavy for ESP32-C3 | Benchmark early. Fallback: simpler Reed-Solomon with fixed overhead |
+    140|| Nostr events too large for LoRa | Start with short text (~500 bytes). Reject oversized events. Compress with LZW (on FIPS roadmap) |
+    141|
+    142|## Reference Repositories
+    143|
+    144|| Repo | URL | Layer | Language |
+    145||------|-----|-------|----------|
     146|| FIPS | `https://github.com/jmcorgan/fips` | L5-6 | Rust |
     147|| microfips | `https://github.com/Amperstrand/microfips` | L5-6 | Rust (no_std) |
     148|| MeshCore | `https://github.com/meshcore-dev/MeshCore` | L1-3 | C++ |
@@ -920,25 +704,581 @@ LINE: | TollGate protocol | `https://github.com/OpenTollGate/tollgate` | L7 | Sp
     150|| TollGate OpenWRT | `https://github.com/OpenTollGate/tollgate-module-basic-go` | L7 | Go |
     151|| ESP32 TollGate | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | L7 | C/C++ |
     152|| sx1280-serial | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-serial` | L2-3 | Rust |
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:150 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | TollGate OpenWRT | `https://github.com/OpenTollGate/tollgate-module-basic-go` | L7 | Go |
-    147|| microfips | `https://github.com/Amperstrand/microfips` | L5-6 | Rust (no_std) |
-    148|| MeshCore | `https://github.com/meshcore-dev/MeshCore` | L1-3 | C++ |
-    149|| TollGate protocol | `https://github.com/OpenTollGate/tollgate` | L7 | Spec |
-    150|| TollGate OpenWRT | `https://github.com/OpenTollGate/tollgate-module-basic-go` | L7 | Go |
-    151|| ESP32 TollGate | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | L7 | C/C++ |
-    152|| sx1280-serial | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-serial` | L2-3 | Rust |
-    153|| sx1280-ethernet-adapter | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-ethernet-adapter` | L7 | Rust |
-================================================================================================
-esp32-balloon-integration-meshcore-pr | rev=WORKTREE-ASIS | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md:151 | date=
-rule=path matches ADR/decision/rfc (step 4) | terms=none
-LINE: | ESP32 TollGate | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | L7 | C/C++ |
-    148|| MeshCore | `https://github.com/meshcore-dev/MeshCore` | L1-3 | C++ |
-    149|| TollGate protocol | `https://github.com/OpenTollGate/tollgate` | L7 | Spec |
-    150|| TollGate OpenWRT | `https://github.com/OpenTollGate/tollgate-module-basic-go` | L7 | Go |
-    151|| ESP32 TollGate | `https://gitworkshop.dev/npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/git.orangesync.tech/esp32-tollgate` | L7 | C/C++ |
-    152|| sx1280-serial | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-serial` | L2-3 | Rust |
     153|| sx1280-ethernet-adapter | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-ethernet-adapter` | L7 | Rust |
     154|| sx1280-correlation-test | `nostr://npub12m5exm2uk3xa674cc5r0hlyvccs5xxn7qv83ezuteefv5972nquq4j4szl/relay.ngit.dev/sx1280-correlation-test` | L1 | Rust |
+    155|| Wirehair | `https://github.com/catid/wirehair` | L3 | C |
+    156|| RadioLib | `https://github.com/jgromes/RadioLib` | L1 | C++ |
+================================================================================================
+[STEP4-FILE-KEEP] esp32-balloon-integration-meshcore-pr | /home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/013-cluster-aware-stratorelay.md | revs=WORKTREE-ASIS | rev_used=WORKTREE-ASIS | lines=119
+    1|# ADR 013: Cluster-Aware Stratorelay for MeshCore
+    2|
+    3|## Status
+    4|
+    5|Proposed
+    6|
+    7|## Context
+    8|
+    9|A balloon at 12 km altitude sees thousands of ground MeshCore nodes simultaneously across an ~800 km diameter footprint. Running the standard MeshCore repeater firmware would cause:
+    10|
+    11|1. **Packet storms**: Every flood packet from every ground node gets rebroadcast to every other ground node via the balloon, multiplying traffic by the number of visible clusters.
+    12|2. **Channel saturation**: LoRa SF8/BW62.5 at 869.618 MHz has limited airtime. A dumb repeater seeing hundreds of nodes would exceed the 10% EU duty cycle.
+    13|3. **Hidden node problem**: Ground nodes in different cities cannot hear each other but can all hear the balloon, causing simultaneous transmissions that corrupt data.
+    14|
+    15|The MeshCore community would benefit from stratospheric coverage (relay range from ~10 km ground-to-ground to ~700+ km via balloon) without their local networks degrading.
+    16|
+    17|MeshCore's `Mesh` base class provides virtual hook methods that allow subclassing without modifying the core framework:
+    18|- `filterRecvFloodPacket()` — drop flood packets before processing
+    19|- `allowPacketForward()` — control which packets get retransmitted
+    20|- `onAdvertRecv()` — intercept node advertisements
+    21|- `routeRecvPacket()` — override retransmission behavior
+    22|
+    23|Ground nodes must remain completely stock (standard MeshCore companion or repeater firmware). All intelligence lives on the balloon.
+    24|
+    25|A secondary benefit: the balloon can broadcast its GPS position and telemetry via standard MeshCore adverts and chat messages, providing a backup tracking path independent of internet, WSPR, or LoRaWAN.
+    26|
+    27|## Decision
+    28|
+    29|Implement a `StratoRelayMesh` class extending MeshCore's `mesh::Mesh` with cluster-aware filtering:
+    30|
+    31|1. **Passive cluster discovery**: Listen to ground node adverts and flood paths. Build clusters using union-find on observed forwarding relationships (if node A forwards node B's advert, they're in the same RF cluster).
+    32|
+    33|2. **Cluster head election**: For each detected cluster, elect one node as the communication gateway based on SNR quality, advert recency, and stability.
+    34|
+    35|3. **Cluster-aware filtering**: Only accept and re-bridge flood packets from cluster heads. Drop packets from non-head nodes (they're already handled by local ground flood).
+    36|
+    37|4. **Per-cluster bloom filters**: Use static bloom filters for scalable membership testing (~4 KB for 32 clusters of 100 nodes each, 1% FP rate). Custom implementation (no external library) to avoid dynamic allocation.
+    38|
+    39|5. **Zero-hop bridging**: Forward inter-cluster messages via `sendZeroHop()` — standard MeshCore packets that ground nodes process normally.
+    40|
+    41|6. **Balloon telemetry**: Broadcast GPS position in adverts, send telemetry via chat messages, respond to on-demand queries.
+    42|
+    43|### Memory Architecture
+    44|
+    45|```
+    46|NodeTable:       256 nodes × 9 bytes = 2.3 KB (static array)
+    47|UnionFind:       embedded in NodeTable (parent + rank per node)
+    48|Bloom filters:   32 clusters × 125 bytes = 4.0 KB (static)
+    49|Cluster heads:   32 × 7 bytes = 224 bytes (static)
+    50|Total:           ~6.5 KB static DRAM
+    51|```
+    52|
+    53|### MeshCore Extension Points
+    54|
+    55|| Virtual Method | Override Purpose |
+    56||---|---|
+    57|| `onAdvertRecv()` | Populate NodeTable + UnionFind from advert paths |
+    58|| `filterRecvFloodPacket()` | Drop packets from non-cluster-head nodes |
+    59|| `allowPacketForward()` | Enable bridging only between different clusters |
+    60|| `routeRecvPacket()` | Selective retransmission via zero-hop to cluster heads |
+    61|
+    62|### Bloom Filter Decision
+    63|
+    64|Evaluated three libraries:
+    65|- **ArashPartow/bloom** (`https://github.com/ArashPartow/bloom`): Uses `std::vector` (dynamic allocation). Header-only but violates MeshCore's "no dynamic allocation" principle.
+    66|- **jvirkki/libbloom** (`https://github.com/jvirkki/libbloom`): C library, uses `malloc/calloc`. Server-oriented, overkill for 100-element filters.
+    67|- **aappleby/smhasher** (`https://github.com/aappleby/smhasher`): Hash functions only, not a bloom filter.
+    68|
+    69|**Decision**: Custom `StaticBloomFilter` template class (~60 lines). FNV-1a hashing with multiple seed passes. Fixed-size bit array. Zero heap allocation. Matches MeshCore coding principles.
+    70|
+    71|### Build System Decision
+    72|
+    73|- **Flight firmware**: ESP-IDF (single MCU, shares radio with tracker via FreeRTOS mutex)
+    74|- **Bench testing**: PlatformIO (`mesh-stack/meshcore-lr2021/`) for quick iteration
+    75|- **Upstream PRs**: Two separate tightly-scoped PRs to MeshCore: (1) LR2021 variant, (2) StratoRelayMesh example
+    76|
+    77|### Single MCU Justification
+    78|
+    79|ESP32-C3 current tracker usage: 4.4 KB BSS, 134 KB flash code. Free: 258 KB DRAM, 3,700 KB flash. MeshCore core + StratoRelay additions: ~32 KB DRAM, ~100 KB flash. Well within budget.
+    80|
+    81|## Consequences
+    82|
+    83|### Positive
+    84|- **No ground node changes**: Stock MeshCore firmware works as-is
+    85|- **Community value**: Stratospheric range for MeshCore community without breaking local networks
+    86|- **Free telemetry**: Balloon position visible on MeshCore map without internet
+    87|- **Incremental**: Basic repeater works first (Phase 2a), clustering added on top (Phase 2b)
+    88|- **Upstreamable**: StratoRelayMesh is a clean subclass, could become a MeshCore example
+    89|
+    90|### Negative
+    91|- **Approximate clustering**: Bloom filter false positives cause over-filtering (safe — ground flood still delivers). Union-find from flood paths is heuristic, not exact topology.
+    92|- **Unknown node density**: Real-world ground node counts at stratospheric range are unmeasured. Design is parameterized but needs tuning after first flight data.
+    93|- **Advert GPS coverage varies**: Only companion radios with GPS include lat/lon in adverts. Dumb repeaters without GPS can't be geographically clustered. RF topology clustering (union-find on flood paths) is the primary mechanism.
+    94|- **RAM for node table**: 256-node table is 2.3 KB. If actual density exceeds this, LRU eviction drops oldest nodes. This may cause clusters to be re-evaluated frequently in dense areas.
+    95|
+    96|### Risks and Mitigations
+    97|
+    98|| Risk | Mitigation |
+    99||---|---|
+    100|| Too few nodes for meaningful clustering | Fallback to normal repeater mode if < STRATO_MIN_CLUSTER_SIZE nodes per cluster |
+    101|| Too many nodes (> 256) overwhelm NodeTable | LRU eviction + increase SNR threshold to only track strongest nodes |
+    102|| MeshCore upstream rejects PR | Stratorelay runs as external PlatformIO project, doesn't need to be in MeshCore core |
+    103|| Balloon advert triggers ground node flood echo | Set balloon advert interval to 60 min (configurable) vs default 5 min |
+    104|| Cluster head goes offline | Re-election at next REBUILD_INTERVAL (5 min), packets temporarily unfiltered |
+    105|
+    106|## Reference Repositories
+    107|
+    108|| Repo | URL | Purpose |
+    109||---|---|---|
+    110|| MeshCore | `https://github.com/meshcore-dev/MeshCore` | Base framework, pinned to `companion-v1.15.0` |
+    111|| ArashPartow/bloom | `https://github.com/ArashPartow/bloom` | Evaluated and rejected (dynamic allocation) |
+    112|| jvirkki/libbloom | `https://github.com/jvirkki/libbloom` | Evaluated and rejected (malloc-based) |
+    113|| aappleby/smhasher | `https://github.com/aappleby/smhasher` | MurmurHash3 reference (not used, FNV-1a sufficient) |
+    114|
+    115|## Related Decisions
+    116|
+    117|- ADR-012: Mesh networking strategy (FIPS + MeshCore + TollGate + Nostr)
+    118|- ADR-009: V1 omnidirectional / V2 directional antenna strategy
+    119|- ADR-010: Adaptive TX power per TDMA slot
+================================================================================================
+[STEP4-FILE-KEEP] esp32-tollgate | docs/ADR-001-tollgate-over-lr2021.md | revs=remotes/origin/balloon-tollgate-c3-port | rev_used=remotes/origin/balloon-tollgate-c3-port | lines=91
+    1|# ADR-001: TollGate Balloon Uses LR2021 Radio as Data Link
+    2|
+    3|**Date:** 2026-07-29
+    4|**Status:** Proposed
+    5|**Decision Maker:** Felix (operator)
+    6|**Supersedes:** Implicit assumption that balloon TollGate uses WiFi captive portal
+    7|
+    8|## Context
+    9|
+    10|The original ESP32 TollGate firmware (tollgate-esp32 repo) is a WiFi captive portal hotspot. Clients connect via WiFi, get DNS-hijacked to a captive portal HTML page, pay with Cashu e-cash tokens, and receive internet access via NAPT.
+    11|
+    12|The balloon project uses LR2021 LoRa radios for long-range communication between the balloon payload and ground stations. WiFi is not the data link — LR2021 is.
+    13|
+    14|## Decision
+    15|
+    16|**The balloon TollGate variant will use LR2021 radio as its data link, NOT WiFi.**
+    17|
+    18|The original ESP32 TollGate keeps its WiFi + BitChat + captive portal stack for other contexts (ground-based, car tollgate, etc.). The balloon variant extracts only the **business logic layer** and adapts it for LR2021 transport.
+    19|
+    20|### What This Means
+    21|
+    22|| Layer | Original TollGate | Balloon TollGate |
+    23||-------|-------------------|-----------------|
+    24|| Data link | WiFi AP+STA | LR2021 LoRa radio |
+    25|| Client connection | WiFi AP join + DHCP | Radio message exchange |
+    26|| Payment UI | HTML captive portal in browser | Protocol-level (no browser) |
+    27|| DNS hijack | Yes (redirect to portal) | No (no DNS over LoRa) |
+    28|| NAPT/forwarding | Yes (share STA internet over AP) | N/A (radio relay, different model) |
+    29|| Cashu wallet | nucula library, swap tokens | SAME — reuse |
+    30|| Identity | nsec → MAC/SSID/IP | nsec → radio identity (adapt) |
+    31|| Nostr signing | nostr_event.c | SAME — reuse |
+    32|| Mint health | mint_health.c | SAME — reuse |
+    33|
+    34|### What Stays (Business Logic — Radio-Agnostic)
+    35|
+    36|1. **Cashu payment logic** — token receive, validate, swap via nucula wallet
+    37|2. **Identity derivation** — nsec → deterministic identity (adapt output format for radio)
+    38|3. **Nostr event signing** — event creation + signature
+    39|4. **Mint health checking** — mint status, accepted mints list
+    40|5. **Geohash** — location encoding for balloon position
+    41|6. **Config** — config.json, nsec loading
+    42|
+    43|### What Changes (Transport Layer)
+    44|
+    45|1. **No WiFi AP/STA** — replaced by LR2021 radio init + TX/RX
+    46|2. **No captive portal HTML** — replaced by radio protocol for payment exchange
+    47|3. **No DNS server** — no DNS concept over LoRa
+    48|4. **No HTTP server** — payment API becomes radio message handlers, not HTTP endpoints
+    49|5. **No NAPT** — radio relay model instead of NAT
+    50|
+    51|### What's Dropped Entirely (Not Needed)
+    52|
+    53|- display.c, font.c, touch.c, keyboard.c (no display on balloon)
+    54|- All mining components
+    55|- All marketplace/CVM/MCP components
+    56|- wifistr (balloon IS the service)
+    57|- dns_server.c (no DNS over LoRa)
+    58|- captive_portal.c HTML (no browser over LoRa — protocol replaces it)
+    59|
+    60|## Implications
+    61|
+    62|1. **The C3 WiFi build we just did is a stepping stone, not the final architecture.** It proves the business logic compiles and runs on C3. The transport layer will be swapped.
+    63|
+    64|2. **Payment protocol needs design.** Over WiFi, clients paste Cashu tokens into an HTML form. Over LR2021, we need a lightweight message protocol: client sends token → ESP32 validates/swaps → grants access (to what? the balloon's radio relay? local Nostr relay?).
+    65|
+    66|3. **"Internet access" concept changes.** Over WiFi, NAPT shares the STA uplink. Over radio, the balloon might relay messages to/from ground — payment gates radio relay time or bandwidth.
+    67|
+    68|4. **Local Nostr relay still valuable.** Clients within radio range can publish/read events via the balloon's local relay, even without internet. Payment gates access to this relay.
+    69|
+    70|5. **Cashu model unchanged.** Online = swap tokens against real mint. Offline = roadmap items R1/R2/R3 from BALLOON-SCOPE-DECISIONS.md.
+    71|
+    72|## Consequences
+    73|
+    74|- The captive_portal.c and dns_server.c files we kept are NOT needed for balloon. They remain useful for the original WiFi TollGate but should not be ported to the balloon radio variant.
+    75|- A new **radio payment protocol** needs to be designed (ADR-002 candidate).
+    76|- The C3 build is still useful — it validates the business logic layer compiles and the nucula wallet works on C3 hardware.
+    77|- Cross-track coordination needed: balloon-range-tests / balloon-firmware tracks own LR2021 driver. TollGate track consumes their radio API.
+    78|
+    79|## Open Questions
+    80|
+    81|1. What exactly does payment grant over radio? Relay time? Message quota? Bandwidth?
+    82|2. Is there a session concept, or per-message payment?
+    83|3. How does a client "discover" the balloon TollGate over LR2021? Beacon?
+    84|4. Does the balloon relay Nostr events to ground, or is it purely local?
+    85|
+    86|## Related
+    87|
+    88|- BALLOON-SCOPE-DECISIONS.md (component keep/drop)
+    89|- ADR-017 (from balloon-fresh repo — LR2021 throughput)
+    90|- balloon-range-tests track: LR2021 driver
+    91|- balloon-firmware track: RP2040/ESP32 FLRC board firmware
+================================================================================================
+[STEP4-FILE-KEEP] esp32-tollgate | docs/BALLOON-SCOPE-DECISIONS.md | revs=remotes/origin/balloon-tollgate-c3-port | rev_used=remotes/origin/balloon-tollgate-c3-port | lines=65
+    1|# Balloon TollGate — Scope Decisions (2026-07-29)
+    2|
+    3|## Directive from Felix (operator)
+    4|
+    5|Strip display + all balloon-irrelevant components. Extract ONLY business logic
+    6|relevant to balloon use case. Original tollgate repo retains everything.
+    7|
+    8|## What Stays (11 source files)
+    9|
+    10|| File | Purpose | Why balloon-relevant |
+    11||------|---------|---------------------|
+    12|| tollgate_main.c | Boot + init sequence | Core |
+    13|| config.c | config.json, nsec loading | Core |
+    14|| captive_portal.c | WiFi AP + Cashu payment portal HTML | Core — this IS the product |
+    15|| dns_server.c | DNS hijack for captive portal redirect | Core — captive portal needs it |
+    16|| tollgate_api.c | HTTP endpoints (payment, wallet, mints, usage) | Core — payment API |
+    17|| identity.c | nsec → MAC/SSID/IP derivation | Core — board identity |
+    18|| nostr_event.c | Nostr event signing | Core — relay identity |
+    19|| geohash.c | Location encoding | Balloon position tracking |
+    20|| mint_health.c | Mint status checking | Dependency of tollgate_api (/mints endpoint) |
+    21|| local_relay.c | Local Nostr relay (wisp-esp32) | Operator decision: keep if space allows |
+    22|
+    23|## What's Dropped (23 source files, preserved in repo)
+    24|
+    25|**Display/UI**: display.c, font.c, touch.c, keyboard.c
+    26|**Mining**: asic_miner.c, sw_miner.c, stratum_client.c, stratum_proxy.c, remote_miner.c, faucet_client.c
+    27|**Marketplace**: market.c, beacon_price.c
+    28|**CVM/MCP**: cvm_server.c, mcp_handler.c
+    29|**Client mode**: tollgate_client.c (balloon is standalone AP)
+    30|**Service discovery**: wifistr.c (balloon IS the service)
+    31|**Heavy sync**: negentropy_adapter.c, relay_selector.c, sync_manager.c
+    32|**Lightning**: lightning_payout.c, lnurl_pay.c
+    33|**Misc**: wifi_setup.c, nip04.c, tls_worker.c
+    34|
+    35|## Cashu Payment Model
+    36|
+    37|**CURRENT (Phase 1): Online mode only.**
+    38|- Balloon is online when receiving payment.
+    39|- nucula wallet swaps incoming Cashu tokens against real mint.
+    40|- No blind acceptance — tokens must be swappable.
+    41|- No own mint — just the wallet.
+    42|
+    43|## ROADMAP (not implemented now)
+    44|
+    45|### R1: Offline Mode (Free Relay Access)
+    46|When balloon has no internet → can't swap notes → can't sell internet access.
+    47|Give users free access to local relay only. No payment needed.
+    48|
+    49|### R2: Pre-loaded Wallet with npub-locked Notes
+    50|- Pre-load ESP32 wallet with e-cash notes locked to balloon's npub (NIP-60 style).
+    51|- Clients obtain notes elsewhere (minted specifically for this balloon).
+    52|- ESP32 validates notes are locked to its npub — no internet needed.
+    53|- Enables offline payment verification.
+    54|
+    55|### R3: Own Local Mint (if space allows on C3)
+    56|- If flash/PSRAM sufficient, run lightweight Cashu mint on ESP32.
+    57|- Clients mint tokens directly from ESP32.
+    58|- Fully offline payment loop.
+    59|- Status: investigate feasibility after C3 build succeeds.
+    60|
+    61|## Preserved State
+    62|
+    63|- Tag `v-balloon-pre-strip` at commit 5b1518f — full tollgate before balloon strip.
+    64|- All dropped files remain in the repo, just not compiled into balloon build.
+    65|- Original tollgate (separate from balloon worktree) is untouched.
+================================================================================================
+[STEP4-FILE-KEEP] esp32-tollgate | docs/adr/ADR-XXX-balloon-stratum-relay.md | revs=remotes/origin/balloon-pow-e-hash|remotes/origin/balloon-pow-extraction | rev_used=remotes/origin/balloon-pow-e-hash | lines=250
+    1|# ADR-XXX: Balloon as Stratum Relay — E-Hash Mining Bridge
+    2|
+    3|## Status
+    4|
+    5|Proposed
+    6|
+    7|## Date
+    8|
+    9|2026-07-29
+    10|
+    11|## Context
+    12|
+    13|The balloon project has a LoRa radio link (Semtech LR1121 or similar) between the
+    14|balloon (in the sky, with internet via STA WiFi) and ground-based stations.
+    15|Felix has identified a use case: the balloon can serve as a **stratum relay
+    16|bridge**, providing internet uplink for ground-based ASIC miners (Bitaxe, NerdMiner)
+    17|in areas where the miners have no direct internet connection.
+    18|
+    19|The concept is called **E-Hash**: customers pay Ecash (via the existing TollGate
+    20|Cashu payment system) for the bandwidth required to relay block templates
+    21|(downlink) and nonce submissions (uplink) over LoRa. The balloon is NOT a hash
+    22|engine — it never computes SHA256. It is a thin relay + payment gateway.
+    23|
+    24|### Existing Code Reuse
+    25|
+    26|The TollGate firmware already provides:
+    27|- WiFi AP+STA, Cashu wallet, captive portal, HTTP API (`main/tollgate_api.c`)
+    28|- Nostr identity, session management, firewall
+    29|- The Phase 1 mining extraction (`mining-standalone/`) provides `stratum_client`
+    30|  and `stratum_proxy` modules that build clean on ESP32-S3 (846KB, 0 warnings)
+    31|
+    32|### System Topology
+    33|
+    34|```
+    35|  Mining Pool (Internet)
+    36|         ↕  Stratum (TCP/WSS)
+    37|    ┌────────────────┐
+    38|    │   BALLOON      │  (ESP32-S3, in sky)
+    39|    │  - stratum_client (upstream to pool)
+    40|    │  - Cashu payment gateway (metered access)
+    41|    │  - LoRa template broadcaster (downlink)
+    42|    │  - LoRa nonce collector (uplink)
+    43|    └───────┬────────┘
+    44|            ↕  LoRa radio
+    45|    ┌───────┴────────┐
+    46|    │ GROUND BASE    │  (balloon LoRa terminal, RP2040 or ESP32)
+    47|    │ STATION        │
+    48|    │  - LoRa receiver (template → local stratum job)
+    49|    │  - Local stratum server (serves Bitaxe)
+    50|    │  - Share filter + uplink queue
+    51|    └───────┬────────┘
+    52|            ↕  USB / serial / local WiFi
+    53|    ┌───────┴────────┐
+    54|    │ BITAXE / ASIC  │  (hash engine, stock firmware)
+    55|    │ MINER          │
+    56|    │  - connects to local stratum server
+    57|    │  - mines against relayed template
+    58|    │  - submits shares locally
+    59|    └────────────────┘
+    60|```
+    61|
+    62|### Bandwidth Budget (LoRa)
+    63|
+    64|| Payload | Direction | Size (binary) | Frequency |
+    65||---------|-----------|---------------|-----------|
+    66|| Block template (Stratum notify) | Downlink (broadcast) | ~80-120 bytes | Every ~10 min (new block) |
+    67|| Nonce submission (valid share) | Uplink | ~20 bytes | Per valid share |
+    68|| Payment token (Ecash) | Uplink or side-channel | ~50-80 bytes | Per session/block |
+    69|
+    70|At LoRa SF7 (~100 bps effective): template broadcast takes ~8-12 seconds.
+    71|At SF12 (~30 bps): ~30-40 seconds. Both fit within a 10-minute block window.
+    72|
+    73|Template is broadcast one-to-many — all ground stations in range receive it
+    74|simultaneously. Nonce submissions are one-to-one uplink.
+    75|
+    76|## Decision
+    77|
+    78|The balloon implements a **Stratum Relay Service** with three components:
+    79|
+    80|### 1. Stratum Client (Balloon → Pool)
+    81|
+    82|Reuse the extracted `stratum_client` module from Phase 1. Balloon connects to
+    83|a configured mining pool via STA WiFi (TCP/WSS). It acts as a standard stratum
+    84|worker: receives `mining.notify` (block templates), submits `mining.submit`
+    85|(valid shares from ground miners).
+    86|
+    87|The balloon registers ONE pool identity. All ground miners mine under the
+    88|balloon's pool account. Revenue flows to the balloon's pool wallet.
+    89|
+    90|### 2. LoRa Template/Nonce Relay
+    91|
+    92|Define a new LoRa message protocol layer (separate from existing balloon
+    93|telemetry packets):
+    94|
+    95|- **MSG_TEMPLATE** (downlink, broadcast): Binary-encoded block template fields.
+    96|  Sent on every `mining.notify` from pool (new block or update).
+    97|  All paying ground stations receive it.
+    98|
+    99|- **MSG_NONCE** (uplink, unicast): Binary nonce submission from ground station.
+    100|  Contains: job_id(4B) + extranonce2(4B) + ntime(4B) + nonce(4B) = 16 bytes.
+    101|
+    102|- **MSG_PAYMENT** (uplink, unicast): Cashu token for bandwidth payment.
+    103|  Ground station submits Ecash token to unlock template access.
+    104|
+    105|### 3. Cashu Payment Gateway (E-Hash)
+    106|
+    107|Reuse the existing TollGate Cashu wallet + payment API. Payment model:
+    108|
+    109|- **Per-block access**: Customer pays Ecash for N blocks of template delivery.
+    110|  Each block = ~10 min window. Balloon tracks per-station credit balance.
+    111|  Zero balance → template broadcast encrypted/keyed, station cannot decode.
+    112|
+    113|- **Share relay**: Included in per-block fee. Ground station submits shares
+    114|  up to a rate cap (prevents flooding LoRa uplink with junk shares).
+    115|
+    116|The balloon's existing session manager (`main/session.c`) already does
+    117|time-based MAC tracking and access control. Extending it to cover LoRa
+    118|identity (per-station keys) is a natural fit.
+    119|
+    120|### Ground Base Station Role
+    121|
+    122|The ground base station is the critical translator:
+    123|
+    124|1. Receives LoRa template → decodes → constructs local Stratum `mining.notify`
+    125|2. Runs a **local Stratum V1 server** (tiny, ~200 lines) on localhost
+    126|3. Bitaxe connects to local server as if it were a normal pool
+    127|4. Bitaxe submits shares → base station filters by difficulty → queues best
+    128|   shares for LoRa uplink to balloon
+    129|5. Base station manages Ecash payment: requests/maintains credit with balloon
+    130|
+    131|Bitaxe runs STOCK firmware — no modification needed. It sees a local stratum
+    132|pool. The base station is transparent.
+    133|
+    134|## Invariants
+    135|
+    136|1. **Balloon never hashes.** No SHA256 computation on balloon. Pure relay.
+    137|2. **Bitaxe runs unmodified firmware.** All intelligence in base station + balloon.
+    138|3. **Template is broadcast, not unicast.** One LoRa transmission serves all stations.
+    139|4. **No template without payment.** Cashu credit required to decode templates.
+    140|5. **Only pool-difficulty shares go up.** Base station filters shares before uplink
+    141|   to conserve LoRa bandwidth. Sub-target shares stay local.
+    142|
+    143|## Consequences
+    144|
+    145|### Positive
+    146|
+    147|- **Massive code reuse**: Cashu wallet, WiFi, identity, session management all
+    148|  exist in TollGate firmware. Stratum client extracted in Phase 1. Only new
+    149|  code is LoRa message encoding + ground base station stratum server.
+    150|- **Bitaxe compatibility**: Stock firmware, zero modification. Any stratum-compatible
+    151|  ASIC works (Bitaxe, NerdMiner, braiins OS miners).
+    152|- **Revenue model**: Balloon operator earns Ecash for bandwidth. Miners get
+    153|  internet-free pool access. Clean E-Hash economy.
+    154|- **Scalable**: One template broadcast serves N ground stations. Uplink is the
+    155|  only per-station bandwidth cost.
+    156|
+    157|### Costs
+    158|
+    159|- **Latency**: LoRa adds 8-40 seconds of template delivery latency vs ~100ms
+    160|  direct internet. Miners work on stale templates for that window. Acceptable
+    161|  for small miners (Bitaxe ~1-3 TH/s) — negligible revenue impact.
+    162|- **Uplink contention**: Multiple ground stations submitting shares compete for
+    163|  LoRa uplink airtime. Need backoff/Collision avoidance or TDM scheduling.
+    164|- **Pool account centralization**: All miners mine under balloon's pool account.
+    165|  Revenue trust model: balloon operator must distribute earnings honestly.
+    166|  Ecash tokens provide accounting transparency.
+    167|- **Ground base station complexity**: Needs a stratum server implementation.
+    168|  Target: ~200-300 lines C on RP2040 or ~150 lines Python on a Pi.
+    169|
+    170|## Open Questions (for design session)
+    171|
+    172|### O1. Stratum V1 vs V2 upstream?
+    173|
+    174|V1 is simpler (JSON text protocol, widely supported, Bitaxe uses V1).
+    175|V2 has better template distribution (binary, designed for relay scenarios)
+    176|but adds protocol complexity. Recommendation: **V1 for initial implementation.**
+    177|V2 can be layered later since the LoRa payload format is protocol-agnostic.
+    178|
+    179|### O2. Pool account / revenue distribution?
+    180|
+    181|Whose pool account? Options:
+    182|- A) Balloon operator's account — all shares credited to operator, who
+    183|     distributes Ecash to miners manually/automatically.
+    184|- B) Per-miner pool accounts — balloon passes through stratum worker IDs.
+    185|     Requires pool to support multiple workers under one connection (most do).
+    186|
+    187|Recommend B — standard stratum multi-worker. Balloon stratum_client uses
+    188|`<pool_user>.<ground_station_id>` worker naming.
+    189|
+    190|### O3. Share difficulty filtering?
+    191|
+    192|Pool sets a share difficulty. At LoRa bandwidth, we cannot relay every share.
+    193|Options:
+    194|- A) Ground base station runs its own higher difficulty filter. Only shares
+    195|     meeting a local threshold (e.g. 10x pool difficulty) go up. Fewer shares
+    196|     relayed but each is more valuable.
+    197|- B) Base station relays all pool-difficulty shares, accepts uplink contention.
+    198|
+    199|Recommend A — conserve LoRa bandwidth. Trade-off: slightly reduced share
+    200|submission rate, but LoRa can't handle high share volume anyway.
+    201|
+    202|### O4. Template encryption / access control?
+    203|
+    204|Felix's model: customer pays Ecash for bandwidth. How do we enforce this?
+    205|- A) Template broadcast in plaintext, but base station needs Ecash token to
+    206|     authenticate uplink (nonce submission). Freeloader gets templates but
+    207|     can't submit shares. Weak — they could mine for their own pool.
+    208|- B) Template encrypted with per-session key. Base station gets decryption
+    209|     key only after Ecash payment. Strong — no template without payment.
+    210|
+    211|Recommend B — use the existing session/key derivation (HMAC-SHA512 from nsec)
+    212|to generate per-station template keys. Cashu payment unlocks key delivery.
+    213|
+    214|### O5. Balloon loses internet?
+    215|
+    216|When balloon STA WiFi drops (no internet):
+    217|- Balloon cannot fetch new templates. Ground miners keep mining last known
+    218|  template. Shares will eventually be rejected by pool (stale).
+    219|- Balloon should cache last template + broadcast "stale" flag. Ground base
+    220|  stations can choose to continue (waste of hashpower) or pause.
+    221|
+    222|Recommend: balloon broadcasts template with a TTL timestamp. Ground station
+    223|stops mining after TTL expires without new template. Resumes when new
+    224|template arrives.
+    225|
+    226|## Rollout / Implementation Phases
+    227|
+    228|TBD — implementation not yet started. Awaiting decisions on open questions O1-O5.
+    229|
+    230|Proposed phase structure (subject to approval):
+    231|
+    232|- Phase A: LoRa message protocol spec (template encoding, nonce format, payment)
+    233|- Phase B: Ground base station prototype (RP2040: LoRa RX → local stratum server)
+    234|- Phase C: Balloon stratum relay module (stratum_client → LoRa TX + Cashu gate)
+    235|- Phase D: Integration test (balloon + base station + Bitaxe, end-to-end)
+    236|
+    237|## Notes
+    238|
+    239|- Phase 1 mining extraction (commit 9e40143) directly supports this architecture.
+    240|  The `stratum_client` module is the balloon's upstream connection.
+    241|  The `sw_miner`/`asic_miner` modules are reference for ground-side understanding
+    242|  but are NOT deployed — Bitaxe runs its own firmware.
+    243|- The existing TollGate session manager (`main/session.c`) does time-based access
+    244|  control per MAC. Extending to LoRa station identity is a small addition.
+    245|- LoRa radio hardware details (modulation, SF, bandwidth) are tracked in the
+    246|  balloon-fresh repo's firmware track, not here. This ADR is protocol-level.
+    247|- Felix's vision: E-Hash = Ecash + hashpower. The balloon provides infrastructure
+    248|  (internet relay) as a metered Ecash service. Ground miners provide hashpower
+    249|  and pay for uplink. This is the TollGate model applied to mining relay instead
+    250|  of WiFi hotspot access.
+================================================================================================
+[STEP4-FILE-KEEP] esp32-tollgate | docs/adr/adr-balloon-stratum-relay-DECISIONS.md | revs=remotes/origin/balloon-pow-e-hash|remotes/origin/balloon-pow-extraction | rev_used=remotes/origin/balloon-pow-e-hash | lines=39
+    1|# ADR: Balloon Stratum Relay (E-Hash) — LOCKED DECISIONS LOG
+    2|
+    3|## RESOLVED DECISIONS (locked)
+    4|
+    5|### D1. Balloon role = relay only, no hashing
+    6|Balloon never computes SHA256. Pure stratum relay + Ecash payment gateway.
+    7|(Felix, 2026-07-29)
+    8|
+    9|### D2. Ground hardware = balloon base station + Bitaxe
+    10|Regular balloon LoRa base station on ground, connected locally to a Bitaxe
+    11|(or any stratum-compatible ASIC miner). Bitaxe runs stock firmware.
+    12|(Felix, 2026-07-29)
+    13|
+    14|### D3. Full template broadcast per block (~10 min)
+    15|Full block template sent on every new block. Customer pays Ecash for
+    16|bandwidth cost. No incremental/diff optimization in initial design.
+    17|(Felix, 2026-07-29)
+    18|
+    19|### D4. E-Hash payment model
+    20|Customer pays Ecash for bandwidth (template delivery + nonce uplink relay).
+    21|Reuses existing TollGate Cashu wallet + session system.
+    22|(Felix, 2026-07-29)
+    23|
+    24|## STILL OPEN (awaiting decision)
+    25|
+    26|### O1. Stratum V1 vs V2 upstream?
+    27|Recommendation: V1 (simpler, Bitaxe-compatible).
+    28|
+    29|### O2. Pool account / revenue distribution?
+    30|Multi-worker pass-through vs single operator account?
+    31|
+    32|### O3. Share difficulty filtering on ground?
+    33|Recommendation: local higher difficulty filter to conserve LoRa bandwidth.
+    34|
+    35|### O4. Template encryption / access control?
+    36|Recommendation: per-session encryption key unlocked by Cashu payment.
+    37|
+    38|### O5. Balloon internet loss behavior?
+    39|Recommendation: TTL-based template expiry + pause on ground.

@@ -102,13 +102,13 @@ for (repo, path, lineno, text), revs in grouped.items():
     rec = (repo, path, lineno, verdict, rule, terms, "|".join(sorted(revs)[:8]), text)
     (cand if verdict == "candidate" else drop).append(rec)
 
-with open(os.path.join(OUT, "candidates2.tsv"), "w") as f:
+with open(os.path.join(OUT, "candidates.tsv"), "w") as f:
     for r in cand:
         f.write("\t".join(r) + "\n")
-with open(os.path.join(OUT, "dropped2.tsv"), "w") as f:
+with open(os.path.join(OUT, "dropped.tsv"), "w") as f:
     for r in drop:
         f.write("\t".join(r) + "\n")
-with open(os.path.join(OUT, "nameonly2.tsv"), "w") as f:
+with open(os.path.join(OUT, "nameonly.tsv"), "w") as f:
     for (repo, path), revs in sorted(nameonly.items()):
         f.write("\t".join([repo, path, "|".join(sorted(revs))]) + "\n")
 

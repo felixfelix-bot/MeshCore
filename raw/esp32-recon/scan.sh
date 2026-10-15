@@ -42,7 +42,11 @@ scan_git esp32-mesh /home/c03rad0r/esp32-mesh \
 scan_git esp32-tollgate /home/c03rad0r/repos/tollgate-esp32 \
   master remotes/origin/master remotes/upstream/master \
   remotes/origin/balloon-pow-e-hash remotes/origin/balloon-pow-extraction \
-  remotes/origin/balloon-tollgate-c3-port v1.4.0 v-balloon-pre-strip
+  remotes/origin/balloon-tollgate-c3-port v1.4.0 v-balloon-pre-strip \
+  archive/cvm-integration archive/display-fix archive/local-relay \
+  archive/miner-integration archive/mining-payment \
+  archive/multi-mint-support-pre-rebase archive/tollgate-core-component \
+  archive/tollgate-core-v2
 
 scan_git wisp-esp32 /home/c03rad0r/wisp-esp32 \
   main fork/balloon-nostr-extraction remotes/origin/main remotes/origin/feature/subscription-manager
@@ -74,7 +78,7 @@ for spec in "esp32-mesh|/home/c03rad0r/esp32-mesh" \
             "wisp-esp32|/home/c03rad0r/wisp-esp32"; do
   label="${spec%%|*}"; dir="${spec#*|}"
   if [ -e "$dir/.git" ]; then
-    for rev in $(git -C "$dir" for-each-ref --format='%(refname:short)' refs/heads refs/tags remotes 2>/dev/null); do
+    for rev in $(git -C "$dir" for-each-ref --format='%(refname:short)' refs/heads refs/tags refs/remotes 2>/dev/null); do
       git -C "$dir" ls-tree -r --name-only "$rev" 2>/dev/null \
       | grep -iE 'design-review-notes|(^|/)ADR[-_/]|decision|rfc' \
       | sed "s|^|$label\t$rev\t|" >> "$NAMEKEEP"
