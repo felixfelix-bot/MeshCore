@@ -1,0 +1,13 @@
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/001-esp32-c3-as-mcu.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/003-dual-track-hardware.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/004-3d-yagi-antenna-structure.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/005-sky66112-fem.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/007-adaptive-protocol.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/009-antenna-strategy-v1-v2.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/011-first-flight-strategy.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/012-mesh-networking-strategy.md	WORKTREE-ASIS
+esp32-balloon-integration-meshcore-pr	/home/c03rad0r/esp32-balloon-integration-meshcore-pr/docs/adr/013-cluster-aware-stratorelay.md	WORKTREE-ASIS
+esp32-tollgate	docs/ADR-001-tollgate-over-lr2021.md	remotes/origin/balloon-tollgate-c3-port
+esp32-tollgate	docs/BALLOON-SCOPE-DECISIONS.md	remotes/origin/balloon-tollgate-c3-port
+esp32-tollgate	docs/adr/ADR-XXX-balloon-stratum-relay.md	remotes/origin/balloon-pow-e-hash|remotes/origin/balloon-pow-extraction
+esp32-tollgate	docs/adr/adr-balloon-stratum-relay-DECISIONS.md	remotes/origin/balloon-pow-e-hash|remotes/origin/balloon-pow-extraction
