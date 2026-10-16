@@ -402,7 +402,9 @@ sibling cards identified, re-confirmed here):
 | `bench/cable-feedthrough-failure-modes/REPORT.md` (2026-09-15) | meshcore repo | cold-bend / jacket-stiffening failure modes |
 | `~/reports/chamber-penetration-survey-NEGATIVE-blocked-t_57c1b9fd-2026-10-01.md` | reports tree | NEGATIVE: no chamber, no camera, no calipers |
 | `~/reports/chamber-penetration-survey-protocol-t_964d4469-2026-10-01.md` | reports tree | UNKNOWN/ESTIMATED rule vocabulary reused here |
-| Board HEAD | `~/repos/meshcore` @ `7b2cfa3b` (`main`, ahead 69 of `origin/main`) | repository state |
+| Board HEAD (at authoring) | `~/repos/meshcore` @ `7b2cfa3b` (`main`, ahead 69 of `origin/main`) | repository state when written; a concurrent worker rebased `main` mid-run and this commit was replayed cleanly onto it |
+| Landing commit | `e8c1b6df` on `~/repos/meshcore` `main` — adds `bench/routing-measurements/{REPORT.md,routing_measure_check_t_93afb6e2.py,output.txt}` | committed, not pushed (the bench campaign is intentionally unpushed: no push/consolidate card exists for it) |
+| Artifact hashes (sha256) | REPORT.md `24db6ea5d91a1617c612d2b2defeae797f480500deb5ce3bfaa501b78f0d76a2`; script `dda8565829a283f04a18ac6128938e3c00df50150c987c6b199f52a9dea14840`; output.txt `8d90a4f725f1d6fdf3caa2922ad1c87eead9bb00399a8dd2e2dd4d920a7bdcc4` | identity of the landed deliverable |
 
 **Board ID cross-reference.** The bench report series refers to its own cards by
 the *pre-2026-10 fleet IDs* (`t_e5d5eaae` routing-freeze, `fe700201`, `55585471`,
