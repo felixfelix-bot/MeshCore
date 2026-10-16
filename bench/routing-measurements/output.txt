@@ -1,0 +1,61 @@
+routing_measure_check_t_93afb6e2.py -- meshcore t_93afb6e2
+==================================================================
+NO MEASUREMENT PERFORMED. All inputs on-record / spec /
+industry-nominal-UNVERIFIED. Physics reproduced, not measured.
+
+--- STEP 1: bundle OD ---
+single RG316 cable envelope (variant A has NO bundle):
+  RG316 alone                                = 2.50 mm
+taped bundle, RG316 coax + USB-C side-by-side (variant A+B
+parallel run) -- PLANNING ARITHMETIC, NOT A MEASUREMENT:
+  sqrt((2.50+4.50)^2 + 4.50^2) + 0.50 loom  = 8.82 mm
+  (published on record as ~8.8 mm; recomputed here 8.82)
+  3 per-point caliper/tape readings along the run : UNKNOWN
+  mean of the 3 readings                         : UNKNOWN
+  measured cross-section shape (round/oval/ribbon): UNKNOWN
+  cables actually in the bundle                  : UNKNOWN
+
+--- STEP 2: slack survey ---
+90-deg arc at frozen R=25.0 mm          = 39.3 mm
+90-deg arc at static-min R=12.7 mm      = 19.9 mm
+tie-off standoff                         = 15.0 mm [SPEC]
+
+interior C-RF-INT-1 (planned 150.0 mm) vs frozen minimum budget:
+  budget = 15.0 tie-off + 39.3 arc + 50.0 loop = 104.3 mm
+  free margin = 150.0 - 104.3 = 45.7 mm  (30% spare)
+exterior C-RF-EXT-1 (planned 500.0 mm):
+  budget = 15.0 + 39.3 + 100.0 = 154.3 mm
+  free margin = 500.0 - 154.3 = 345.7 mm  (69% spare)
+  MEASURED usable free length, inside / outside / tied-down
+    each                                : UNKNOWN
+  NOTE: 'free length' is a property of the INSTALLED path,
+    i.e. (planned length) - (length consumed by the actual
+    routing). Only the budget check above is on record; the
+    real consumption depends on the unlocated chamber.
+
+--- STEP 3/5: forced bend ---
+R=12.7 mm (static min): swept diameter = 27.9 mm, clearance = 13.95 mm
+R=25.0 mm (frozen rule): swept diameter = 52.5 mm, clearance = 26.25 mm
+  MEASURED tightest bend radius centreline     : UNKNOWN
+  MEASURED second-tightest bend                : UNKNOWN
+  second bend within 20%% of tightest?          : UNKNOWN
+    (frozen path defines ONE deliberate bend B1; the exterior
+     drape carries no specified bend below 25.0 mm, so no
+     distinct 2nd bend is DEFINED, let alone measured)
+
+--- STEP 4: static vs dynamic ---
+Decision inputs from the frozen routing spec (t_e5d5eaae):
+  B1 is a bend in the INTERIOR floor run, anchored at T1,
+    formed at install time, one plane, R>=25.0 mm [SPEC]
+  no moving joint / no articulation in the path [SPEC]
+  cable lies slack, no tension, loops carry slack [SPEC]
+  -> the forced bend is STATIC (installed, not moving in
+     operation) -- determination from SPEC, not observation
+  governing spec once measured = STATIC min bend radius
+    (12.7 mm industry-nominal-UNVERIFIED), NOT a dynamic value
+  dynamic min bend radius on record           : UNKNOWN
+
+--- tool floors that will bound every future reading ---
+caliper least count = 0.01 mm; tape least count = 1.0 mm [SPEC]
+
+END routing_measure_check_t_93afb6e2.py
