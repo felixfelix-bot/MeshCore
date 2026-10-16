@@ -1,0 +1,35 @@
+========== t_cdcc5b88 RF feedthrough cold-bridge derating (BASIC) ==========
+
+§A assumed geometry, from RG316 DCR (Belden 83284):
+   A centre  = 0.0637 mm^2   (26AWG 7x34 SCCS)
+   A braid   = 0.6182 mm^2   (lumped 95% shield, UPPER BOUND)
+   A usb     = 0.2580 mm^2   (2x20AWG VBUS+GND, ASSUMED)
+
+§B BASIC derating (L=50 mm across wall, Cch=50 kJ/K, nominal 1.5 C/min):
+   Q coax centre        =  22.9298 mW   (dT=45 K)
+   Q USB-C 2x20AWG      =  92.8800 mW   (dT=45 K)
+   Q total (-20 C)      = 115.8098 mW   -> rate 1.4999 C/min = 99.99% of nominal
+   Q total (-40 C)      = 167.2809 mW   -> rate 1.4998 C/min = 99.99% of nominal
+
+§C sensitivity envelope (54 cases): f = 0.9951 (99.51%) .. 1.0000 (100.00%)
+   worst case: P-1 + braid + USB-C / L=10 mm / dT=65 K / Cch=20 kJ/K -> Q=2443.7 mW rate=1.4927 C/min
+   best  case: P-1 coax centre only / L=50 mm / dT=45 K / Cch=50 kJ/K -> Q=22.9 mW rate=1.5000 C/min
+
+§D Tier B (conducted variant, 2x record RG316), dT=65 K, Cch=50 kJ/K:
+   L= 10 mm  Q=  0.331 W  rate=1.4996 C/min = 99.97% of nominal
+   L= 25 mm  Q=  0.132 W  rate=1.4998 C/min = 99.99% of nominal
+   L= 50 mm  Q=  0.066 W  rate=1.4999 C/min = 99.99% of nominal
+
+§E wall/ceiling cross-checks:
+   Q floor+walls = 15.6 W -> rate pull -0.0187 C/min (wall continuity)
+   blower-test ceilin: Q=0 W at 1.5 C/min -> 1.4999 C/min = 100.0%
+
+§F checkable threshold (f<=0.90):
+   Q_allow = 125.0 W ; L=10 mm,dT=45 K -> A_met = 69.44 mm^2
+
+§G SELF-TEST of the assumption chain:
+   Cch x R_nom = 50 kJ/K x 0.5 C/min = 416.7 W net cooling
+   Cch x R_nom = 50 kJ/K x 1.5 C/min = 1250.0 W net cooling
+   Cch x R_nom = 50 kJ/K x 3.0 C/min = 2500.0 W net cooling
+   back-solve for f=0.90 at L=50mm,dT=45K (A_met=10 vs 50 mm^2 scaled):
+      A_met=347.22 mm^2 required (linear in 1/L*L -> ~9.4 mm^2)
