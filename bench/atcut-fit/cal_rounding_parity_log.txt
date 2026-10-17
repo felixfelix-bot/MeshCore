@@ -1,0 +1,82 @@
+== cal_rounding.py differential parity vs verbatim C firmware parseFloat ==
+module : /home/c03rad0r/worktrees/t_e1408991/cal_rounding.py
+oracle : /home/c03rad0r/worktrees/t_e1408991/cal_reference_parse.c (parseFloat verbatim: cal_cli_harness.cpp:27-47 <- MyMesh.cpp:128-143 @3fdfbc8e)
+corpus : 89 literals x 2 printf modes x 3 build variants
+
+--- build variant O2_contract_off: -std=c99 -O2 -ffp-contract=off
+--- build variant O0: -std=c99 -O0
+--- build variant O2_default: -std=c99 -O2
+
+byte-level comparisons: 1602 (verdict + f32 bits + consumed index, each mode/variant)
+mismatches:              0
+cross-variant gcc drift: 0
+
+== round-trip: emit_literal(parse_literal(x)) == x byte-for-byte ==
+canonical (firmware-emitted format) literals: 15, failures: 0
+
+== accepted-but-non-canonical literals (re-emission canonicalises) ==
+  '0.04123456789012' -> '0.0412346'   (f32 bits 0x3D28E594 identical to C)
+  '000.0340' -> '0.034'   (f32 bits 0x3D0B4396 identical to C)
+  '+024.95' -> '24.95'   (f32 bits 0x41C79999 identical to C)
+  '007.5' -> '7.5'   (f32 bits 0x40F00000 identical to C)
+  '+0.04' -> '0.04'   (f32 bits 0x3D23D70B identical to C)
+  '0000' -> '0'   (f32 bits 0x00000000 identical to C)
+  '+0' -> '0'   (f32 bits 0x00000000 identical to C)
+  '25.' -> '25'   (f32 bits 0x41C80000 identical to C)
+  '25.0' -> '25'   (f32 bits 0x41C80000 identical to C)
+  '10.5000' -> '10.5'   (f32 bits 0x41280000 identical to C)
+  '0.0400' -> '0.04'   (f32 bits 0x3D23D70B identical to C)
+  '1.' -> '1'   (f32 bits 0x3F800000 identical to C)
+  '3.000000000000000000000' -> '3'   (f32 bits 0x40400000 identical to C)
+  '-0.0' -> '-0'   (f32 bits 0x80000000 identical to C)
+  '-000.000' -> '-0'   (f32 bits 0x80000000 identical to C)
+  '-40.0' -> '-40'   (f32 bits 0xC2200000 identical to C)
+  ' 0.04' -> '0.04'   (f32 bits 0x3D23D70B identical to C)
+  '\t0.04' -> '0.04'   (f32 bits 0x3D23D70B identical to C)
+  ' \t 25' -> '25'   (f32 bits 0x41C80000 identical to C)
+  '  0.034021' -> '0.034021'   (f32 bits 0x3D0B599B identical to C)
+  '0.9999999' -> '1'   (f32 bits 0x3F7FFFFE identical to C)
+  '1.9999999999' -> '2'   (f32 bits 0x40000000 identical to C)
+  '123456789' -> '1.23457e+08'   (f32 bits 0x4CEB79A3 identical to C)
+  '99999999' -> '1e+08'   (f32 bits 0x4CBEBC20 identical to C)
+  '0.0000000001' -> '1e-10'   (f32 bits 0x2EDBE702 identical to C)
+  '0.0000000000000000000000000000000000000001' -> '1.00001e-40'   (f32 bits 0x000116C3 identical to C)
+  '0.00000000000000000000000000000000000000000001' -> '9.80909e-45'   (f32 bits 0x00000007 identical to C)
+  '0.000000000000000000000000000000000000000000001' -> '1.4013e-45'   (f32 bits 0x00000001 identical to C)
+  '0.000000000000000000000000000000000000000000000000001' -> '0'   (f32 bits 0x00000000 identical to C)
+  '9999999999999999999999999999999999999999' -> 'inf'   (f32 bits 0x7F800000 identical to C)
+  '99999999999999999999999999999999999999999999999999999999999999999999999999999999' -> 'inf'   (f32 bits 0x7F800000 identical to C)
+  '10000000000000000000000000000000000000000' -> 'inf'   (f32 bits 0x7F800000 identical to C)
+  '-99999999999999999999999999999999999999999999999999999999999999999999999999999999' -> '-inf'   (f32 bits 0xFF800000 identical to C)
+  '1048576.5' -> '1.04858e+06'   (f32 bits 0x49800004 identical to C)
+  '16777216.5' -> '1.67772e+07'   (f32 bits 0x4B800000 identical to C)
+  '33554432.5' -> '3.35544e+07'   (f32 bits 0x4C000000 identical to C)
+  '1.000000059604644775390625' -> '1'   (f32 bits 0x3F800000 identical to C)
+  '1.00000011920928955078125' -> '1'   (f32 bits 0x3F800001 identical to C)
+  '0.100000001490116119384765625' -> '0.1'   (f32 bits 0x3DCCCCCD identical to C)
+non-canonical accepted literals: 39
+
+== contract-rule probes ==
+  [OK ] CAL-CLI-SPEC.md:74-76  '-0' -> -0.0f (0x80000000): '-0' bits=0x80000000
+  [OK ] CAL-CLI-SPEC.md:73     '000.0340' -> 0.0340: '000.0340' bits=0x3D0B4396
+  [OK ] CAL-CLI-SPEC.md:77-79  '25.' -> 25.0: '25.' bits=0x41C80000
+  [OK ] CAL-CLI-SPEC.md:92-95  overflow -> +inf: '99999999999999999999' bits=0x7F800000
+  [OK ] CAL-CLI-SPEC.md:92-95  overflow -> -inf: '-9999999999999999999' bits=0xFF800000
+  [OK ] python round() CALL sites in cal_rounding.py: 0 (contract specifies no decimal rounding rule)
+  -- rounding-rule discrimination (no decimal rule may fire) --
+    '0.0340214'    -> f32 0x3D0B5A06 emit '0.0340214'  (6dp-round-half-up would be 0.034021  ) 0.034021|0.034022 boundary: must NOT carry to 0.034022
+    '0.03402149'   -> f32 0x3D0B5A1E emit '0.0340215'  (6dp-round-half-up would be 0.034021  ) just below midpoint x1e-8: must NOT carry
+    '0.03402151'   -> f32 0x3D0B5A24 emit '0.0340215'  (6dp-round-half-up would be 0.034022  ) just above midpoint: must NOT carry
+    '0.0340205'    -> f32 0x3D0B5915 emit '0.0340205'  (6dp-round-half-up would be 0.034021  ) exact half at 7th decimal: must NOT carry (no half-up)
+    '1.0000005'    -> f32 0x3F800004 emit '1'          (6dp-round-half-up would be 1.000001  ) exact half: must NOT carry (no half-up)
+    '2.675'        -> f32 0x402B3333 emit '2.675'      (6dp-round-half-up would be 2.675     ) classic half-up trap (decimal 2.675 -> 2.68): must stay f32(2.675)
+  [OK ] cal-tail '0.04 25'          accepted=True k=0x3D23D70B T0=25.0
+  [OK ] cal-tail '-0 25'            accepted=True k=0x80000000 T0=25.0
+  [OK ] cal-tail '-0.04 25'         accepted=False k < 0 rejected by the k >= 0 gate (CAL-CLI-SPEC.md:105)
+  [OK ] cal-tail '0.04-25'          accepted=True k=0x3D23D70B T0=-25.0
+  [OK ] cal-tail '0.04 24.95xyz'    accepted=True k=0x3D23D70B T0=24.94999885559082
+  [OK ] cal-tail '.04 25'           accepted=False no digit at index 0: leading digit required (CAL-CLI-SPEC.md
+  [OK ] cal-tail '0.04'             accepted=False T0 parse failed after k at index 4: no digit at index 4: lea
+  [OK ] cal-tail '0..04 25'         accepted=False T0 parse failed after k at index 2: no digit at index 2: lea
+
+OVERALL: PASS
