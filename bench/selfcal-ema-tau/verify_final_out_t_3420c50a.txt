@@ -1,0 +1,57 @@
+SELF-TEST PASS  18/18
+
+=== full verification run ===
+  near turnover (±15 C)    sens  1.20  e@10  0.70  e@25  0.03  e@10-ISA  0.56
+  bench mid-ramp (-20 C)   sens  3.60  e@10  2.11  e@25  0.10  e@10-ISA  1.67
+  ISA floor (-56.5 C)      sens  6.52  e@10  3.82  e@25  0.19  e@10-ISA  3.03
+
+  robustness sweep at ISA floor (keep 10 s vs move 25 s):
+    tau   5.0  keep  1.06  move  4.24  move better NO   both<72 yes
+    tau  10.0  keep  0.00  move  3.18  move better NO   both<72 yes
+    tau  15.0  keep  1.06  move  2.12  move better NO   both<72 yes
+    tau  17.0  keep  1.48  move  1.70  move better NO   both<72 yes
+    tau  24.3  keep  3.03  move  0.15  move better yes  both<72 yes
+    tau  30.0  keep  4.24  move  1.06  move better yes  both<72 yes
+    tau  40.0  keep  6.36  move  3.18  move better yes  both<72 yes
+    tau  60.0  keep 10.60  move  7.42  move better yes  both<72 yes
+
+  cold-boot table:
+    -40.0 C  init  169.0 ppm  settle@10  51.3 s  settle@25 128.2 s
+    -20.0 C  init   81.0 ppm  settle@10  43.9 s  settle@25 109.9 s
+      0.0 C  init   25.0 ppm  settle@10  32.2 s  settle@25  80.5 s
+     20.0 C  init    1.0 ppm  settle@10   0.0 s  settle@25   0.0 s
+
+  sign law on the four ramp cases (dtau = 14.3 s):
+    cooling away     sim max +2.077 ppm at  -20.0 C   doc +2.08 at  -20.0 C   sign +1
+    warming toward   sim max -1.897 ppm at  -15.7 C   doc +1.90 at  -15.7 C   sign -1
+    cooling away     sim max +3.014 ppm at  -40.0 C   doc +3.02 at  -40.0 C   sign +1
+    warming toward   sim max -2.817 ppm at  -35.4 C   doc +2.82 at  -35.4 C   sign -1
+
+==============================================================================
+VERIFY PASS  121/121 checks passed
+Every number in the recommendation was recomputed from the
+firmware constants and mission-profile assumptions and matches.
+
+=== decision demo: synthetic 24.3 s ===
+==============================================================================
+SELFCAL EMA DECISION -- meshcore:t_3420c50a
+==============================================================================
+  measured lag      : 24.30 s (sigma 1.00 s)
+  rule              : raise TEMP_TC_SECS iff measured tau > 30.0 s, then round to a 5 s grid
+  -> tau 24.3 s <= 30 s -> KEEP 10.0 s
+  SelfCal.h:47      : static constexpr float TEMP_TC_SECS = 10.0f;
+  ISA-floor error   : 3.03 ppm now -> 3.03 ppm after (window 72 ppm)
+  within window     : yes
+  action            : NO CODE CHANGE
+
+=== decision demo: hypothetical measured 34 s ===
+==============================================================================
+SELFCAL EMA DECISION -- meshcore:t_3420c50a
+==============================================================================
+  measured lag      : 34.00 s (sigma 2.00 s)
+  rule              : raise TEMP_TC_SECS iff measured tau > 30.0 s, then round to a 5 s grid
+  -> tau 34.0 s > 30 s -> set 35.0 s
+  SelfCal.h:47      : static constexpr float TEMP_TC_SECS = 35.0f;
+  ISA-floor error   : 5.09 ppm now -> 0.21 ppm after (window 72 ppm)
+  within window     : yes
+  action            : apply the constant above
