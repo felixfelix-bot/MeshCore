@@ -1,0 +1,84 @@
+VERIFICATION OF REPORT-t_b59e2fc1.md -- 82 checks
+  [PASS] SelfCal.h fetched from d7ae93fa                                218 lines
+  [PASS] SelfCal.h:47 contains 'TEMP_TC_SECS'                           static constexpr float TEMP_TC_SECS = 10.0f;    
+  [PASS] SelfCal.h:48 contains 'SLEW_PPM'                               static constexpr float SLEW_PPM     = 25.0f;    
+  [PASS] SelfCal.h:49 contains 'DEADBAND_PPM'                           static constexpr float DEADBAND_PPM = 1.0f;     
+  [PASS] SelfCal.h:50 contains 'MAX_PPM'                                static constexpr float MAX_PPM      = 300.0f;   
+  [PASS] SelfCal.h:53 contains 'SNR_GATE_DB'                            static constexpr float SNR_GATE_DB  = -10.0f;   
+  [PASS] SelfCal.h:72 contains 'CAL_RANGE_C'                            static constexpr float CAL_RANGE_C  = 90.0f;
+  [PASS] SelfCal.h:100 contains '_temp_ema = T0'                        _temp_ema = T0;   // assume ambient ~ T0 until f
+  [PASS] SelfCal.h:118 contains 'expf(-dt / TEMP_TC_SECS)'              float alpha = 1.0f - expf(-dt / TEMP_TC_SECS);
+  [PASS] SelfCal.h:133 contains 'float raw = _k * (_temp_ema - _T0)'    float raw = _k * (_temp_ema - _T0) * (_temp_ema 
+  [PASS] SelfCal.h:158 contains 'void feedMeasured(float freq_error_ppm void feedMeasured(float freq_error_ppm, float sn
+  [PASS] TEMP_TC_SECS declared once                                     
+  [PASS] MyMesh.cpp:23 documents the +/-72 ppm BW125 window             // (SelfCal::inCalRange), the mapper switches th
+  [PASS] zero production call sites of feedMeasured                     found 0: []
+  [PASS] feedMeasured defined in SelfCal.h                              
+  [PASS] feedMeasured called only from the host test suite              2 test invocations
+  [PASS] datasheet text extracted                                       768765 bytes
+  [PASS] datasheet has no FEI register                                  
+  [PASS] datasheet has no 'frequency error indicator'                   
+  [PASS] datasheet has no FreqErrInd symbol                             
+  [PASS] every 'frequency error' hit is a tolerance spec or the 0xF30A2 39 hits, 39 categorised
+  [PASS] the 0xF30A2C register is a mode switch, not a readout          
+  [PASS] no host-readable freq-offset read command                      
+  [PASS] datasheet states the FEI-inert rationale is real (XTAL only co 
+  [PASS] rule A threshold 2.0 x tau present                             
+  [PASS] rule A rounds to a 5 s grid                                    
+  [PASS] rule A note names the FEI dead end                             
+  [PASS] rule B threshold 30 s present (thermal_bench.py)               
+  [PASS] rule B threshold 30 s present (README.md)                      
+  [PASS] bench kit rejects derivative xcorr as unidentifiable           
+  [PASS] bench kit's own default tau in its simulated pipeline is 45 s  
+  [PASS] analyze_thermal_lag.py --self-test exit 0                      rc=0
+  [PASS] analyze_thermal_lag.py produces 'SELF-TEST PASS'               
+  [PASS] hysteresis_fit.py --self-test exit 0                           rc=0
+  [PASS] hysteresis_fit.py produces 'SELF-TEST PASS'                    
+  [PASS] synthesize_tau.py  exit 0                                      rc=0
+  [PASS] synthesize_tau.py produces 'KEEP TEMP_TC_SECS = 10.0 s'        
+  [PASS] sibling prints the loop-area 24.2 s primary lag                
+  [PASS] sibling prints the 1.96 ppm open-loop bound                    
+  [PASS] sibling prints the 0.098 ppm residual loop                     
+  [PASS] hysteresis prints tau_hyst +24.4 s                             
+  [PASS] hysteresis prints dT +1.34 C                                   
+  [PASS] hysteresis CI [+23.6, +25.9]                                   
+  [PASS] deliverable --self-test exit 0                                 rc=0
+  [PASS] deliverable --self-test PASS                                   
+  [PASS] deliverable 24/24 checks pass                                  24 PASS / 0 FAIL
+  [PASS] deliverable --json exit 0                                      
+  [PASS] json ratio = 2.43                                              2.4300
+  [PASS] json rules disagree                                            
+  [PASS] json rule A fires, rule B does not                             
+  [PASS] json transient not binding                                     
+  [PASS] json action today is KEEP                                      
+  [PASS] json worst transient err = 3.03 ppm                            3.0302
+  [PASS] report states '2.43×'                                          
+  [PASS] report states '24.3 ± 1.0 s'                                   
+  [PASS] report states 'KEEP `TEMP_TC_SECS = 10.0 s`'                   
+  [PASS] report states '3.03 ppm'                                       
+  [PASS] report states '72 ppm'                                         
+  [PASS] report states '95.8 %'                                         
+  [PASS] report states '2.53 C/s'                                       
+  [PASS] report states '169.0 ppm'                                      
+  [PASS] report states '81.0 ppm'                                       
+  [PASS] report states 'd7ae93fa'                                       
+  [PASS] report states 'zero call sites'                                
+  [PASS] report states 'no FEI register'                                
+  [PASS] report states '5.7 s below'                                    
+  [PASS] report states '27.3 s'                                         
+  [PASS] parent lag.json absent                                         
+  [PASS] parent hyst.json absent                                        
+  [PASS] no die-temp+ppm ramp CSV among candidate CSVs                  25 CSVs scanned, 0 ramp-shaped: []
+  [PASS] meshcore repo contains no ramp CSV                             4 repo CSVs, 0 ramp-shaped
+  [PASS] ISA rate 5 m/s x 6.5 K/km = 0.0325 C/s                         
+  [PASS] ISA floor err @10 s = 3.03 ppm                                 3.0302
+  [PASS] capture crossover at ISA floor = 0.77 C/s                      0.7722
+  [PASS] capture crossover at the 1.99 ppm/K window = 2.53 C/s          2.5301
+  [PASS] ISA ascent is 24x below the ISA-floor crossover                23.8x
+  [PASS] cold-boot err at -20 C = 81 ppm                                
+  [PASS] cold-boot err at -40 C = 169 ppm                               
+  [PASS] +3 sigma = 27.3 s < 30 s                                       
+  [PASS] 30 - 24.3 = 5.7 s margin                                       
+  [PASS] 14.3 s mismatch = 14.3 sigma                                   
+  [PASS] CAL_RANGE band holds the ISA floor                             81.5 <= 90
+VERIFY PASS  (82/82)

@@ -1,0 +1,77 @@
+==============================================================================
+SELFCAL EMA TIME-CONSTANT EVALUATION -- meshcore:t_b59e2fc1
+==============================================================================
+DATA STATUS: UNDEFINED -- no die-temp/ppm ramp time series exists
+  lag used below      : 24.3 s -- SYNTHETIC estimator validation from the sibling tools' own --self-test runs (planted truth 25.0 s); NOT a measurement
+  k/T0                : NO-FIT (n=0 dwell points, t_3f930320) -- k is a labelled sizing constant, not a measurement
+
+--- STEP 1  lag vs EMA constant
+  lag (SYNTHETIC)     = 24.3 +/- 1.0 s
+  EMA constant        = 10.0 s   [SelfCal.h:47]
+  ratio lag/EMA       = 2.43 x   (2.33x .. 2.53x at +/-1 sigma)
+  delta lag-EMA       = 14.3 s = 14.3 sigma
+  independent families: hysteresis tau_hyst 24.4 +/- 1.15 s; loop-area 24.2 +/- 1.0 s
+
+--- STEP 2/3  the firmware tree's OWN two decision rules
+  rule A  bench/thermal-lag/analyze_thermal_lag.py:495,500
+          transient_limited iff ci_lo > 2.0 * TEMP_TC_SECS -> fires=True; implied value 25 s
+  rule B  bench/thermal_bench.py:538-541 + bench/README.md:146 (examples/passive_mapper, d7ae93fa)
+          raise TEMP_TC_SECS iff measured tau > 30 s -> fires=False (at +3 sigma: False); margin 5.7 s
+  rules agree: False
+  NOTE: the two committed rules DISAGREE on this value: the thermal-lag tool fires above ~20 s and would set 25 s; the bench kit fires above 30 s and would keep 10 s.  The synthetic estimate sits in the gap.
+
+--- STEP 4  open-loop transient error vs mission-profile temperature
+  err_ppm = 2k|T-T0| * ramp_rate * |tau_ema - tau_lag|   (k=0.040 ppm/K^2, labelled: NOT measured)
+  point                    2k|T-T0|   err@10s    err@25s     err@10s ISA
+  at turnover+/-15 C       1.20       0.70       0.03        0.56
+  bench mid-ramp (-20 C)   3.60       2.11       0.10        1.67
+  ISA floor (-56.5 C)      6.52       3.82       0.19        3.03
+  bench ramp 0.041 C/s; ISA ascent 0.0325 C/s; BW125 capture window 72 ppm
+  worst tau=10 error is 3.03 ppm = 4.2% of the capture window -> margin 95.8%
+  burning the ENTIRE 72 ppm window with the current 14.3 s mismatch needs
+    0.77 C/s (46 C/min) at the ISA-floor sensitivity 6.52 ppm/K, or
+    2.53 C/s (152 C/min) at the synthetic worst-window 1.99 ppm/K
+  ISA ascent 0.0325 C/s is 24x (ISA basis) to 78x (mild basis) slower -> not binding
+
+--- STEP 4b  sign of the error, derived AND simulated
+  err ~= +2k(tau_lag - tau_ema) * (dT/dt) * (T - T0)
+  => OVER-shoots when the ramp moves AWAY from turnover, UNDER-shoots TOWARD.
+  case                               max|err|   signed     sign ok?  T at max
+  cooling +25 -> -20 (away from T0)  2.08       +2.08      yes       -20.0 C
+  warming -20 -> +25 (toward T0)     1.90       -1.90      yes       -15.7 C
+  cooling -20 -> -40 (away from T0)  3.02       +3.02      yes       -40.0 C
+  warming -40 -> -20 (toward T0)     2.82       -2.82      yes       -35.4 C
+
+--- STEP 3b  robustness if the true lag turns out different (ISA floor)
+  tau_true   err @ keep 10s   err @ move 25s   move better? both < 72ppm
+  5.0        1.06             4.24             NO           yes
+  10.0       0.00             3.18             NO           yes
+  15.0       1.06             2.12             NO           yes
+  24.3       3.03             0.15             yes          yes
+  30.0       4.24             1.06             yes          yes
+  40.0       6.36             3.18             yes          yes
+  60.0       10.60            7.42             yes          yes
+
+--- STEP 5  cost of a longer EMA at boot (SelfCal.h:100 seeds _temp_ema = T0)
+  ambient    initial err    settle to 1ppm     settle to 1ppm
+  (C)        (ppm)          @ tau=10 s         @ tau=25 s
+  -40.0      169.0          51                 128 s
+  -20.0      81.0           44                 110 s
+  0.0        25.0           32                 80 s
+  20.0       1.0            0                  0 s
+
+------------------------------------------------------------------------------
+VERDICT
+------------------------------------------------------------------------------
+  firmware action : KEEP TEMP_TC_SECS = 10.0 s (no firmware change)
+    1. the lag is UNMEASURED (both sibling cards committed NO-DATA; k/T0 NO-FIT); moving a firmware constant on synthetic self-test numbers would be fabrication
+    2. even the synthetic estimator value 24.3 +/- 1.0 s is BELOW the firmware's own committed change threshold of 30 s (thermal_bench.py:538-541, bench/README.md:146) -- margin 5.7 s, and still not crossed at +3 sigma
+  conditional     : if a real ramp CSV yields tau_die_to_crystal > 30 s, set TEMP_TC_SECS = round(tau/5)*5 s (a 24.3 s result -> 25 s)
+  open-loop limit : LIMITED (unconditional).  The compensation leads or
+                    trails the crystal by the unmatched part of the lag and
+                    there is NO closed-loop backstop: SelfCal.feedMeasured()
+                    has zero call sites in the pinned tree, and the LR2021
+                    datasheet (Rev 2.1) contains no FEI register -- the FEI
+                    path is a verified dead end.
+  binding on link?: False -- worst case 3.03 ppm against 72 ppm of capture
+==============================================================================
