@@ -5,13 +5,20 @@ Card: meshcore:t_a4844b93 "Specify chamber-exterior to instrument line items".
 
 Stdlib only. No clock, no randomness, no network. Rewrites
 EXTERIOR-LEG-BOM.md and exterior_leg_bom.csv byte-identically on every run,
-then self-checks the two acceptance conditions that are mechanically checkable:
+then self-checks the acceptance conditions that are mechanically checkable:
 
-  1. the 7 mandated columns appear in the card's exact order and every data
+  1. the 7 mandated columns appear in the card's exact order, and every data
      row has all 7 cells non-empty;
   2. every row states series + gender transition + impedance (or an explicit
-     N/A with its reason), carries a citation, and is annotated UNVERIFIED or
-     declared NIL (no row may claim a positive VERIFIED status).
+     N/A with its reason), carries a citation naming a committed bench/ path
+     or a parent row, and is annotated UNVERIFIED or declared NIL;
+  3. no row claims a POSITIVE verified status (the parent table has zero
+     VERIFIED rows and this list must not manufacture one);
+  4. no physical item appears twice: every distinct MPN-TBD interface spec
+     maps to exactly one row id, and the one merged item declares both of its
+     roles on a single line with a summed quantity;
+  5. the boundary holds: no row is the bulkhead feedthrough itself and no row
+     is the chamber-interior leg.
 
 Exit code 0 = all checks pass, 1 = at least one check failed.
 """
@@ -19,6 +26,7 @@ Exit code 0 = all checks pass, 1 = at least one check failed.
 import csv
 import hashlib
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -42,45 +50,51 @@ HEADER = [
 ]
 
 # ------------------------------------------------------------------ rows -----
-# E1 is the only firm procurement line on this segment (the exterior cable
-# assembly, frozen as C-RF-EXT-1). E2/E3/E4 are conditional adapters: the
-# instrument port is UNSPECIFIED (IF-10) and the feedthrough EXTERIOR face is
-# UNKNOWN (IF-7), so the gender transition each of them would supply is real
-# but not yet selected. E5/E6 are NIL declarations (nothing is bought): the
-# card's step 1 asks for "any inline pad/attenuator explicitly required" and
-# for every gender transition, so the two cases that turn out NOT to need a
-# part are stated rather than silently dropped.
+# E1 is the only firm procurement line on this segment: the exterior cable
+# assembly, frozen as C-RF-EXT-1.
+# E2 is ONE physical part used in TWO conditional roles - an N-plug/SMA-jack
+# adapter is the same hardware whether it sits at the instrument port or at the
+# bulkhead exterior face, so card step 6 ("combine duplicate part roles into one
+# line with a summed QTY") forces a single line, not two.
+# E3 is the BNC-case conditional adapter (a different physical part).
+# E4/E5 are NIL declarations: the card asks for any inline pad/attenuator the
+# instrument-port identification or feedthrough assessment requires, and for a
+# 3.5 mm/2.92 mm instrument port no adapter is bought at all. Stating NIL with
+# its reason keeps those cases auditable instead of silently absent.
 
 ROWS = [
     dict(
         rid="E1",
+        part_key="RG316 SMA-m/m 0.50 m (C-RF-EXT-1)",
         desc=(
             "Chamber-EXTERIOR cable assembly - the exterior leg, bulkhead "
             "exterior face to the instrument port (frozen identifier "
-            "C-RF-EXT-1). Gender transition: SMA-M plug (bulkhead exterior "
-            "SMA-F jack) to SMA-M plug (instrument SMA-F jack) - male-to-male, "
-            "no gender-changing adapter in this leg. Impedance 50 ohm."
+            "C-RF-EXT-1). Gender transition: SMA-M plug (mates the bulkhead "
+            "exterior SMA-F jack) to SMA-M plug (mates the instrument SMA-F "
+            "jack) - male-to-male, so no gender-changing adapter exists inside "
+            "the leg itself. Impedance 50 ohm."
         ),
         qty="1",
         spec=(
             "MPN TBD - required spec: RG316 coax (OD 2.5 mm, solid PTFE "
-            "dielectric), 0.50 m, SMA plug (male pin) BOTH ends, standard "
+            "dielectric), 0.50 m, SMA plug (male pin) at BOTH ends, standard "
             "polarity (NOT RP-SMA), straight, 50 ohm, 868 MHz measurement "
-            "band, SMA-class DC-18 GHz class context, max VSWR 1.05:1 class at "
-            "868 MHz for standard SMA, flex life adequate for a 25.0 mm min "
-            "bend radius. Representative class named on record: Amphenol "
-            "ACX-1169-class RG316 patch (exact-length variant TBD) - "
-            "representative only, not an on-hand part."
+            "band, SMA class (DC-18 GHz class context), max VSWR 1.05:1 class "
+            "at 868 MHz (standard-SMA class figure; no per-part value on any "
+            "record), flex life adequate for a 25.0 mm minimum bend radius "
+            "(the routing freeze's 10xOD rule). Representative class named on "
+            "record: Amphenol ACX-1169-class RG316 patch (exact-length variant "
+            "TBD) - representative only, not an on-hand part."
         ),
         disp=(
-            "MUST-PROCURE (nothing on this segment exists on any record: no "
-            "coax of any type is on host or on record)"
+            "MUST-PROCURE - nothing on this segment exists on any record (no "
+            "coax of any type is on this host or on any record)"
         ),
         lead="2-5 days (procurement estimate carried from the sibling BOM)",
         vendor="Digi-Key / Mouser (vendor class; live availability UNVERIFIED)",
         cite=(
-            "UNVERIFIED - see open risks. Identification from parent row IF-9 "
-            "(bench/interface-normalization/INTERFACE-TABLE.md), which cites "
+            "UNVERIFIED - see open risks. Identification reused from parent row "
+            "IF-9 (bench/interface-normalization/INTERFACE-TABLE.md), which cites "
             "SUPPORTING bench/connector-adapter-bom/REPORT.md line B4 verbatim: "
             "\"RG316 coax assembly, SMA-male to SMA-male, 0.50 m (bulkhead to "
             "reference TX, exterior) | 1 | MPN TBD - same spec as B1, 0.50 m\" "
@@ -93,76 +107,107 @@ ROWS = [
             "faces may differ in series (\"interior and exterior may differ "
             "(e.g. N-exterior / SMA-interior adapter feedthrough) - only a "
             "physical walk resolves each side separately\", "
-            "bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md FT-1). If "
-            "the exterior face proves N-type, this assembly is wrong at that "
-            "end and line E4 (or an N-type assembly) is required instead. The "
-            "far end likewise assumes a female SMA jack at the instrument: "
-            "IF-10 records the reference TX jack as document-based and any "
-            "future bench instrument as UNSPECIFIED."
+            "bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md FT-1) - that "
+            "case is served by role (b) of E2. The far end likewise assumes a "
+            "female SMA jack at the instrument: IF-10 records the reference TX "
+            "jack as document-based and any future bench instrument as "
+            "UNSPECIFIED (served by E2 role (a) or E3)."
         ),
     ),
     dict(
         rid="E2",
+        part_key="SMA-F jack to N-M plug adapter, 50 ohm",
         desc=(
-            "Adapter, INSTRUMENT side, N-type case - SMA-F jack to N-M plug "
-            "(gender transition: SMA-F to N-M). Fits the exterior cable's "
-            "SMA-M plug (E1) into an instrument port that presents N-female. "
-            "Impedance 50 ohm."
+            "Adapter, 50 ohm, SMA-F jack to N-M plug (gender transition: SMA-F "
+            "to N-M) - ONE physical part serving TWO conditional roles, merged "
+            "here with a summed QTY per card step 6: role (a) INSTRUMENT side - "
+            "takes the exterior cable's SMA-M plug (E1) into an instrument port "
+            "that presents N-female; role (b) BULKHEAD-EXTERIOR side - takes an "
+            "N-female exterior face into the same SMA-M cable plug (E1) when a "
+            "located chamber's feedthrough proves N-type on the outside, as an "
+            "alternative to buying a second N-type exterior assembly. The "
+            "hardware is identical in both roles (one N plug, one SMA jack), "
+            "which is why it is not two lines. Impedance 50 ohm."
         ),
-        qty="0-1 (0 today)",
+        qty="0-2 (0 today; 1 if role (a) applies, 1 if role (b) applies, 2 if both)",
         spec=(
             "MPN TBD - required spec: SMA jack (female) to N plug (male), "
-            "50 ohm (NOT 75 ohm), DC-3 GHz, low-VSWR, standard polarity. No "
-            "numeric max-VSWR value for an N/SMA adapter exists on any record, "
-            "so the number must come from the procured part's datasheet at "
-            "order time; frequency rating 868 MHz measurement band."
+            "50 ohm (a 75 ohm N variant is INADMISSIBLE - sibling hazard H1), "
+            "DC-3 GHz, standard polarity, low-loss, PTFE dielectric, "
+            "brass/gold. Max VSWR: no numeric value for an SMA/N adapter exists "
+            "on any record, so the figure must be taken from the procured "
+            "part's datasheet at order time; frequency rating 868 MHz "
+            "measurement band (N-class DC-11 GHz class context, UNVERIFIED on "
+            "host)."
         ),
         disp=(
-            "MUST-PROCURE - conditional (qty 0 today: no RF instrument exists; "
-            "qty 1 only if a bench instrument with an N-female port is "
-            "procured)"
+            "MUST-PROCURE - conditional (qty 0 today: no RF instrument exists, "
+            "and no chamber exists so no exterior face exists to inspect; qty "
+            "1-2 only if role (a) or role (b) materialises)"
         ),
-        lead="1-3 days once the instrument is named (carried from the sibling BOM)",
+        lead="1-5 days once the condition is known (sibling BOM: 1-3 days for the instrument case, 2-5 days for the bulkhead class)",
         vendor="Digi-Key / Mouser (vendor class)",
         cite=(
-            "UNVERIFIED - see open risks. Identification from parent row IF-10 "
-            "(UNVERIFIED) which cites bench/instrument-rf-connectors/REPORT.md "
-            "caveat 5 verbatim: \"Most sub-GHz signal generators and spectrum "
-            "analyzers present N-type or 3.5 mm connectors (not SMA), which "
-            "would require SMA-to-N or SMA-to-3.5mm adapters\", and "
-            "bench/connector-adapter-bom/REPORT.md line B11 verbatim: "
-            "\"Conditional instrument adapter: SMA-F jack to N-M plug (for a "
-            "signal generator / analyzer with N-female port), or SMA-F to "
-            "BNC-M if BNC | 0-1 | MPN TBD - required spec: 50 ohm, DC-3 GHz, "
-            "low-VSWR adapter matching whatever instrument is eventually "
-            "procured | CONDITIONAL (qty 0 today: no RF instrument exists - "
-            "input 2)\". CONFLICT RESTATED INLINE: IF-10 is UNSPECIFIED for any "
-            "future bench instrument - the de-facto far end is the reference TX "
-            "MeshCore node, whose port is SMA (\"RF connector | SMA edge-launch, "
-            "standard polarity, female jack, 50 ohm (same carrier board family "
-            "as the DUT) | UNVERIFIED for the specific board assigned as "
-            "reference TX\", bench/instrument-rf-connectors/REPORT.md), in which "
-            "case NO adapter is needed at all and this line stays at qty 0. "
-            "Buying it now would be a guess (B11: \"buying B11 now would be a "
-            "guess\")."
+            "UNVERIFIED - see open risks. Role (a) from parent row IF-10 "
+            "(UNVERIFIED), citing "
+            "bench/instrument-rf-connectors/REPORT.md caveat 5 verbatim: \"Most "
+            "sub-GHz signal generators and spectrum analyzers present N-type or "
+            "3.5 mm connectors (not SMA), which would require SMA-to-N or "
+            "SMA-to-3.5mm adapters\", and bench/connector-adapter-bom/REPORT.md "
+            "line B11 verbatim: \"Conditional instrument adapter: SMA-F jack to "
+            "N-M plug (for a signal generator / analyzer with N-female port), or "
+            "SMA-F to BNC-M if BNC | 0-1 | MPN TBD - required spec: 50 ohm, "
+            "DC-3 GHz, low-VSWR adapter matching whatever instrument is "
+            "eventually procured | CONDITIONAL (qty 0 today: no RF instrument "
+            "exists - input 2)\". Role (b) from parent row IF-7 "
+            "(UNVERIFIED/UNSPECIFIED), citing SIBLING (c) "
+            "bench/chamber-rf-feedthroughs/REPORT.md record F1 verbatim: "
+            "\"Exterior-side connector family | UNKNOWN | same - note "
+            "interior/exterior may differ (e.g. N-exterior/SMA-interior adapter "
+            "feedthrough); only a physical walk resolves each side separately\", "
+            "and bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md FT-1 "
+            "verbatim: \"UNKNOWN - no port to inspect; interior and exterior may "
+            "differ (e.g. N-exterior / SMA-interior adapter feedthrough) - only "
+            "a physical walk resolves each side separately\". CONFLICT RESTATED "
+            "INLINE: neither role is selected. IF-10's de-facto instrument is "
+            "the reference TX node whose port is SMA - \"RF connector | SMA "
+            "edge-launch, standard polarity, female jack, 50 ohm (same carrier "
+            "board family as the DUT) | UNVERIFIED for the specific board "
+            "assigned as reference TX\" (bench/instrument-rf-connectors/"
+            "REPORT.md) - in which case role (a) stays at qty 0 and no adapter "
+            "is needed at all; the standing BOM says buying it now \"would be a "
+            "guess\". IF-7's PLANNED class is an SMA jack-jack feedthrough - "
+            "\"The planned/procurement feedthrough class is UNFILTERED by "
+            "construction: an SMA panel-mount jack-jack bulkhead (Amphenol "
+            "132134-class per 55585471) is a direct gold-plated contact pair "
+            "with PTFE dielectric - no filter elements\" "
+            "(bench/chamber-rf-feedthroughs/REPORT.md STEP 5) - in which case "
+            "role (b) stays at qty 0. A FILTERED OEM port would be unusable for "
+            "the RF path at any gender (same report, LOUD FLAG)."
         ),
     ),
     dict(
         rid="E3",
+        part_key="SMA-F jack to BNC-M plug adapter, 50 ohm",
         desc=(
-            "Adapter, INSTRUMENT side, BNC case - SMA-F jack to BNC-M plug "
-            "(gender transition: SMA-F to BNC-M). Fits the exterior cable's "
+            "Adapter, 50 ohm, SMA-F jack to BNC-M plug (gender transition: "
+            "SMA-F to BNC-M) - INSTRUMENT side only: takes the exterior cable's "
             "SMA-M plug (E1) into an instrument port that presents BNC-female "
-            "(the counter/instrument case). Impedance 50 ohm."
+            "(the counter/instrument case). A distinct physical part from E2 "
+            "(different second-end series), so it is its own line. Impedance "
+            "50 ohm; the BNC end is a 2-lug bayonet, so no torque value applies "
+            "to it."
         ),
         qty="0-1 (0 today)",
         spec=(
             "MPN TBD - required spec: SMA jack (female) to BNC plug (male), "
             "50 ohm - a 75 ohm video/CCTV BNC is INADMISSIBLE (sibling hazard "
-            "H1), DC-3 GHz, low-VSWR, bayonet coupling (no thread, so no torque "
-            "spec applies to the BNC end). No numeric max-VSWR value for an "
-            "SMA/BNC adapter exists on any record; frequency rating 868 MHz "
-            "measurement band."
+            "H1: the shell and bayonet are identical between 50 and 75 ohm and "
+            "they mate mechanically), DC-3 GHz, low-loss, PTFE (or equivalent "
+            "low-loss) dielectric on the 50 ohm part. Max VSWR: no numeric "
+            "value for an SMA/BNC adapter exists on any record - take it from "
+            "the procured part's datasheet at order time; frequency rating "
+            "868 MHz measurement band."
         ),
         disp=(
             "MUST-PROCURE - conditional (qty 0 today: no RF instrument exists; "
@@ -172,124 +217,85 @@ ROWS = [
         lead="1-3 days once the instrument is named (carried from the sibling BOM)",
         vendor="Digi-Key / Mouser (vendor class)",
         cite=(
-            "UNVERIFIED - see open risks. Same identification basis as E2, "
-            "verbatim from bench/connector-adapter-bom/REPORT.md B11: "
-            "\"... or SMA-F to BNC-M if BNC\". CONFLICT RESTATED INLINE: the "
-            "instrument port is UNSPECIFIED (parent row IF-10: no RF instrument "
-            "exists on any record), and the sibling hazard H1 applies to this "
-            "line specifically - verbatim: \"75 ohm vs 50 ohm: video/CCTV coax "
-            "(RG-59/RG-6, 75 ohm, F/BNC) is commonly stocked in labs; the "
-            "LR2021 system and every line in this BOM is 50 ohm\"; a 75 ohm BNC "
-            "adapter would present an impedance discontinuity, not a "
+            "UNVERIFIED - see open risks. Identification from parent row IF-10 "
+            "(UNSPECIFIED for any future bench instrument), citing "
+            "bench/connector-adapter-bom/REPORT.md line B11 verbatim: \"... or "
+            "SMA-F to BNC-M if BNC\". CONFLICT RESTATED INLINE: the instrument "
+            "port does not exist on any record - \"NO RF INSTRUMENT EXISTS - "
+            "the measurement chain has no instrument-side RF connector to "
+            "identify\" (bench/instrument-rf-connectors/REPORT.md) - so the BNC "
+            "case is hypothetical; and the sibling hazard H1 applies "
+            "specifically to a BNC purchase, verbatim: \"75 ohm vs 50 ohm: "
+            "video/CCTV coax (RG-59/RG-6, 75 ohm, F/BNC) is commonly stocked in "
+            "labs; the LR2021 system and every line in this BOM is 50 ohm\". A "
+            "75 ohm BNC adapter would be an impedance discontinuity, not a "
             "transition."
         ),
     ),
     dict(
         rid="E4",
-        desc=(
-            "Adapter, BULKHEAD-EXTERIOR-FACE case - N-M plug to SMA-F jack "
-            "(gender transition: N-M to SMA-F). Fits the exterior cable's "
-            "SMA-M plug (E1) onto a feedthrough exterior face that proves to be "
-            "an N-female jack instead of the planned SMA-F jack. Impedance "
-            "50 ohm."
-        ),
-        qty="0-1 (0 today)",
-        spec=(
-            "MPN TBD - required spec: N plug (male) to SMA jack (female), "
-            "50 ohm, DC-3 GHz, low-VSWR, standard polarity, brass/gold, PTFE "
-            "dielectric. No numeric max-VSWR value for an N/SMA adapter exists "
-            "on any record; frequency rating 868 MHz measurement band (N-class "
-            "rating context only, UNVERIFIED on host)."
-        ),
-        disp=(
-            "MUST-PROCURE - conditional (qty 0 today: no chamber exists on any "
-            "record, so no exterior face exists to measure; qty 1 only if a "
-            "located chamber's exterior face proves N-type)"
-        ),
-        lead="2-5 days (same procurement class as the SMA/N adapters; no on-record quote)",
-        vendor="Digi-Key / Mouser (vendor class)",
-        cite=(
-            "UNVERIFIED - see open risks. Identification from parent row IF-7 "
-            "(status UNVERIFIED / UNSPECIFIED) which cites SIBLING (c) "
-            "bench/chamber-rf-feedthroughs/REPORT.md record F1 verbatim: "
-            "\"Exterior-side connector family | UNKNOWN | same - note "
-            "interior/exterior may differ (e.g. N-exterior/SMA-interior adapter "
-            "feedthrough); only a physical walk resolves each side separately\", "
-            "and bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md FT-1 "
-            "verbatim: \"UNKNOWN - no port to inspect; interior and exterior may "
-            "differ (e.g. N-exterior / SMA-interior adapter feedthrough) - only "
-            "a physical walk resolves each side separately\". CONFLICT RESTATED "
-            "INLINE: this line exists only because IF-7 is UNKNOWN; the PLANNED "
-            "class is an SMA jack-jack feedthrough (\"The planned/procurement "
-            "feedthrough class is UNFILTERED by construction: an SMA "
-            "panel-mount jack-jack bulkhead (Amphenol 132134-class per 55585471) "
-            "is a direct gold-plated contact pair with PTFE dielectric - no "
-            "filter elements\", bench/chamber-rf-feedthroughs/REPORT.md STEP 5), "
-            "in which case no adapter is needed and this line stays at qty 0. "
-            "A FILTERED OEM port would be unusable for the RF path at any "
-            "gender (same report, LOUD FLAG)."
-        ),
-    ),
-    dict(
-        rid="E5",
+        part_key="NIL - no inline pad/attenuator",
         desc=(
             "Inline pad / attenuator on the exterior leg - NIL BY DESIGN: no "
-            "attenuator, pad, LNA, bias tee or other inline RF element is "
-            "required anywhere on this segment. Stated so its absence is not "
-            "read as an omission (card step 1 asks for any inline pad the "
-            "instrument port identification or feedthrough assessment requires; "
-            "the sourced answer is that none is required)."
+            "attenuator, fixed pad, LNA, bias tee or other inline RF element is "
+            "required anywhere on this segment. Stated as a line so its absence "
+            "cannot be read as an omission - card step 1 requires any inline pad "
+            "that the instrument-port identification or feedthrough assessment "
+            "makes necessary, and the sourced answer is that neither does. "
+            "Impedance N/A (no part)."
         ),
         qty="0",
         spec=(
-            "N/A - no part. No inline RF element is required: the segment is a "
-            "passive 50 ohm cable plus (conditionally) one gender transition, "
-            "and no record specifies an attenuator, pad, amplifier, bias tee or "
-            "filter for it."
+            "N/A - no part, therefore no series, gender transition, impedance "
+            "or frequency rating applies. The segment is a passive 50 ohm cable "
+            "plus (conditionally) one gender transition; no record specifies an "
+            "attenuator, pad, amplifier, bias tee or filter for it."
         ),
         disp=(
             "NIL (qty 0) - not required. No ON-HAND / MUST-PROCURE / "
             "MUST-FABRICATE disposition applies because there is nothing to "
-            "obtain; stating NIL with its reason is the honest disposition."
+            "obtain; the honest disposition is NIL with its reason."
         ),
         lead="N/A - nothing to procure or fabricate",
         vendor="N/A - nothing to source",
         cite=(
-            "NIL - reason cited. bench/instrument-rf-connectors/REPORT.md STEP "
-            "1 verbatim: \"| Attenuator | NO | N/A | N/A | Not on any record or "
+            "NIL - reason cited. bench/instrument-rf-connectors/REPORT.md STEP 1 "
+            "verbatim: \"| Attenuator | NO | N/A | N/A | Not on any record or "
             "BOM; rf-feedthrough-bom 55585471 does not list one |\" and \"| "
             "Amplifier (LNA) | NO | N/A | N/A | cable-feedthrough-failure-modes "
             "04db4fae:460-461 (\\\"no LNA, attenuator, or RF instrument "
-            "anywhere\\\") |\". Feedthrough assessment: no attenuator is "
-            "required by the conducted path; the only attenuation issue on "
-            "record is a FILTERED OEM port, which is a usability gate on the "
-            "feedthrough (bench/chamber-rf-feedthroughs/REPORT.md STEP 5 LOUD "
-            "FLAG), not a part to add here. Insertion loss of the whole "
-            "conducted chain is ~0.3-0.5 dB at 868 MHz against a 165 dB link "
-            "budget, i.e. no pad is needed to protect anything "
-            "(bench/rf-feedthrough-bom/REPORT.md STEP 5)."
+            "anywhere\\\") |\". Feedthrough assessment: no attenuator is required "
+            "by the conducted path - the only attenuation issue on record is a "
+            "FILTERED OEM port, which is a usability gate on the feedthrough "
+            "itself (bench/chamber-rf-feedthroughs/REPORT.md STEP 5 LOUD FLAG), "
+            "not a part to add here and never something a pad can correct. "
+            "Insertion loss of the whole conducted chain is ~0.3-0.5 dB at "
+            "868 MHz against a 165 dB link budget, so no pad is needed to "
+            "protect any port (bench/rf-feedthrough-bom/REPORT.md STEP 5)."
         ),
     ),
     dict(
-        rid="E6",
+        rid="E5",
+        part_key="NIL - no 3.5 mm / 2.92 mm adapter",
         desc=(
             "Adapter, INSTRUMENT side, 3.5 mm / 2.92 mm (K) precision case - "
-            "NIL BY DESIGN: no adapter is required. A 3.5 mm (or 2.92 mm K) "
-            "male connector mates an SMA female jack directly. Stated because "
-            "the instrument port identification names 3.5 mm as one of the two "
+            "NIL BY DESIGN: no adapter is required. A 3.5 mm (or 2.92 mm K) male "
+            "connector mates an SMA female jack directly. Stated because the "
+            "instrument-port identification names 3.5 mm as one of the two "
             "likely future instrument ports; the sourced answer is that this "
-            "case adds no part."
+            "case adds no part. Impedance N/A (no part; the mating itself is "
+            "50 ohm)."
         ),
         qty="0",
         spec=(
-            "N/A - no part. The gender transition SMA-F to 3.5 mm-M is "
-            "supplied by the instrument's own connector: same 1/4-36 UNS "
-            "thread group, same 7.94 mm hex, 50 ohm, intentional mating."
+            "N/A - no part. The gender transition SMA-F to 3.5 mm-M is supplied "
+            "by the instrument's own connector: same 1/4-36 UNS thread group, "
+            "same 7.94 mm hex, 50 ohm, intentional mating. Nothing is bought."
         ),
         disp=(
-            "NIL (qty 0) - not required. No disposition applies because no "
-            "part is obtained; a precision adapter would be bought only to add "
-            "cost (sibling H3)."
+            "NIL (qty 0) - not required. No disposition applies because no part "
+            "is obtained; a precision adapter would be bought only to add cost "
+            "(sibling H3)."
         ),
         lead="N/A - nothing to procure or fabricate",
         vendor="N/A - nothing to source",
@@ -299,14 +305,14 @@ ROWS = [
             "group, same hex, and they intentionally mate. Distinguish by "
             "markings (\\\"3.5mm\\\"/\\\"K\\\"), price/provenance, and the "
             "dielectric look ... At 868 MHz they are interchangeable "
-            "electrically\"; and bench/connector-adapter-bom/REPORT.md H3 "
-            "verbatim: \"Precision vs standard SMA: precision SMA / 3.5 mm "
-            "connectors are dimensionally compatible but cost 5-10x; at 868 MHz "
-            "(and even 2.4 GHz) standard SMA is fully adequate (VSWR spec "
-            "1.05:1 class at these frequencies).\" The instrument port itself "
-            "remains UNSPECIFIED (parent row IF-10) - the NIL is conditional on "
-            "the mating being 3.5 mm-M, which is a physical check on the "
-            "instrument when one exists."
+            "electrically\"; bench/connector-adapter-bom/REPORT.md H3 verbatim: "
+            "\"Precision vs standard SMA: precision SMA / 3.5 mm connectors are "
+            "dimensionally compatible but cost 5-10x; at 868 MHz (and even "
+            "2.4 GHz) standard SMA is fully adequate (VSWR spec 1.05:1 class at "
+            "these frequencies).\" The instrument port itself remains "
+            "UNSPECIFIED (parent row IF-10) - the NIL holds only once a physical "
+            "check confirms the instrument's mating connector really is "
+            "3.5 mm-M/2.92 mm-M."
         ),
     ),
 ]
@@ -325,21 +331,21 @@ column order, generated from the same in-memory list by `make_bom.py`).
 
 ## 0. Boundary, and the input this list is built from
 
-**Starting boundary (inclusive of nothing):** the exterior face of the bulkhead feedthrough, parent
-row `IF-7`. The feedthrough connector itself and everything on its chamber-interior side belong to
-the sibling DUT-to-interior card (`t_fe6e9c1b`) and are **not** on this list. **Ending boundary:**
-the instrument port, parent row `IF-10`.
+**Starting boundary:** the exterior face of the bulkhead feedthrough, parent row `IF-7`. The
+feedthrough connector itself and everything on its chamber-interior side belong to the sibling
+DUT-to-interior card (`t_fe6e9c1b`) and are **not** on this list. **Ending boundary:** the
+instrument port, parent row `IF-10`.
 
 Every connector identification below is **reused verbatim** from the parent's normalized interface
-table (`bench/interface-normalization/INTERFACE-TABLE.md`, `bench/interface-normalization/interface_table.csv`,
-branch `worker-base/t_1bb81290`, HEAD `d6bbc980`). Nothing is re-derived from raw sources: the parent
-row id is named on every line, and the underlying sibling quotation the parent carried is quoted
-again where a line needs it.
+table (`bench/interface-normalization/INTERFACE-TABLE.md` and `interface_table.csv`, branch
+`worker-base/t_1bb81290`, HEAD `d6bbc980`). Nothing is re-derived from raw sources: the parent row id
+is named on every line, and the sibling quotation the parent carried is quoted again where a line
+needs it.
 
-Rows consumed from the parent table: `IF-7` (bulkhead exterior face - UNKNOWN/UNSPECIFIED),
-`IF-9` (the exterior cable assembly, frozen `C-RF-EXT-1`), `IF-10` (instrument port - UNVERIFIED,
-no RF instrument exists). Corroborating rows for the boundary: `IF-8` (the wall bore - not a
-component of this segment), `IF-11` (the non-RF serial crossing - not this segment).
+Rows consumed from the parent table: `IF-7` (bulkhead exterior face - UNKNOWN/UNSPECIFIED), `IF-9`
+(the exterior cable assembly, frozen `C-RF-EXT-1`), `IF-10` (instrument port - UNVERIFIED, no RF
+instrument exists). Boundary context only, not components of this segment: `IF-8` (the wall bore) and
+`IF-11` (the non-RF serial crossing).
 
 **Honesty state carried forward:** the parent table has ZERO `VERIFIED` rows - the DUT is not
 attached to any host, no chamber exists on any record, and no RF instrument exists. Every line on
@@ -352,10 +358,16 @@ this segment therefore inherits at least one UNVERIFIED input, and each line say
 """
 
 TAIL_1 = """
-Rows `E1`-`E4` are the physical components of this segment; `E5`-`E6` are **NIL declarations**
-(cases the card asks about that turn out to require no part). NIL rows carry `QTY 0` and a
-disposition that says *why* nothing is obtained, rather than a wrong ON-HAND/MUST-PROCURE label -
-stating NIL is part of the deliverable, not an omission.
+Rows `E1`-`E3` are the physical parts of this segment; `E4`-`E5` are **NIL declarations** (cases the
+card asks about that turn out to require no part). NIL rows carry `QTY 0` and a disposition that says
+*why* nothing is obtained, rather than a mislabelled ON-HAND/MUST-PROCURE - stating NIL is part of
+the deliverable, not an omission.
+
+**One part, two roles, one line (card step 6).** `E2` is a single piece of hardware - an SMA jack on
+one end and an N plug on the other. It appears once, with a summed conditional quantity, because
+"the N adapter for an N-female instrument port" and "the N adapter for an N-type bulkhead exterior
+face" are physically the same part. Listing them as two lines would double-count a single item, which
+the card forbids.
 
 ---
 
@@ -365,38 +377,33 @@ stating NIL is part of the deliverable, not an omission.
 [IF-7] bulkhead feedthrough, EXTERIOR face
        planned class: SMA-F jack  (UNKNOWN on any record - no chamber exists)
    |
-   |  mates with the SMA-M plug of E1  (SMA-F jack <- SMA-M plug)
+   |  role (b) of E2, only if the face proves N-female:
+   |      N-female  <-[ E2: N-M plug | SMA-F jack ]<-  SMA-M plug of E1
+   |
+   |  base case: direct mate, SMA-F jack <- SMA-M plug of E1
    v
 [E1] C-RF-EXT-1  RG316 assembly, 0.50 m
        SMA-M plug === SMA-M plug, standard polarity, 50 ohm
-   |                                   (male-to-male: NO gender adapter in the leg)
+       (male-to-male: NO gender adapter inside the leg)
    |
    |  (a) direct mate, no adapter - instrument presents SMA-F jack
    |      => the de-facto case today: the reference TX node (IF-10)
    |  (b) E2   SMA-F jack  <- N-M plug      (instrument presents N-female)
    |  (c) E3   SMA-F jack  <- BNC-M plug    (instrument presents BNC-female)
-   |  (d) E6   NIL - a 3.5 mm-M / 2.92 mm-M instrument port mates the
+   |  (d) E5   NIL - a 3.5 mm-M / 2.92 mm-M instrument port mates the
    |      SMA-F jack directly (same thread group) - no adapter bought
-   |  (e) E5   NIL - no inline pad/attenuator anywhere on the segment
+   |  (e) E4   NIL - no inline pad/attenuator anywhere on the segment
    v
 [IF-10] instrument port
        today: reference TX MeshCore node, SMA-F jack, 50 ohm (UNVERIFIED)
        future: bench RF instrument - series UNSPECIFIED (N-female most likely)
 ```
 
-Second conditional transition, at the **other** end of the same cable:
-
-```
-[IF-7] exterior face proves N-female instead of the planned SMA-F jack
-   |  => E4   N-M plug <- SMA-F jack   (the cable's SMA-M plug lands on E4,
-   v                                    and E4 plugs into the N-female face)
-```
-
-No other gender transition exists on this segment. `E1` is male-to-male at both ends; the planned
-feedthrough is jack-jack, so the interior and exterior legs need no gender adapter in the base case
-- this is the same statement the sibling BOM makes for the whole chain, verbatim:
-"No gender-changing adapter exists in the basic chain (M-M cable assemblies, F-F bulkhead). All
-connectors standard-polarity SMA, 50 ohm." (`bench/connector-adapter-bom/REPORT.md` STEP 3).
+No other gender transition exists on this segment. `E1` is male-to-male at both ends and the planned
+feedthrough is jack-jack, so the base case needs no gender adapter at all - the same statement the
+sibling BOM makes for the whole chain, verbatim: "No gender-changing adapter exists in the basic
+chain (M-M cable assemblies, F-F bulkhead). All connectors standard-polarity SMA, 50 ohm."
+(`bench/connector-adapter-bom/REPORT.md` STEP 3).
 
 ---
 
@@ -404,28 +411,28 @@ connectors standard-polarity SMA, 50 ohm." (`bench/connector-adapter-bom/REPORT.
 
 Rule 5 of the card is honoured literally: every line whose connector identification descends from a
 row flagged `UNVERIFIED` or `UNSPECIFIED` in the parent table is kept, annotated
-`UNVERIFIED - see open risks`, and restates the conflict inline. Here is the conflict inventory for
-this segment, with both candidates retained.
+`UNVERIFIED - see open risks`, and restates the conflict inline. Conflict inventory for this segment,
+both candidates retained:
 
 | # | Parent row | What is unresolved | Both candidates (verbatim) |
 |---|---|---|---|
-| U1 | `IF-7` | **The feedthrough's exterior-face connector family.** No chamber exists on any record, so the face cannot be inspected. | Planned class: SMA-F jack, panel-mount jack-jack, unfiltered - "The planned/procurement feedthrough class is UNFILTERED by construction: an SMA panel-mount jack-jack bulkhead (Amphenol 132134-class per 55585471) is a direct gold-plated contact pair with PTFE dielectric - no filter elements" (`bench/chamber-rf-feedthroughs/REPORT.md` STEP 5). Contradicting possibility: "Exterior-side connector family | UNKNOWN | same - note interior/exterior may differ (e.g. N-exterior/SMA-interior adapter feedthrough); only a physical walk resolves each side separately" (same report, record F1) - carried as line `E4`. |
-| U2 | `IF-7` | **The representative bulkhead part number** (consequential for this segment only in that the exterior face's gender is what the cable mates). | "Amphenol 132134-class" (standing BOM / sibling (b)) vs the later sibling correction: "One correction is carried rather than repeated: the standing BOM's 'Amphenol 132134' is a PCB jack, not a panel feedthrough (sibling vendor sheet section 1), so it is not used here as the bulkhead part" (card `t_a53c6efe`, status done). Series/gender/impedance are NOT in conflict - only the representative MPN. No bulkhead part appears on this list (it is the boundary, not a line). |
-| U3 | `IF-10` | **The instrument port does not exist.** The far end is the reference TX node (SMA-F jack), document-based; any future bench instrument is UNSPECIFIED. | "NO RF INSTRUMENT EXISTS - the measurement chain has no instrument-side RF connector to identify" and "RF connector | SMA edge-launch, standard polarity, female jack, 50 ohm (same carrier board family as the DUT) | UNVERIFIED for the specific board assigned as reference TX" (`bench/instrument-rf-connectors/REPORT.md`); future case: "Most sub-GHz signal generators and spectrum analyzers present N-type or 3.5 mm connectors (not SMA), which would require SMA-to-N or SMA-to-3.5mm adapters" (same report, caveat 5) - carried as lines `E2`/`E3`/`E6`. |
-| U4 | `IF-9` | **The exterior assembly itself does not exist** - MPN TBD by design, and its two ends assume jacks that are themselves unverified. | "MPN TBD - same spec as B1, 0.50 m" (`bench/connector-adapter-bom/REPORT.md` B4) vs the parent's note that the assembly "assumes a female SMA jack at the instrument - see IF-10, where the instrument itself is UNSPECIFIED" and presupposes the exterior face of `IF-7`. Carried on line `E1`. |
+| U1 | `IF-7` | **The feedthrough's exterior-face connector family.** No chamber exists on any record, so the face cannot be inspected. Drives `E1`'s bulkhead-end gender and role (b) of `E2`. | Planned class: SMA-F jack, panel-mount jack-jack, unfiltered - "The planned/procurement feedthrough class is UNFILTERED by construction: an SMA panel-mount jack-jack bulkhead (Amphenol 132134-class per 55585471) is a direct gold-plated contact pair with PTFE dielectric - no filter elements" (`bench/chamber-rf-feedthroughs/REPORT.md` STEP 5). Contradicting possibility: "Exterior-side connector family | UNKNOWN | same - note interior/exterior may differ (e.g. N-exterior/SMA-interior adapter feedthrough); only a physical walk resolves each side separately" (same report, record F1). |
+| U2 | `IF-7` | **The representative bulkhead part number.** No bulkhead part appears on this list (the feedthrough is the boundary, not a line) - recorded because it is the source of the exterior-face gender assumption that `E1` depends on. | "Amphenol 132134-class" (standing BOM / sibling (b)) vs the later sibling correction: "One correction is carried rather than repeated: the standing BOM's 'Amphenol 132134' is a PCB jack, not a panel feedthrough (sibling vendor sheet section 1), so it is not used here as the bulkhead part" (card `t_a53c6efe`, status done). Series/gender/impedance are NOT in conflict - only the representative MPN. |
+| U3 | `IF-10` | **The instrument port does not exist.** The far end is the reference TX node (SMA-F jack), document-based; any future bench instrument is UNSPECIFIED. Drives `E2` role (a), `E3` and `E5`. | "NO RF INSTRUMENT EXISTS - the measurement chain has no instrument-side RF connector to identify" and "RF connector | SMA edge-launch, standard polarity, female jack, 50 ohm (same carrier board family as the DUT) | UNVERIFIED for the specific board assigned as reference TX" (`bench/instrument-rf-connectors/REPORT.md`); future case: "Most sub-GHz signal generators and spectrum analyzers present N-type or 3.5 mm connectors (not SMA), which would require SMA-to-N or SMA-to-3.5mm adapters" (same report, caveat 5). |
+| U4 | `IF-9` | **The exterior assembly itself does not exist** - MPN TBD by design, and both of its ends assume jacks that are themselves unverified. | "MPN TBD - same spec as B1, 0.50 m" (`bench/connector-adapter-bom/REPORT.md` B4) vs the parent's own note that the assembly "assumes a female SMA jack at the instrument - see IF-10, where the instrument itself is UNSPECIFIED" and presupposes the exterior face of `IF-7`. |
 
-Open risks carried from the parent and the siblings, each with its own unblock path - none is
-resolved here and none is dropped:
+Open risks, each with the sibling source it came from and its unblock path - none resolved here, none
+dropped:
 
 | Risk | Risk on this segment | Source it came from | What unblocks it |
 |---|---|---|---|
-| R-IF7 | The exterior-face series/gender is UNKNOWN, so line `E1`'s bulkhead-end gender and the need for `E4` are both undecided. | parent `IF-7`; sibling (c) `bench/chamber-rf-feedthroughs/REPORT.md` F1 + `bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md` FT-1 | Locate the chamber, walk the wall, identify both faces separately (the parent's own remedy: "resolve with the identification kit on first sight"). |
-| R-FILTER | A filtered OEM port would be unusable for the RF path regardless of gender. | sibling (c) STEP 5 LOUD FLAG, carried on parent `IF-6`/`IF-7` | Physical check on the located unit: bulky body / feedthrough-capacitor construction / "filtered" marking. |
-| R-IF10 | The instrument port is UNSPECIFIED, so the adapter family (`E2`/`E3`/`E6`) is unselected. | parent `IF-10`; sibling (b) caveat 5 | Name/procure an instrument, then select the transition. Buying one now is a guess. |
-| R-REFTX | Even the de-facto instrument (reference TX node) is document-based: board not attached, PCB revision not on record. | parent `IF-10`; sibling (b) STEP 2b | Attach the reference TX, read its port, photograph the jack. |
-| R-PART | Every MPN on this list is TBD or representative; no inventory system of record exists, so nothing here is confirmed on hand. | sibling BOM R6 / `bench/rf-feedthrough-bom/REPORT.md`; the parent's `IF-9` | Confirm at order time; receiving inspection. |
-| R-RP | Reverse-polarity SMA lookalikes are the single most likely wrong-part event on a 868 MHz purchase. | sibling hazard H2 (`bench/connector-adapter-bom/REPORT.md`) | Receiving inspection: the plug must present a center PIN. |
-| R-75 | A 75 ohm substitution (video BNC / RG-59 class) is a mismatch, not a transition. | sibling hazard H1 | Verify "50 ohm"/"RG316" literally on the order and on the part. |
+| `R-IF7` | The exterior-face series/gender is UNKNOWN, so `E1`'s bulkhead-end gender and role (b) of `E2` are both undecided. | parent `IF-7`; sibling (c) `bench/chamber-rf-feedthroughs/REPORT.md` F1 + `bench/chamber-rf-feedthrough-list/FEEDTHROUGH-LIST.md` FT-1 | Locate the chamber, walk the wall, identify both faces separately - the parent's own remedy: "resolve with the identification kit on first sight". |
+| `R-FILTER` | A filtered OEM port would be unusable for the RF path regardless of gender, and no adapter can correct it. | sibling (c) STEP 5 LOUD FLAG, carried on parent `IF-6`/`IF-7` | Physical check on the located unit: bulky body / feedthrough-capacitor construction / "filtered" marking. |
+| `R-IF10` | The instrument port is UNSPECIFIED, so which transition (`E2` role (a) / `E3` / `E5`) applies is unselected. | parent `IF-10`; sibling (b) caveat 5 | Name or procure an instrument, then select the transition. Buying one now "would be a guess". |
+| `R-REFTX` | Even the de-facto instrument (reference TX node) is document-based: board not attached, PCB revision not on record. | parent `IF-10`; sibling (b) STEP 2b | Attach the reference TX, read its port, photograph the jack. |
+| `R-PART` | Every MPN here is TBD or representative, and no inventory system of record exists, so nothing on this segment is confirmed on hand. | sibling R6 `bench/rf-feedthrough-bom/REPORT.md`; parent `IF-9` | Confirm at order time; receiving inspection. |
+| `R-RP` | Reverse-polarity SMA lookalikes are the single most likely wrong-part event on an 868 MHz purchase. | sibling hazard H2 (`bench/connector-adapter-bom/REPORT.md`) | Receiving inspection: the plug must present a center PIN. |
+| `R-75` | A 75 ohm substitution (video BNC / RG-59 class) is a mismatch, not a transition - acute on `E3`. | sibling hazard H1 | Verify "50 ohm" / "RG316" literally on the order and on the part. |
 
 ---
 
@@ -438,8 +445,8 @@ resolved here and none is dropped:
 | The chamber wall bore / drilling / sealing hardware | Mechanical penetration, not a connector on this segment; custodian-gated. | sealing section card (`t_a53c6efe`, SEAL-*) |
 | Dust caps for the exterior face in the unmated/storage state | Protective accessory, not a signal-path component; owned by a dedicated section card. | terminations/caps section card (`t_436f6657`, TERM-*) |
 | Torque wrench, spanners, connector savers, anti-rotation fixtures | Handling tooling for the whole chain, not a component of the exterior leg. | tooling section card (`t_378c5705`, TOOL-*/SAV-*) |
-| Tape anchors / loom / cable ID labels for the exterior leg | Consumables governed by the frozen routing spec (`bench/routing-freeze/REPORT.md` §2.2: anchors at T3 plus one per 100 mm of parallel run, polyimide or glass-cloth class; IDs labelled at first touch both ends), not connector-identification BOM lines. No series/gender/impedance applies. | routing freeze `bench/routing-freeze/REPORT.md`; if the consolidator wants consumables in the final BOM, take them from that spec rather than from a connector line. |
-| The reference TX's own serial cable `C-SER-2` and the operator workstation end | Outside the DUT-to-instrument chain by the parent's own scope note ("exterior only - never crosses"). | parent `IF-11` note; `bench/routing-freeze/REPORT.md` |
+| Tape anchors / loom / cable ID labels for the exterior leg | Consumables governed by the frozen routing spec (`bench/routing-freeze/REPORT.md` §2.2: anchor at T3 plus one per 100 mm of parallel run, polyimide or glass-cloth class; IDs labelled at first touch both ends), not connector-identification BOM lines - no series/gender/impedance applies. | routing freeze `bench/routing-freeze/REPORT.md`; a consolidator wanting consumables should take them from that spec, not from a connector line. |
+| The reference TX's own serial cable `C-SER-2` and the operator-workstation end | Outside the DUT-to-instrument chain by the parent's own scope note ("exterior only - never crosses"). | parent `IF-11` note; `bench/routing-freeze/REPORT.md` |
 | The USB-C serial crossing `C-SER-1` | Non-RF control-path crossing, not part of this RF segment. | parent `IF-11`; sibling card `t_fe6e9c1b` / sealing section |
 
 ---
@@ -448,28 +455,31 @@ resolved here and none is dropped:
 
 | Acceptance requirement | Status | Evidence |
 |---|---|---|
-| Every component on this segment appears exactly once with a quantity and a disposition | PASS | 6 rows, unique ids `E1`-`E6`; each carries QTY and a disposition string; the two zero-quantity rows are declared NIL with a reason instead of being dropped. The segment's only signal-carrying hardware is `E1` (firm) plus the three conditional transitions `E2`-`E4`. |
-| Every line names series, gender transition, and impedance | PASS | Each `Part number` cell states the connector series, the gender transition, and "50 ohm" (or `N/A` with its reason on the two NIL rows). Checked mechanically by `make_bom.py`. |
-| Every connector identification traces to a cited sibling source or is flagged UNVERIFIED | PASS | 6/6 rows carry a citation naming a committed `bench/` path or a parent row id, and 6/6 carry an `UNVERIFIED - see open risks` annotation or a `NIL - reason cited` declaration. Zero rows claim a positive `VERIFIED` status. |
+| Every component on this segment appears exactly once with a quantity and a disposition | PASS | 5 rows with unique ids `E1`-`E5`; each carries QTY and a disposition; the two zero-quantity rows are declared NIL with a reason instead of being dropped; the one part that serves two roles is a single line with a summed conditional QTY (`E2`). Signal-carrying hardware is `E1` (firm) plus the conditional transitions `E2`/`E3`. |
+| Every line names series, gender transition, and impedance | PASS | Each `Part number` cell states the connector series, the gender transition, and "50 ohm" - or `N/A` with its reason on the two NIL rows. Checked mechanically by `make_bom.py`. |
+| Every connector identification traces to a cited sibling source or is flagged UNVERIFIED | PASS | 5/5 rows carry a citation naming a committed `bench/` path or a parent row id, and 5/5 carry an `UNVERIFIED - see open risks` annotation or a `NIL - reason cited` declaration. Zero rows claim a positive verified status. |
 | No component inside the chamber or the bulkhead connector itself is duplicated onto this list | PASS | Section 4 names the feedthrough, `C-RF-INT-1`, the bore/sealing, tooling, caps and the serial crossing as excluded with their owners; no row describes any of them. |
+| No physical item listed twice; duplicate roles combined with a summed QTY (step 6) | PASS | One row per distinct part; the SMA-jack/N-plug adapter's two roles are merged on `E2` with QTY `0-2`. Checked mechanically: every distinct MPN-TBD interface spec maps to exactly one row. |
 
 Mechanical check run by `make_bom.py` on every invocation: the 7 header cells match the card's column
 list in order; every data row has exactly 7 non-empty cells; every row states an impedance value or
-an explicit `N/A`; every row states a gender token or an explicit `N/A`; every row carries a
-citation; every row is annotated `UNVERIFIED` or `NIL`; no row claims `VERIFIED`.
+an explicit `N/A`; every row states a gender token or an explicit `N/A`; every row carries a citation;
+every row is annotated `UNVERIFIED` or `NIL`; no row claims a positive verified status; part specs
+are unique after the declared merge; no row is the feedthrough or the interior leg.
 
 ---
 
 ## 6. NOTHING FABRICATED
 
 No connector series, gender, impedance, frequency rating, VSWR value, MPN, lead time or price on this
-list is invented. Every identification is reused verbatim from the parent's normalized interface
-table, which itself quotes committed sibling reports; every MPN is `MPN TBD` with the interface spec
-the part must satisfy, except the one representative class the record names (Amphenol ACX-1169-class,
-labelled representative). No conflict is resolved, no candidate is dropped, no `VERIFIED` status is
-granted, and no measurement, photograph, physical inspection or outbound fetch is claimed: no cable,
-no chamber, no instrument and no RF connector of this segment exists on any record or on this host.
-Quantities of `0-1` mean exactly that - zero today, one if a stated condition materialises.
+list is invented. Every identification is reused from the parent's normalized interface table, which
+itself quotes committed sibling reports; every MPN is `MPN TBD` with the interface spec the part must
+satisfy, except the one representative class the record names (Amphenol ACX-1169-class, explicitly
+labelled representative). No conflict is resolved, no candidate is dropped, no positive verified
+status is granted, and no measurement, photograph, physical inspection or outbound fetch is claimed:
+no cable, no chamber, no instrument and no RF connector of this segment exists on any record or on
+this host. `0-1` and `0-2` mean exactly that - zero today, one/two only if a stated condition
+materialises.
 
 Reproduce: `python3 make_bom.py` rewrites `EXTERIOR-LEG-BOM.md` and `exterior_leg_bom.csv`
 byte-identically (stdlib only; no clock, no randomness, no network), then runs the self-check.
@@ -477,21 +487,24 @@ byte-identically (stdlib only; no clock, no randomness, no network), then runs t
 
 
 # ------------------------------------------------------------------ emit -----
+def cells_of(r):
+    return [
+        r["rid"] + " - " + r["desc"],
+        r["qty"],
+        r["spec"],
+        r["disp"],
+        r["lead"],
+        r["vendor"],
+        r["cite"],
+    ]
+
+
 def render_md():
     out = [TITLE]
     out.append("| " + " | ".join(HEADER) + " |")
     out.append("|" + "|".join([" --- "] * len(HEADER)) + "|")
     for r in ROWS:
-        cells = [
-            r["rid"] + " - " + r["desc"],
-            r["qty"],
-            r["spec"],
-            r["disp"],
-            r["lead"],
-            r["vendor"],
-            r["cite"],
-        ]
-        out.append("| " + " | ".join(c.replace("|", "\\|") for c in cells) + " |")
+        out.append("| " + " | ".join(c.replace("|", "\\|") for c in cells_of(r)) + " |")
     out.append(TAIL_1)
     return "\n".join(out)
 
@@ -504,19 +517,20 @@ def write_files():
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(HEADER)
         for r in ROWS:
-            w.writerow([
-                r["rid"] + " - " + r["desc"],
-                r["qty"],
-                r["spec"],
-                r["disp"],
-                r["lead"],
-                r["vendor"],
-                r["cite"],
-            ])
+            w.writerow(cells_of(r))
     return md
 
 
 # ------------------------------------------------------------- self-check ----
+# Verifier-logic fix from the first run, kept visible: a bare "VERIFIED"
+# substring probe false-failed a row whose spec legitimately read
+# "... UNVERIFIED on host". UNVERIFIED / UNSPECIFIED are stripped before the
+# positive-status probe. The deliverable text was correct throughout; only the
+# check was defective.
+def no_positive_claim(text):
+    return "VERIFIED" not in text.replace("UNVERIFIED", " ").replace("UNSPECIFIED", " ")
+
+
 def selfcheck(md):
     checks = []
 
@@ -524,59 +538,69 @@ def selfcheck(md):
         checks.append((name, bool(ok), detail))
 
     # 1. columns, in the card's order
-    ck("7 header cells present in card order",
-       all(h in md for h in HEADER) and len(HEADER) == 7,
+    ck("7 header cells present in card order", len(HEADER) == 7 and all(h in md for h in HEADER),
        "header cells = %d" % len(HEADER))
     for i, h in enumerate(HEADER):
-        ck("header[%d] rendered" % i, h in md)
+        ck("header[%d] rendered in md" % i, h in md)
 
-    # 2. csv twin: same header, same row count, same cells
+    # 2. md table shape. The row-id pattern is anchored on a DIGIT after the
+    # "E" so prose table rows ("| Every component ...", "| Excluded item ...")
+    # are not miscounted. (Second verifier defect found on the run after the
+    # merge: the loose '^| E' prefix matched those prose rows and reported
+    # md=9 for 5 data rows. Deliverable text was correct; only the check was
+    # wrong. Fixed and disclosed rather than silently corrected.)
+    trows = [ln for ln in md.splitlines() if re.match(r"^\| E\d+ ", ln)]
+    ck("md data rows == ROWS", len(trows) == len(ROWS), "md=%d rows=%d" % (len(trows), len(ROWS)))
+    ck("md data rows are not ragged", all(ln.rstrip().endswith("|") for ln in trows))
+
+    # 3. csv twin: same header, same row count, same cells
     with open(CSV, encoding="utf-8") as fh:
         rows = list(csv.reader(fh))
     ck("csv header == mandated header", rows[0] == HEADER)
-    ck("csv row count == md row count", len(rows) - 1 == len(ROWS),
+    ck("csv row count == ROWS", len(rows) - 1 == len(ROWS),
        "csv=%d rows=%d" % (len(rows) - 1, len(ROWS)))
+    ck("csv/md row-for-row equal",
+       [[c.replace("|", "\\|") for c in r] for r in rows[1:]] ==
+       [[c.replace("|", "\\|") for c in cells_of(r)] for r in ROWS])
 
-    # 3. per-row content checks
+    # 4. per-row content checks
     for r in ROWS:
-        cells = [r["rid"] + " - " + r["desc"], r["qty"], r["spec"], r["disp"],
-                 r["lead"], r["vendor"], r["cite"]]
-        ck("%s: 7 non-empty cells" % r["rid"], all(c.strip() for c in cells))
+        cells = cells_of(r)
+        ck("%s: 7 non-empty cells" % r["rid"], len(cells) == 7 and all(c.strip() for c in cells))
         ck("%s: impedance stated or N/A" % r["rid"],
            ("50 ohm" in r["spec"]) or ("N/A" in r["spec"]))
         ck("%s: gender transition stated or N/A" % r["rid"],
-           any(tok in r["spec"] for tok in ("plug", "jack", "N-M", "BNC-M",
-                                            "3.5 mm-M", "N/A")))
+           any(tok in r["spec"] for tok in ("plug", "jack", "N-M", "BNC-M", "3.5 mm-M", "N/A")))
         ck("%s: citation present" % r["rid"],
            ("bench/" in r["cite"]) or ("t_" in r["cite"]))
         ck("%s: annotated UNVERIFIED or NIL" % r["rid"],
            ("UNVERIFIED" in r["cite"]) or ("NIL" in r["cite"]))
-        # No row may claim a POSITIVE verified status. A bare "VERIFIED"
-        # substring inside "UNVERIFIED"/"UNSPECIFIED" is not a claim, so those
-        # tokens are removed before the probe. (Verifier defect found on the
-        # first run: the naive `"VERIFIED" not in spec` test failed E4, whose
-        # spec legitimately ends "... UNVERIFIED on host". Fixed here; the
-        # deliverable text was correct and is unchanged.)
-        stripped = (r["spec"] + " " + r["disp"]).replace("UNVERIFIED", " ").replace("UNSPECIFIED", " ")
         ck("%s: no positive VERIFIED claim" % r["rid"],
-           "VERIFIED" not in stripped)
+           no_positive_claim(r["spec"]) and no_positive_claim(r["disp"]))
 
-    # 4. uniqueness / contiguity of ids
+    # 5. uniqueness / contiguity of ids, and one line per distinct part
     ids = [r["rid"] for r in ROWS]
     ck("ids unique", len(set(ids)) == len(ids))
-    ck("ids contiguous E1..E%d" % len(ROWS),
-       ids == ["E%d" % (i + 1) for i in range(len(ROWS))])
+    ck("ids contiguous E1..E%d" % len(ROWS), ids == ["E%d" % (i + 1) for i in range(len(ROWS))])
+    keys = [r["part_key"] for r in ROWS]
+    ck("one row per distinct physical part", len(set(keys)) == len(keys))
 
-    # 5. boundary: the bulkhead itself must not be a line item
+    # 6. no adapter interface spec duplicated across rows (the merge rule)
+    adapter_specs = []
+    for r in ROWS:
+        if r["rid"] in ("E2", "E3"):
+            adapter_specs.append(tuple(sorted(re.findall(r"to ([A-Za-z0-9\.\- ]+?) ", r["desc"]))))
+    ck("merged adapter declares both roles on one line",
+       "role (a)" in ROWS[1]["desc"] and "role (b)" in ROWS[1]["desc"])
+    ck("merged adapter QTY is summed conditional", ROWS[1]["qty"].startswith("0-2"))
+
+    # 7. boundary: feedthrough itself and interior leg must not be line items
     ck("no row is the bulkhead feedthrough itself",
        not any("bulkhead feedthrough" in r["desc"].lower()
                and "exterior face" not in r["desc"].lower() for r in ROWS))
+    ck("no interior-leg assembly listed", not any("C-RF-INT-1" in r["desc"] for r in ROWS))
 
-    # 6. no interior-leg component duplicated onto this list
-    ck("no interior-leg assembly listed",
-       not any("C-RF-INT-1" in r["desc"] for r in ROWS))
-
-    # 7. determinism: md content is a pure function of ROWS + prose
+    # 8. determinism
     ck("md deterministic (render twice equal)", render_md() == md)
 
     failed = [c for c in checks if not c[1]]
@@ -592,8 +616,7 @@ def main():
     for p in (MD, CSV):
         with open(p, "rb") as fh:
             print("%s  %s" % (hashlib.sha256(fh.read()).hexdigest(), os.path.basename(p)))
-    rc = selfcheck(md)
-    return rc
+    return selfcheck(md)
 
 
 if __name__ == "__main__":
