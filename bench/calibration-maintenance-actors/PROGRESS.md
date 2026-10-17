@@ -38,3 +38,23 @@ Run 2 (this commit), same worktree:
   target exists.
 - PUSH note for future workers: meshcore `main` is ~448 commits ahead of origin/main and has never
   been pushed; bench reports are published as fork branches `worker-<profile>/t_<card>`.
+
+Run 3 (run 2130, this dispatch) — re-verification close, nothing re-authored:
+
+- The card was re-dispatched after run 2 capped out at the iteration budget AFTER its commit had
+  already landed and been pushed. Run 3 therefore re-measured the DoD read-only instead of redoing
+  the search, and added a Run-3 section to the report.
+- Re-measured unchanged: `/dev/video*` NONE; `v4l2-ctl`/`fswebcam` ABSENT; `lsusb` = 4 hubs + BT
+  radio + Lexar ES4 + Zoran USB-audio-HID, no scanner/camera; cited commits d7ae93fa
+  (2026-09-11T11:24:09+05:30), 11e43b0a (2026-09-14T10:53:50+02:00) and 4b3ec9b5
+  (2026-09-14T12:08:32+02:00) all present with the quoted lines intact; fork ref
+  `worker-admin/t_9a2f522b` = bdbe1f4f…; committed REPORT == worktree copy (cmp IDENTICAL).
+- Two deltas recorded: (a) `sane-find-scanner`/`scanimage` are now INSTALLED (run 2 measured them
+  absent) yet still enumerate NO scanner-class device — a stronger, measured negative;
+  (b) the host's only filled approver cell now has an exact date: e80-bench/docs/coordination/
+  FLASH-QUEUE.md line 10, 2026-08-20T09:00Z, `felix (orchestrator)`, E80 FLASHING — different bench,
+  still not a finding for buckets (a)-(c).
+- Run-3 census caveat: the bounded name re-census timed out (rc=124) on ~/repos and ~/worktrees;
+  those two bases rest on run 2's completed per-base census. A timed-out `find` is not a negative.
+- Transcripts: verify_out_t_9a2f522b_run2130.txt, verify2_out_t_9a2f522b_run2130.txt — durable copies
+  under ~/reports/logbook-actors-t_9a2f522b-2026-10-17/.

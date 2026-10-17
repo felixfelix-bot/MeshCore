@@ -216,6 +216,55 @@ at the raw source (the `git cat-file`/`git show` output is in this report's own 
   hook printed `cred-gate: no remote-tracking knowledge for HEAD — judging the fail-closed window
   <sha>~50..<sha>` and the push then succeeded with `[new branch]`, rc=0.
 
+## Run-3 re-verification (2026-10-17, run 2130) — nothing re-authored, everything re-measured
+
+This card was dispatched a third time after run 2 hit the iteration cap **after** its commit was already
+landed and pushed. Per the fleet's re-verification pattern, run 3 re-measured the DoD read-only instead
+of redoing the search. Transcripts: `verify_out_t_9a2f522b_run2130.txt` and
+`verify2_out_t_9a2f522b_run2130.txt` (durable copies under `~/reports/logbook-actors-t_9a2f522b-2026-10-17/`).
+
+Re-measured and unchanged:
+
+| check | result this run |
+|---|---|
+| `/dev/video*` | **NONE** (0 devices) |
+| `v4l2-ctl`, `fswebcam` | **ABSENT** |
+| `lsusb` | 4 buses / 4 real devices: Realtek BT radio, Lexar ES4 USB stick, Zoran USB-audio-HID, hubs — **no scanner, no camera** |
+| cited commit `d7ae93fa` | present, `2026-09-11T11:24:09+05:30`; `examples/passive_mapper/bench/README.md` section *"What has to be measured, and by whom"* contains verbatim *"bench work for the operator (Felix)"* — re-read from the commit this run (9,912 bytes) |
+| cited commits `11e43b0a` / `4b3ec9b5` | present, `2026-09-14T10:53:50+02:00` / `2026-09-14T12:08:32+02:00`; `bench/chamber-ownership/REPORT.md` re-read from both commits and still carries §1 *"Physical chamber custodian: Felix — confidence MEDIUM (inference by…"*, §2 *"Controller/software admin: UNDETERMINED"*, §3 *"Maintenance/calibration window approver: UNDETERMINED"* |
+| published ref | `git ls-remote fork refs/heads/worker-admin/t_9a2f522b` → `bdbe1f4f…` (rc 0), tree = `bench/calibration-maintenance-actors/{REPORT,PROGRESS}.md` |
+| committed report vs worktree report | `cmp` → **IDENTICAL** |
+
+Two deltas worth recording, both refinements rather than contradictions:
+
+1. **Scanner tooling is now installed where run 2 found it absent — but no scanner is attached.**
+   Run 2 measured `sane-find-scanner` → *"No USB scanners found"*. This run the binaries are **present**
+   (`sane-find-scanner` and `scanimage` both resolve on PATH), and that makes the negative *stronger*:
+   `sane-find-scanner -q` exits 0 reporting only `Access denied (insufficient permissions)` against the
+   seven `/dev/bus/usb` nodes, i.e. it enumerated the bus and found no scanner-class device to open
+   (the access denials are ordinary non-root control-transfer probes of hubs/HID/storage, not a
+   hidden scanner); `scanimage -L` produced **no device line** and hung until the 40 s timeout on a
+   `bjnp` network-backend socket error (`bind socket to local address failed - Address already in
+   use`), which is the network backend finding nothing, not an attached device. Conclusion unchanged:
+   **no device on this host can image a page.** Recorded because "tool absent" and "tool present, no
+   device" are different measurements and run 2 documented the first.
+2. **The one filled approver cell now carries an exact date.** `215c8c55`'s correction is confirmed by
+   direct read of the file this run: `e80-bench/docs/coordination/FLASH-QUEUE.md` (2,753 bytes,
+   byte-identical twin at `balloon-e80bench/docs/coordination/FLASH-QUEUE.md`) line 10 is
+   `| balloon-range-tests | E80 #1+#2 | PRBS-15 harmonization: … | 2026-08-20T09:00Z | felix (orchestrator) | 8m | DONE (PARTIAL) |`.
+   The meshcore-bench copy (`balloon/docs/coordination/FLASH-QUEUE.md`, 2,216 bytes) contains **no**
+   `approver` string at all — zero named approver, as reported. Re-stated: this is E80 board
+   **flashing**, a different bench, and stays out of buckets (a)–(c).
+
+Coverage caveat for this run's own census: the bounded name re-census (`find -xdev -maxdepth 7`, 90 s cap
+per base) returned **rc=124 (timeout)** for `~/repos` and `~/worktrees`, so those two bases were *not*
+re-established this run; the negative for them rests on run 2's per-base census
+(`logbook_home_census3_out.txt`, per-base rc/hits/elapsed). The bases it did complete this run —
+`~/reports` (11 hits, all this card's own artefacts), `~/Documents` (0), `~/Downloads` (0),
+`/mnt/cw-offload` (1, the `regex-1.10.4/record/old-bench-log` crate fixture already documented),
+`/mnt/archive` (0) — agree with run 2. A timed-out `find` is **not** a negative result and is not
+counted as one.
+
 ## Evidence files (durable copies)
 
 - `~/reports/logbook-actors-t_9a2f522b-2026-10-17.md` — this report
