@@ -1,0 +1,81 @@
+==============================================================================
+SECTION 1 -- FRESH PHYSICAL CENSUS (run this session)
+==============================================================================
+
+-- lsusb --
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 002: ID 0bda:b850 Realtek Semiconductor Corp. Bluetooth Radio
+Bus 003 Device 003: ID 21c4:0004 Lexar                ES4                 
+Bus 003 Device 004: ID 0573:1573 Zoran Co. Personal Media Division (Nogatech) USB Audio and HID
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+
+-- serial / instrument buses --
+  /dev/serial/by-id      -> ls: cannot access '/dev/serial/by-id': No such file or directory
+  /dev/usbtmc*           -> ls: cannot access '/dev/usbtmc*': No such file or directory
+  /dev/gpib*             -> ls: cannot access '/dev/gpib*': No such file or directory
+  /dev/ttyACM*           -> ls: cannot access '/dev/ttyACM*': No such file or directory
+  /dev/ttyUSB*           -> ls: cannot access '/dev/ttyUSB*': No such file or directory
+
+-- camera --
+  /dev/video*            -> ls: cannot access '/dev/video*': No such file or directory
+  /dev/media*            -> ls: cannot access '/dev/media*': No such file or directory
+  /sys/class/video4linux -> ls: cannot access '/sys/class/video4linux': No such file or directory
+
+-- measuring-tool assets on disk (bounded, name match) --
+  caliper/micrometer/vernier/tape assets: ZERO HITS
+[PASS] no measuring instrument asset on host: 0 hit groups
+
+-- physical RF coax / connector assets in the project repo (bounded) --
+  ZERO HITS
+[PASS] no physical RF coax/connector asset in repo tree: zero
+
+-- connector / cable photographs anywhere in reports or kanban home --
+  ZERO HITS
+[PASS] no connector photograph exists: zero
+
+-- procurement records (a part on order would carry a P/N) --
+  files naming a representative SMA MPN: /home/c03rad0r/repos/meshcore/bench/chamber-rf-feedthrough-list/feedthrough_list.csv
+  (a hit means the class is CITED in a report, not that a part exists)
+
+==============================================================================
+SECTION 2 -- CONNECTOR CENSUS ARITHMETIC (frozen variant-B coax run)
+==============================================================================
+
+Bodies in the coax run (each listed exactly once):
+  CN-1  DUT carrier J1 ("SMA-868") edge-launch jack            | C-RF-INT-1                                               | board jack | if=1
+  CN-2  C-RF-INT-1 plug, DUT end                               | C-RF-INT-1                                               | cable plug | if=1
+  CN-3  C-RF-INT-1 plug, bulkhead end                          | C-RF-INT-1                                               | cable plug | if=1
+  CN-4  SMA bulkhead feedthrough, jack-jack panel mount        | C-RF-INT-1 (interior interface) + C-RF-EXT-1 (exterior interface) | bulkhead, ONE body / TWO interfaces | if=2
+  CN-5  C-RF-EXT-1 plug, bulkhead end                          | C-RF-EXT-1                                               | cable plug | if=1
+  CN-6  C-RF-EXT-1 plug, ref-TX end                            | C-RF-EXT-1                                               | cable plug | if=1
+  CN-7  REF-TX J1 edge-launch jack                             | C-RF-EXT-1                                               | board jack | if=1
+
+  bodies = 7; interface-halves = 8; joints = 4
+
+Conditional body (in the run ONLY if BOM B6 is used):
+  CN-8  connector saver (BOM B6), SMA M-F bullet adapter at DUT J1 | C-RF-INT-1                                               | adapter, CONDITIONAL on B6 decision | if=2
+  bodies_if_B6_used = 8
+
+Explicitly OUT of the run (so no connector is silently missing or doubled):
+  B7  SMA 50-ohm termination load, DUT J2 (2.4 GHz port)       | not on the coax run: J2 is not part of the conducted path
+  B8  SMA dust caps x4                                         | protective caps, not connectors; they cover interfaces when UNMATED
+  C-SER-1 / C-SER-2 USB-C plugs                                | USB-C serial cable ends -- not coax connectors, not on the coax run
+  U.FL (I-PEX) receptacle, ESP32-C3 SuperMini                  | WiFi/BLE radio, not on the LR2021 868 MHz measurement path
+  FT-1 .. FT-5 chamber bulkhead feedthroughs                   | all five states are NON-EXISTENT -- no chamber, no bulkhead
+
+-- identity checks --
+[PASS] bulkhead counted once, not twice: CN-4 carries 2 coaxial interfaces in 1 body row
+[PASS] interface arithmetic closes: 7 bodies -> 8 halves -> 4 mating joints (J1|plug, plug|bulkhead, bulkhead|plug, plug|J1)
+[PASS] every run body is tied to a cable ID: no orphan connector
+[PASS] each of the 2 RF cables terminates exactly 2 cable-end plugs: C-RF-INT-1: CN-2,CN-3 ; C-RF-EXT-1: CN-5,CN-6
+[PASS] cable-ID coverage complete: frozen coax IDs present: ['C-RF-EXT-1', 'C-RF-INT-1']
+[FAIL] measured numbers available for any body: 0 of 7 bodies have a measured OD or length -- no part exists (UNKNOWN, see report)
+
+==============================================================================
+RESULT: census rerun complete; connector-run census closes arithmetically.
+        checks failed: 1 -> ['measured numbers available for any body']
+        NOTE: the one expected FAIL is the honest measurement gap:
+        no connector body OD / length is measurable on this host.
+==============================================================================
