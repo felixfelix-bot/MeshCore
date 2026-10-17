@@ -409,8 +409,8 @@ MD_CELL = "\\|"
 
 
 def md_row(cells):
-    """Markdown row, escaping any literal pipe inside a cell."""
-    return "| " + " | ".join(c.replace("|", MD_CELL) for c in cells) + " |"
+    """Markdown row (newline-terminated), escaping any literal pipe inside a cell."""
+    return "| " + " | ".join(c.replace("|", MD_CELL) for c in cells) + " |\n"
 
 
 def build_markdown():
