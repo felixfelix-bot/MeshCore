@@ -48,6 +48,9 @@ uint32_t RadioLibWrapper::getRngSeed() {
 }
 
 void RadioLibWrapper::setTxPower(int8_t dbm) {
+#if defined(USE_LR2021)
+  idle();
+#endif
   _radio->setOutputPower(dbm);
 }
 
@@ -110,6 +113,7 @@ void RadioLibWrapper::startRecv() {
   #if defined(USE_LR2021)
   _radio->standby(); // without this LR2021 can throw -706 when calling startReceive after hardware CAD when side detectors are enabled
   #endif
+  applyCenterFreqOffset(); // re-apply thermal-compensation offset before RX re-arm
   int err = _radio->startReceive();
   if (err == RADIOLIB_ERR_NONE) {
     state = STATE_RX;
